@@ -1,2 +1,2 @@
-// export * from "./BookingLogs";
-// export * from "./RoomLogs";
+export * from "./BookingLogs";
+export * from "./RoomLogs";
