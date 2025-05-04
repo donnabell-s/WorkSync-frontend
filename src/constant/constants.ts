@@ -1,5 +1,15 @@
 // ROUTER PATH
 export const PATHS = {
+    // URLs for admin pages always start with "/admin"
+    ADMIN_MAIN: {
+        path: "/admin",
+        label: "Admin Main"
+    },
+    // URLs for user pages always start with "/user"
+    USER_MAIN: {
+        path: "/user",
+        label: "User Main"
+    },
     LOGIN: {
         path: "/login",
         label: "Login"
@@ -26,135 +36,119 @@ export const PATHS = {
     },
     ROOM_MGNT: {
         VIEW: {
-            path: "/rooms/view",
+            path: "rooms/view",
             label: "View Rooms"
         },
-        CALENDAR: {
-            path: "/rooms/calendar",
-            label: "Booking Calendar"
-        },
-        HISTORY: {
-            path: "/rooms/history",
-            label: "Booking History"
-        },
-        RESERVATIONS: {
-            path: "/rooms/reservations",
-            label: "Booking Reservations"
+        DETAIL: {
+            path: "rooms/room-detail",
+            label: "Room Detail"
         },
         ADD: {
-            path: "/rooms/add",
+            path: "rooms/add",
             label: "Add Room"
         },
         EDIT: {
-            path: "/rooms/edit",
+            path: "rooms/edit",
             label: "Edit Room"
         },
         DELETE: {
-            path: "/rooms/delete",
+            path: "rooms/delete",
             label: "Delete Room"
         },
     },
     BOOKING_MGNT: {
         VIEW: {
-            path: "/bookings/view",
+            path: "bookings/view",
             label: "View Bookings"
         },
-        VIEW_APPROVED: {
-            path: "/bookings/approved-view",
-            label: "View Approved Booking"
+        DETAIL: {
+            path: "bookings/booking-detail",
+            label: "Booking Detail"
         },
         ADD: {
-            path: "/bookings/add",
+            path: "bookings/add",
             label: "Add Booking"
         },
         EDIT: {
-            path: "/bookings/edit",
+            path: "bookings/edit",
             label: "Edit Booking"
         },
         CANCEL: {
-            path: "/bookings/cancel",
+            path: "bookings/cancel",
             label: "Cancel Booking"
-        },
-        MODAL: {
-            path: "/bookings/modal",
-            label: "Modal"
         },
     },
     ADMIN_MGNT: {
         VIEW: {
-            path: "/admins/view",
+            path: "admins/view",
             label: "View Admins"
         },
         ADD: {
-            path: "/admins/add",
+            path: "admins/add",
             label: "Add Admin"
         },
         EDIT: {
-            path: "/admins/edit",
+            path: "admins/edit",
             label: "Edit Admin"
         },
     },
     USER_MGNT: {
         VIEW: {
-            path: "/users/view",
+            path: "users/view",
             label: "View Users"
         },
         ADD: {
-            path: "/users/add",
+            path: "users/add",
             label: "Add User"
         },
         EDIT: {
-            path: "/users/edit",
+            path: "users/edit",
             label: "Edit User"
         },
     },
     USER_VIEW: {
         HOME: {
-            path: "/home",
+            path: "home",
             label: "Home Page"
         },
         ROOM_EXPLORER: {
-            path: "/room-explorer",
+            path: "room-explorer",
             label: "Room Explorer"
         },
         BOOKINGS: {
-            path: "/my-bookings",
+            path: "my-bookings",
             label: "My Bookings"
         },
         BOOK: {
-            path: "/book-room",
+            path: "book-room",
             label: "Book Room"
         },
-        BOOKING_DETAIL: {
-            path: "/booking-detail",
-            label: "Booking Detail"
+        EDIT: {
+            path: "edit-booking",
+            label: "Edit Booking"
         },
-        ACCOUNT: {
-            path: "/account",
-            label: "Account"
-        },
-        PREFERENCES: {
-            path: "/preferences",
-            label: "Preferences"
+        SETTINGS: {
+            path: "settings",
+            label: "Settings"
         },
     },
     ADMIN_VIEW: {
         DASHBOARD: {
-            path: "/dashboard",
+            path: "dashboard",
             label: "Dashboard"
         },
         NOTIFICATION: {
-            path: "/admin-notification",
+            path: "notification",
             label: "Notifications"
         },
     },
     LOGS: {
         ROOMS: {
-            path: "/logs/rooms",
+            path: "logs/rooms",
             label: "Room Logs"
         },
         BOOKINGS: {
-            path: "/logs/bookings",
+            path: "logs/bookings",
             label: "Booking Logs"
         },
     },

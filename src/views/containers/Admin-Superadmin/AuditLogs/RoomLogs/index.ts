@@ -1,1 +1,1 @@
-export * from "./RoomLogs";
+export { default as RoomLogs } from "./RoomLogs";

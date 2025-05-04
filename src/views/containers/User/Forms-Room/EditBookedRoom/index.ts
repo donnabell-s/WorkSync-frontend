@@ -1,1 +1,1 @@
-export * from "./EditBookedRoom";
+export { default as EditBookedRoom } from "./EditBookedRoom";

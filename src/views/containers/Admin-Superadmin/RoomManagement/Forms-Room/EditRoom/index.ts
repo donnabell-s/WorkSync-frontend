@@ -1,1 +1,1 @@
-export * from "./EditRoom";
+export { default as EditRoom } from "./EditRoom";

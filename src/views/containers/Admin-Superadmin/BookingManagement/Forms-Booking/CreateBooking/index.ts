@@ -1,1 +1,1 @@
-export * from "./createBooking";
+export { default as CreateBooking } from "./CreateBooking";

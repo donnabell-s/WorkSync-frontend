@@ -1,1 +1,1 @@
-export * from "./EditAdmin";
+export { default as EditAdmin } from "./EditAdmin";

@@ -1,1 +1,1 @@
-export * from "./ViewRoomDetails";
+export { default as ViewRoomDetails } from "./ViewRoomDetails";

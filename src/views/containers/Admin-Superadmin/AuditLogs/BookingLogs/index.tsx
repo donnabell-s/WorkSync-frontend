@@ -1,1 +1,1 @@
-export * from "./BookingLogs";
+export { default as BookingLogs } from "./BookingLogs";

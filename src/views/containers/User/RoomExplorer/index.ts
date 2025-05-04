@@ -1,1 +1,1 @@
-export * from "./RoomExplorer";
+export { default as RoomExplorer } from "./RoomExplorer";

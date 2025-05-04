@@ -1,1 +1,1 @@
-export * from "./ViewUsers";
+export { default as ViewUsers } from "./ViewUsers";
