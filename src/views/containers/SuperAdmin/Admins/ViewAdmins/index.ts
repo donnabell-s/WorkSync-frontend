@@ -1,0 +1,1 @@
+export { default as ViewAdmins } from "./ViewAdmins";
