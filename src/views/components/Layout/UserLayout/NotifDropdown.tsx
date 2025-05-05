@@ -62,7 +62,7 @@ const NotifDropdown: React.FC = () => {
                     >
                         <div className="flex items-center justify-center pt-1">{getIcon(notif.type)}</div>
                         <div>
-                            <div className="text-md font-medium">{notif.header}</div>
+                            <div className="text-md font-medium text-[#1F2937]">{notif.header}</div>
                             <div className="text-sm">{notif.body}</div>
                             <div className="text-xs">{notif.timestamp}</div>
                         </div>
