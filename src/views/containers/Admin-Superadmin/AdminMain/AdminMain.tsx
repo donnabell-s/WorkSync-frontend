@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Outlet } from 'react-router'
-import Header from '../../../components/AdminSuperAdminLayout/Header'
-import SideNav from '../../../components/AdminSuperAdminLayout/SideNav'
+import Header from '../../../components/Layout/AdminSuperAdminLayout/Header'
+import SideNav from '../../../components/Layout/AdminSuperAdminLayout/SideNav'
 
 const AdminMain = () => {
 

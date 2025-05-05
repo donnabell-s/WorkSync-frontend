@@ -1,5 +1,5 @@
 import React from 'react'
-import Logo from '../../../assets/admin-brand-logo.png'
+import Logo from '../../../../assets/admin-brand-logo.png'
 import { IoNotifications } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { IoMenu, IoClose } from "react-icons/io5";

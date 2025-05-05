@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { IoIosArrowForward, IoIosArrowDown } from "react-icons/io";
-import { navLinks } from '../../../constant/superadmin-nav-links';
+import { navLinks } from '../../../../constant/superadmin-nav-links';
 import SideNavLink from './SideNavLink';
 // import { RiDashboardHorizontalFill } from "react-icons/ri";
 // import { IoNotifications } from "react-icons/io5";
