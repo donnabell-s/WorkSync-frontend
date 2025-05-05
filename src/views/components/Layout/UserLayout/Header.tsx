@@ -10,7 +10,7 @@ const Header: React.FC = () => {
     const location = useLocation();
 
     return (
-    <div className="flex justify-between p-5 pl-13 pr-10 shadow-zinc-100 shadow-lg bg-[#FFFFFF] shadow-md shadow-zinc-200">
+    <div className="sticky top-0 z-50 flex justify-between p-5 pl-13 pr-10 shadow-zinc-100 shadow-lg bg-[#FFFFFF] shadow-md shadow-zinc-200">
       <div className="flex justify-center items-center">
         <img src={Logo} alt="Logo" className="h-16" />
       </div>
