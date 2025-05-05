@@ -36,7 +36,7 @@ const HeaderLink: React.FC<SideNavLinkProps> = ({ label, selected, path }) => {
                 ${selected ? 'after:scale-x-100 after:bg-emerald-500' : 'after:scale-x-0 after:bg-emerald-500 hover:after:scale-x-100'}
             `}
         >
-          <p>{label}</p>
+          <p className={`${selected ? 'text-[#1F2937]' : 'text-[#4B5563]'}`}>{label}</p>
         </div>
       );
   };
