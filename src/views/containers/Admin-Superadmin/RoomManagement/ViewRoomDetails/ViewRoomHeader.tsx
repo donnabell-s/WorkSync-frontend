@@ -10,12 +10,12 @@ interface ViewRoomHeaderProps {
 const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabClick }) => {
 
     return (
-        <div className='max-h-max flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
-            <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
-                <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
+        <div className='flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
+            <div className='w-full flex p-2.5 gap-4'>
+                <div className='h-22 rounded-md shadow-sm bg-zinc-100 w-2/6'>
                     <img src="" alt="" />
                 </div>
-                <div className='max-h-max rounded-md lg:w-3/6 w-full flex gap-8'>
+                <div className='h-22 rounded-md w-3/6 flex gap-8'>
                     <div className='flex flex-col text-sm gap-1'>
                         <div className='font-bold'>Executive Boardroom</div>
                         <div className='font-bold'>CR-102A</div>
@@ -35,7 +35,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                         <div>Projector, Video Conferencing, Whiteboard</div>
                     </div>
                 </div>
-                <div className='max-h-max rounded-md lg:w-1/6 w-full flex lg:flex-col flex-row gap-2 items-end'>
+                <div className='h-22 rounded-md w-1/6 flex flex-col gap-2 items-end'>
                     <button className='text-white text-sm bg-[#F59E0B] hover:bg-[#f5740b] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer'>
                         <MdEdit className='size-5 text-white' />
                         Edit
