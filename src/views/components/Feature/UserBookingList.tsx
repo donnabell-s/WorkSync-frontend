@@ -121,78 +121,80 @@ const UserBookingList: React.FC = () => {
     <div>
       <div className="overflow-x-auto shadow-[0_0_9px_rgba(0,0,0,0.1)]">
         <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm text-[#1F2937]">
-          <thead>
-            <tr className="text-left text-sm">
-              <th className={getThClasses()}>ID</th>
-              <th className={getThClasses()}>Name</th>
-              <th className={getThClasses()}>Room</th>
-              <th className={getThClasses()}>Location</th>
-              <th className={getThClasses()}>Date</th>
-              <th className={getThClasses()}>Time</th>
-              <th className={getThClasses()}>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visibleBookings.map((booking) => (
-              <tr key={booking.id} className="text-sm hover:bg-gray-50">
-                <td className={getTdClasses()}>{booking.id}</td>
-                <td className={getTdClasses()}>{booking.name}</td>
-                <td className={getTdClasses()}>{booking.room}</td>
-                <td className={getTdClasses()}>{booking.location}</td>
-                <td className={getTdClasses()}>{booking.date}</td>
-                <td className={getTdClasses()}>{booking.time}</td>
-                <td className={`py-3 px-4 border-b border-b-[#D2D4D8] font-semibold uppercase ${getStatusColor(booking.status)}`}>
-                  {booking.status}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-                <td colSpan={7} className="py-5 px-4 border-t">
-                    <div className="flex items-center justify-end text-sm gap-8">
-                        {/* Items per page */}
-                        <div className="flex items-center space-x-2">
-                            <label htmlFor="itemsPerPage" className="font-regular">
-                            Items per page:
-                            </label>
-                            <select
-                            id="itemsPerPage"
-                            className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            value={itemsPerPage}
-                            onChange={handleItemsPerPageChange}
-                            >
-                            <option value="5">5</option>
-                            <option value="10">10</option>
-                            <option value="20">20</option>
-                            </select>
-                    </div>
-                {/* Page range info */}
-                <div>
-                    {startIndex + 1} - {endIndex} of {totalItems}
-                </div>
+            <thead>
+                <tr className="text-left text-sm">
+                <th className={getThClasses()}>ID</th>
+                <th className={getThClasses()}>Name</th>
+                <th className={getThClasses()}>Room</th>
+                <th className={getThClasses()}>Location</th>
+                <th className={getThClasses()}>Date</th>
+                <th className={getThClasses()}>Time</th>
+                <th className={getThClasses()}>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {visibleBookings.map((booking) => (
+                <tr key={booking.id} className="text-sm hover:bg-gray-50">
+                    <td className={getTdClasses()}>{booking.id}</td>
+                    <td className={getTdClasses()}>{booking.name}</td>
+                    <td className={getTdClasses()}>{booking.room}</td>
+                    <td className={getTdClasses()}>{booking.location}</td>
+                    <td className={getTdClasses()}>{booking.date}</td>
+                    <td className={getTdClasses()}>{booking.time}</td>
+                    <td className={`py-3 px-4 border-b border-b-[#D2D4D8] font-semibold uppercase ${getStatusColor(booking.status)}`}>
+                    {booking.status}
+                    </td>
+                </tr>
+                ))}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colSpan={7} className="py-5 px-4 border-t">
+                        <div className="flex items-center justify-end text-sm gap-8">
+                            
+                            {/* Items per page */}
+                            <div className="flex items-center space-x-2">
+                                <label htmlFor="itemsPerPage" className="font-regular">
+                                Items per page:
+                                </label>
+                                <select
+                                id="itemsPerPage"
+                                className="border border-gray-300 rounded-md px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                value={itemsPerPage}
+                                onChange={handleItemsPerPageChange}
+                                >
+                                <option value="5">5</option>
+                                <option value="10">10</option>
+                                <option value="20">20</option>
+                                </select>
+                            </div>
 
-                {/* Pagination buttons */}
-                <div className="space-x-2">
-                    <button
-                        className="p-1 hover:text-emerald-600 transition-colors duration-200 cursor-pointer disabled:opacity-50"
-                        onClick={handlePrevious}
-                        disabled={currentPage === 1}
-                    >
-                        <FaChevronLeft className="text-gray-800" />
-                    </button>
-                    <button
-                        className="p-1 hover:text-emerald-600 transition-colors duration-200 cursor-pointer disabled:opacity-50 "
-                        onClick={handleNext}
-                        disabled={currentPage === totalPages}
-                    >
-                        <FaChevronRight className="text-gray-800" />
-                    </button>
-                </div>
-                </div>
-              </td>
-            </tr>
-          </tfoot>
+                            {/* Page range info */}
+                            <div>
+                                {startIndex + 1} - {endIndex} of {totalItems}
+                            </div>
+
+                            {/* Pagination buttons */}
+                            <div className="space-x-2">
+                                <button
+                                    className="p-1 hover:text-emerald-600 transition-colors duration-200 cursor-pointer disabled:opacity-50"
+                                    onClick={handlePrevious}
+                                    disabled={currentPage === 1}
+                                >
+                                    <FaChevronLeft className="text-gray-800" />
+                                </button>
+                                <button
+                                    className="p-1 hover:text-emerald-600 transition-colors duration-200 cursor-pointer disabled:opacity-50 "
+                                    onClick={handleNext}
+                                    disabled={currentPage === totalPages}
+                                >
+                                    <FaChevronRight className="text-gray-800" />
+                                </button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
       </div>
     </div>
