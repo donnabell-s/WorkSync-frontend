@@ -1,5 +1,5 @@
 import React from 'react'
-import { IoIosArrowForward } from "react-icons/io";
+// import { IoIosArrowForward } from "react-icons/io";
 
 interface SideNavLinkProps {
     label: string;
