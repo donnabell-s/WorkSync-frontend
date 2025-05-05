@@ -1,8 +1,12 @@
 import React from 'react'
+import SideContainer from "../../../components/Layout/UserLayout/SideContainer"
 
 const Settings = () => {
   return (
-    <div>Settings</div>
+    <div>
+      <SideContainer>
+      </SideContainer>
+    </div>
   )
 }
 

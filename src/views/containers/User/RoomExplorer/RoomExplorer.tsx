@@ -1,8 +1,12 @@
 import React from 'react'
+import SideContainer from "../../../components/Layout/UserLayout/SideContainer"
 
 const RoomExplorer = () => {
   return (
-    <div>RoomExplorer</div>
+    <div>
+      <SideContainer>
+      </SideContainer>
+    </div>
   )
 }
 
