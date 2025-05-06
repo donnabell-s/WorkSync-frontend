@@ -11,7 +11,7 @@ interface SideNavProps {
 
 const SideNav: React.FC<SideNavProps> = ({ nav }) => {
     return (
-        <div className={`fixed bg-[#FFFFFF] w-67 h-full flex flex-col shadow-zinc-500 shadow-lg duration-300 ease-in-out
+        <div className={`fixed bg-[#FFFFFF] sm:w-67 w-full h-full flex flex-col shadow-zinc-500 shadow-lg duration-300 ease-in-out
             ${nav ? 'translate-x-0' : '-translate-x-full'}`}>
             <SideNavLinkDropdown icon={<MdAdminPanelSettings className='size-7' />} label="Superadmin View" />
             <SideNavLinkDropdown icon={<MdMeetingRoom className='size-6' />} label="Room Management" />
