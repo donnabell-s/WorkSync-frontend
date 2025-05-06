@@ -12,7 +12,7 @@ const AdminMain = () => {
   }
 
   return (
-    <div className='h-screen w-screen flex flex-col'>
+    <div className='h-screen w-screen flex flex-col min-w-20 min-h-20'>
       <Header nav={nav} toggleNav={handleNav} />
       <main className='flex h-full'>
         <SideNav nav={nav} />
