@@ -10,12 +10,12 @@ interface ViewRoomHeaderProps {
 const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabClick }) => {
 
     return (
-        <div className='flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
-            <div className='w-full flex p-2.5 gap-4'>
-                <div className='h-22 rounded-md shadow-sm bg-zinc-100 w-2/6'>
+        <div className='max-h-max flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
+            <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
+                <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
                     <img src="" alt="" />
                 </div>
-                <div className='h-22 rounded-md w-3/6 flex gap-8'>
+                <div className='max-h-max rounded-md lg:w-3/6 w-full flex gap-8'>
                     <div className='flex flex-col text-sm gap-1'>
                         <div className='font-bold'>Executive Boardroom</div>
                         <div className='font-bold'>CR-102A</div>
@@ -35,7 +35,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                         <div>Projector, Video Conferencing, Whiteboard</div>
                     </div>
                 </div>
-                <div className='h-22 rounded-md w-1/6 flex flex-col gap-2 items-end'>
+                <div className='max-h-max rounded-md lg:w-1/6 w-full flex lg:flex-col flex-row gap-2 items-end'>
                     <button className='text-white text-sm bg-[#F59E0B] hover:bg-[#f5740b] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer'>
                         <MdEdit className='size-5 text-white' />
                         Edit
@@ -46,7 +46,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </button>
                 </div>
             </div>
-            <div className='w-full h-13 flex items-center justify-between px-2'>
+            <div className='w-full max-h-max flex items-center justify-between p-2'>
                 <div className='h-full w-4/9 flex text-sm items-center justify-start text-[#acb3b9] font-medium'>
                     <div className={`px-6 p-2 cursor-pointer ${activeTab === 'Calendar' ? 'border-b-2 border-blue-600 text-blue-600' : ''}`} onClick={() => handleTabClick('Calendar')}>
                         <p className='w-full'>Calendar</p>
@@ -59,7 +59,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </div>
                 </div>
 
-                <div className='h-full w-2/9 flex items-center'>
+                <div className='lg:h-full lg:w-2/9 lg:flex items-center hidden'>
                     <div className='w-full flex items-center border border-zinc-200 rounded-md p-2 bg-[#F3F4F6] focus-within:border-zinc-400'>
                         <input type="text" placeholder='Search' className='outline-none flex-grow text-sm' />
                         <IoSearch className='text-gray-500 size-5' />
