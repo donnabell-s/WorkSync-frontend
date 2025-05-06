@@ -86,7 +86,7 @@ const MyBookings = () => {
         </div>
       </SideContainer>
 
-      <div className="ml-67 p-10 flex flex-col gap-6">
+      <div className="xl:ml-67 p-10 flex flex-col gap-6">
         <div className="flex flex-row justify-between">
           <UserHeading label="My Bookings" />
           <UserSearch value={searchQuery} onChange={handleSearchChange} />
