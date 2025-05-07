@@ -42,7 +42,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
             className="w-full h-40 object-cover rounded-md"
           />
           <div className="pt-4 pb-2">
-            <h2 className="text-xl font-semibold">
+            <h2 className="text-xl font-semibold text-[#1F2937]">
               {room.roomCode} – {room.roomName}
             </h2>
             <p className="text-sm text-gray-600 font-semibold">{room.location}</p>
@@ -72,7 +72,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           <div className="flex flex-grow items-end mt-4">
             <button
               onClick={handleClick}
-              className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 ${
+              className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
                 role === "admin" ? "p-3" : "p-6"
               }`}
             >
