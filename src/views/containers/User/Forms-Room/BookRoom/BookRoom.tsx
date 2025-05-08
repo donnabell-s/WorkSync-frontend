@@ -1,12 +1,21 @@
-import React from 'react'
-import UserRoomForms from '../../../../components/Feature/UserRoomForms'
+import React, { useEffect, useState } from 'react';
+import RoomDetailsForm from '../../../../components/Feature/RoomDetailsForm';
 
 const BookRoom = () => {
-  return (
-    <div>
-      <UserRoomForms/>
-    </div>
-  )
-}
+  const [roomCode, setRoomCode] = useState<string | null>(null);
 
-export default BookRoom
+  useEffect(() => {
+    const storedRoomCode = localStorage.getItem("selectedRoomId");
+    setRoomCode(storedRoomCode);
+  }, []);
+
+  return (
+    <div className='p-10 h-full'>
+      <div className='bg-white h-full flex flex-col'>
+          <RoomDetailsForm roomCode={roomCode || ''} />
+      </div>
+    </div>
+  );
+};
+
+export default BookRoom;
