@@ -19,15 +19,19 @@ const getStatusClass = (status: string) => {
   }
 };
 
+
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const navigate = useNavigate();
 
   const path = role === "admin" ? "/admin/room-management" : "/user/book-room";
   const label = role === "admin" ? "View Room Details" : "Book Room";
 
-  const handleClick = () => {
+  
+  const handleClick = (roomId: string) => {
+    localStorage.setItem("selectedRoomId", roomId);
     navigate(path);
   };
+  
 
   return (
     <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
@@ -71,13 +75,13 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           </div>
           <div className="flex flex-grow items-end mt-4">
             <button
-              onClick={handleClick}
-              className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
-                role === "admin" ? "p-3" : "p-6"
-              }`}
+            onClick={() => handleClick(room.roomCode)} // Assuming room has an `id` field
+            className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
+              role === "admin" ? "p-3" : "p-6"
+            }`}
             >
-              {role === "admin" && <LuCalendar1 className="text-base" />}
-              {label}
+                {role === "admin" && <LuCalendar1 className="text-base" />}
+                {label}
             </button>
           </div>
         </div>
