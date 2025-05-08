@@ -61,8 +61,8 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
         <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
             <div className="relative w-full md:w-[75%]">
                 <RxCross1
-                className="absolute left-2 top-1/2 -translate-y-1/2 text-[#4B5563] cursor-pointer text-lg"
-                onClick={() => navigate("/user/room-explorer")}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 text-[#4B5563] cursor-pointer text-lg"
+                    onClick={() => navigate(edit ? "/user/my-bookings" : "/user/room-explorer")}
                 />
                 <input
                 type="text"

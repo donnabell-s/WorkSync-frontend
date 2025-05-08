@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Booking, sampleBookingList } from './UserBookingListInterface';
+import { useNavigate } from 'react-router';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
@@ -23,6 +24,7 @@ const getThClasses = () => 'py-5 px-4 border-b-[1px] border-b-[#D2D4D8] text-bas
 const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const navigate = useNavigate();
 
   // Filter by search query (search by id, name, room, location)
   let filtered = [...sampleBookingList];
@@ -81,7 +83,17 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
           </thead>
           <tbody>
             {visibleBookings.map((booking) => (
-              <tr key={booking.id} className="text-sm hover:bg-gray-50">
+              // <tr key={booking.id} className="text-sm hover:bg-gray-50">
+              <tr
+                key={booking.id}
+                className={`text-sm ${booking.status === "Upcoming" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                onClick={() => {
+                  if (booking.status === "Upcoming") {
+                    navigate(`/user/edit-booking`);
+                  }
+                }}
+              >
+
                 <td className={getTdClasses()}>{booking.id}</td>
                 <td className={getTdClasses()}>{booking.name}</td>
                 <td className={getTdClasses()}>{booking.room}</td>
