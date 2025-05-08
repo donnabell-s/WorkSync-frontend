@@ -1,8 +1,11 @@
 import React from 'react'
+import UserRoomForms from '../../../../components/Feature/UserRoomForms'
 
 const BookRoom = () => {
   return (
-    <div>BookRoom</div>
+    <div>
+      <UserRoomForms/>
+    </div>
   )
 }
 
