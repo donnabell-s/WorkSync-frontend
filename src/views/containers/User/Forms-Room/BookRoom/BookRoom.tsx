@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import RoomDetailsForm from '../../../../components/Feature/RoomDetailsForm';
+import MeetingDetailsForm from '../../../../components/Feature/MeetingDetailsForm';
+import RoomBookingForm from '../../../../components/Feature/RoomBookingForm';
 
 const BookRoom = () => {
   const [roomCode, setRoomCode] = useState<string | null>(null);
@@ -10,9 +12,13 @@ const BookRoom = () => {
   }, []);
 
   return (
-    <div className='p-10 h-full'>
-      <div className='bg-white h-full flex flex-col'>
-          <RoomDetailsForm roomCode={roomCode || ''} />
+    <div className='h-full bg-white flex flex-col px-4 sm:px-8 md:px-13 lg:px-25 xl:px-33 py-6 sm:py-8 md:py-10 gap-9'>
+      <div>
+        <RoomBookingForm edit={false} />
+      </div>
+      <div  className="h-full flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-13">
+        <MeetingDetailsForm roomCode={roomCode} />
+        <RoomDetailsForm roomCode={roomCode} />
       </div>
     </div>
   );
