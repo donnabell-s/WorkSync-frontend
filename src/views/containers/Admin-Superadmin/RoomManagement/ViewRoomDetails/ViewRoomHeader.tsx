@@ -46,8 +46,8 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </button>
                 </div>
             </div>
-            <div className='w-full h-full flex flex-wrap justify-start gap-5 p-2'>
-                <div className='md:h-12 h-full text-sm items-center justify-start text-[#acb3b9] font-medium flex flex-wrap'>
+            <div className='w-full max-h-max grid flex-wrap justify-start gap-5 p-2 xl:grid-cols-7 lg:grid-cols-3 grid-cols-1'>
+                <div className='h-full lg:col-span-3 flex text-sm items-center justify-start text-[#acb3b9] font-medium'>
                     <div className={`px-6 p-2 cursor-pointer ${activeTab === 'Calendar' ? 'border-b-2 border-blue-600 text-blue-600' : ''}`} onClick={() => handleTabClick('Calendar')}>
                         <p className='w-full text-center'>Calendar</p>
                     </div>
@@ -59,7 +59,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </div>
                 </div>
 
-                <div className='h-12 lg:flex w-full lg:w-70 items-center hidden'>
+                <div className='h-full xl:col-span-2 flex w-70 items-center'>
                     <div className='w-full flex items-center border border-zinc-200 rounded-md p-2 bg-[#F3F4F6] focus-within:border-zinc-400'>
                         <input type="text" placeholder='Search' className='outline-none flex-grow text-sm' />
                         <IoSearch className='text-gray-500 size-5' />
@@ -67,8 +67,8 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                 </div>
 
                 {activeTab === 'Calendar' ?
-                    <div className='h-12 items-center flex gap-4 text-sm'></div> :
-                    <div className='h-12 items-center lg:flex gap-4 text-sm flex-wrap hidden'>
+                    <div className='h-full xl:col-span-2 items-center flex gap-4 text-sm'></div> :
+                    <div className='h-full xl:col-span-2 items-center flex gap-4 text-sm'>
                         <p className=''>Filter by:</p>
                         <select name="" id="" className='border border-zinc-200 rounded-md p-2 bg-[#F3F4F6] focus:border-zinc-400 px-6 cursor-pointer justify-start'>
                             <option value="">This Week</option>
