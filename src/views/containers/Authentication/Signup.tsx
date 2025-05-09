@@ -80,12 +80,10 @@ const Signup = () => {
       <div className="basis-[45%] flex flex-col justify-center items-center relative min-h-screen p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden">
         <div className="absolute inset-0 w-full h-full bg-cover bg-center rounded-tr-3xl rounded-br-3xl z-0 bg-[url('/src/assets/login-bg1.png')]" />
         <div className="w-full max-w-[420px] flex flex-col items-center justify-center mx-auto z-10 relative h-full">
-          <h3 className="text-2xl font-extrabold mb-4 mt-2 text-white text-left w-full">Hey, there!</h3>
-          <p className="text-xl font-medium text-white text-left w-full mb-2">Join us in</p>
-          <h1 className="text-5xl font-extrabold mb-4 font-montserrat tracking-tighter leading-tight text-white text-left w-full mx-auto block w-max">WorkSync</h1>
-          <p className="text-lg font-medium italic text-left max-w-fit block ml-8 text-white/85">
-            Where Teams and Rooms Align.
-          </p>
+          <h3 className="text-3xl font-extrabold text-white text-left w-full mb-2">Hey, there!</h3>
+          <p className="text-lg text-white text-left w-full mb-2">Join us in</p>
+          <h1 className="text-5xl font-extrabold font-montserrat tracking-tighter leading-tight text-white text-left w-full mb-4">WorkSync</h1>
+          <p className="text-base font-medium italic text-left w-full text-white/80">Where Teams and Rooms Align.</p>
         </div>
       </div>
     </div>
