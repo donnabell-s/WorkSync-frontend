@@ -11,7 +11,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ nav, toggleNav }) => {
     return (
-        <div className='bg-[#1E40AF] h-16 flex items-center justify-between px-4'>
+        <div className='sticky top-0 bg-[#1E40AF] h-16 flex items-center justify-between px-4'>
             <div className='flex items-center gap-10'>
                 <img src={Logo} alt="Logo" className='h-20  cursor-pointer' />
                 {nav ? <IoClose className='text-white size-7 cursor-pointer' onClick={() => { toggleNav() }} /> :
