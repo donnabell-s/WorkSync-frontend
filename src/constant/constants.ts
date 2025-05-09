@@ -138,7 +138,7 @@ export const PATHS = {
             label: "Dashboard"
         },
         NOTIFICATION: {
-            path: "notification",
+            path: "notifications",
             label: "Notifications"
         },
     },
