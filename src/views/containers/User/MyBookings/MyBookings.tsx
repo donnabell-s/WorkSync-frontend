@@ -10,7 +10,6 @@ const MyBookings = () => {
   const [statusFilter, setStatusFilter] = useState<'Completed' | 'Upcoming' | 'Cancelled' | 'See All'>('See All');
   const [searchQuery, setSearchQuery] = useState('');  // State for search query
 
-  // Temporary state for the form
   const [pendingDateOrder, setPendingDateOrder] = useState(dateOrder);
   const [pendingStatusFilter, setPendingStatusFilter] = useState(statusFilter);
 
@@ -94,7 +93,7 @@ const MyBookings = () => {
         <UserBookingList
           dateOrder={dateOrder}
           statusFilter={statusFilter}
-          searchQuery={searchQuery}  // Pass the search query to the booking list
+          searchQuery={searchQuery}
         />
       </div>
     </div>

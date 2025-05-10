@@ -69,7 +69,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
                 placeholder="Add Title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="border-b border-[#4B5563] px-9 py-1 w-full text-[25px] min-w-0"
+                className="border-0 border-b border-[#4B5563] px-9 py-1 w-full text-[25px] min-w-0 focus:outline-none focus:border-black transition-colors duration-200"
                 />
             </div>
             <button className="bg-[#1E40AF] text-white text-lg px-8 py-2 rounded-full cursor-pointer "

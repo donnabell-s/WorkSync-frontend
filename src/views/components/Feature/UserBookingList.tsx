@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router';
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
   statusFilter: 'Completed' | 'Upcoming' | 'Cancelled' | 'See All';
-  searchQuery: string;  // Accept search query as a prop
+  searchQuery: string;
 }
 
 const getStatusColor = (status: Booking['status']) => {
