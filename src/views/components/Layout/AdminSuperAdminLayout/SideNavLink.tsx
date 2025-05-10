@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-=======
-import React from 'react'
-// import { IoIosArrowForward } from "react-icons/io";
->>>>>>> origin/admin-room-detail/yana
 
 interface SideNavLinkProps {
     label: string;
