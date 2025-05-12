@@ -3,15 +3,17 @@ import React, { useState } from 'react';
 const Account: React.FC = () => {
   const [profilePicture, setProfilePicture] = useState<string | null>(null);
 
-  // Default user information
-  const [userInfo] = useState({
-    firstName: 'Alliyana Rose',
-    lastName: 'Garcia',
-    email: 'alliyanarose.garcia.22@usjr.edu.ph',
-    phone: '+63 999 999 9999',
-    country: 'Philippines',
-    cityState: 'Cebu, Cebu City',
-  });
+const [userInfo, setUserInfo] = useState({
+  firstName: 'John',
+  lastName: 'Doe',
+  email: 'johndoe@gmail.com',
+  phone: '09123456789',
+  country: 'Philippines',
+  cityState: 'Cebu, Cebu City',
+});
+ 
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -25,6 +27,11 @@ const Account: React.FC = () => {
 
   const handleRemove = () => {
     setProfilePicture(null);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUserInfo((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -59,44 +66,74 @@ const Account: React.FC = () => {
       {/* Personal Information */}
       <div className="bg-white rounded-lg shadow p-6 mb-6 relative">
         <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
-        <button className="absolute top-6 right-6 text-sm text-gray-600 hover:underline">
-          ✎ Edit
-        </button>
+        {isEditingPersonal ? (
+          <button
+            onClick={() => setIsEditingPersonal(false)}
+            className="absolute top-6 right-6 text-sm text-blue-600 hover:underline"
+          >
+            Save
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsEditingPersonal(true)}
+            className="absolute top-6 right-6 text-sm text-gray-600 hover:underline"
+          >
+            ✎ Edit
+          </button>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-500 text-sm">First Name</p>
-            <p className="text-gray-900">{userInfo.firstName}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Last Name</p>
-            <p className="text-gray-900">{userInfo.lastName}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Email Address</p>
-            <p className="text-gray-900">{userInfo.email}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">Phone</p>
-            <p className="text-gray-900">{userInfo.phone}</p>
-          </div>
+          {['firstName', 'lastName', 'email', 'phone'].map((field) => (
+            <div key={field}>
+              <p className="text-gray-500 text-sm capitalize">{field.replace(/([A-Z])/g, ' $1')}</p>
+              {isEditingPersonal ? (
+                <input
+                  name={field}
+                  value={(userInfo as any)[field]}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 mt-1"
+                />
+              ) : (
+                <p className="text-gray-900">{(userInfo as any)[field]}</p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
       {/* Address */}
       <div className="bg-white rounded-lg shadow p-6 relative">
         <h3 className="text-lg font-semibold mb-4">Address</h3>
-        <button className="absolute top-6 right-6 text-sm text-gray-600 hover:underline">
-          ✎ Edit
-        </button>
+        {isEditingAddress ? (
+          <button
+            onClick={() => setIsEditingAddress(false)}
+            className="absolute top-6 right-6 text-sm text-blue-600 hover:underline"
+          >
+            Save
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsEditingAddress(true)}
+            className="absolute top-6 right-6 text-sm text-gray-600 hover:underline"
+          >
+            ✎ Edit
+          </button>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p className="text-gray-500 text-sm">Country</p>
-            <p className="text-gray-900">{userInfo.country}</p>
-          </div>
-          <div>
-            <p className="text-gray-500 text-sm">City/State</p>
-            <p className="text-gray-900">{userInfo.cityState}</p>
-          </div>
+          {['country', 'cityState'].map((field) => (
+            <div key={field}>
+              <p className="text-gray-500 text-sm">{field === 'cityState' ? 'City/State' : 'Country'}</p>
+              {isEditingAddress ? (
+                <input
+                  name={field}
+                  value={(userInfo as any)[field]}
+                  onChange={handleChange}
+                  className="w-full border rounded px-3 py-2 mt-1"
+                />
+              ) : (
+                <p className="text-gray-900">{(userInfo as any)[field]}</p>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </div>
