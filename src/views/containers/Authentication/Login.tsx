@@ -11,15 +11,15 @@ const Login = () => {
     >
       {/* Left Side */}
        <div
-        className="basis-[55%] flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl"
+        className="flex-1 flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl"
       >
-        {/* Subtle white overlay for readability */}
-        <div className="absolute inset-0 bg-white/10 rounded-tl-3xl rounded-bl-3xl pointer-events-none z-0" />
+  
+        <div className="absolute inset-0 bg-white/40 rounded-tl-3xl rounded-bl-3xl pointer-events-none z-0" />
     
         <div className="absolute top-8 left-8">
           <img src={userBrandLogo} alt="WorkSync Logo" className="w-14 h-14" />
         </div>
-        <section className="w-full flex flex-col items-center px-2 z-10">
+        <div className="w-full flex flex-col items-center px-2 z-10">
           <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-800 w-[320px]">Sign In to WorkSync</h2>
           <p className="text-gray-500 text-center mb-8 text-base w-[320px]">Book. Meet. Repeat.</p>
           <div className="w-[320px] flex flex-col items-center">
@@ -65,13 +65,13 @@ const Login = () => {
               </button>
             </p>
           </div>
-        </section>
+        </div>
       </div>
 
 
       {/* Right Side */}
       <div
-        className="basis-[45%] flex flex-col justify-center items-center relative min-h-screen p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden"
+        className="flex-1 flex flex-col justify-center items-center relative min-h-screen p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden"
       >
         <div
           className="absolute inset-0 w-full h-full bg-cover bg-center rounded-tr-3xl rounded-br-3xl z-0 bg-[url('/src/assets/login-bg1.png')]"
@@ -79,7 +79,7 @@ const Login = () => {
         <div className="w-full max-w-[420px] flex flex-col items-center justify-center mx-auto z-10 relative h-full">
           <h3 className="text-2xl font-semibold mb-4 mt-2 text-white text-center w-full">Welcome to</h3>
           <h1 className="text-6xl font-extrabold mb-4 font-montserrat tracking-tighter leading-tight text-white text-center w-full mx-auto block w-max">WorkSync</h1>
-          <p className="text-lg font-medium italic text-left max-w-fit block ml-8 text-white/85">
+          <p className="text-lg font-medium italic text-left max-w-fit block ml-0 text-white/85">
             Sync Your Space.<br />
             Simplify Your Schedule.
           </p>
