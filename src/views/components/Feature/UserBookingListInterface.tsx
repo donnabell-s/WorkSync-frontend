@@ -7,7 +7,7 @@ export interface Booking {
     time: string;
     status: 'Upcoming' | 'Completed' | 'Cancelled';
   }
-  
+
 export const sampleBookingList: Booking[] = [
   {
     id: 'MTG12',
