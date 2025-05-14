@@ -2,28 +2,28 @@ import React, { useState } from 'react';
 
 type Mode = 'edit' | 'delete';
 
-interface AdminData {
+interface UserData {
   id: string;
   name: string;
   email: string;
 }
 
-interface EditDeleteAdminFormProps {
+interface EditDeleteUserFormProps {
   mode: Mode;
-  admin: AdminData;
-  onSubmit: (id: string, updatedData?: Partial<AdminData>) => void;
+  user: UserData;
+  onSubmit: (id: string, updatedData?: Partial<UserData>) => void;
   onClose: () => void;
 }
 
-const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
+const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
   mode,
-  admin,
+  user,
   onSubmit,
   onClose,
 }) => {
-  const [formData, setFormData] = useState<Partial<AdminData>>({
-    name: admin.name,
-    email: admin.email,
+  const [formData, setFormData] = useState<Partial<UserData>>({
+    name: user.name,
+    email: user.email,
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -35,9 +35,9 @@ const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
 
   const handleSubmit = () => {
     if (mode === 'edit') {
-      onSubmit(admin.id, formData);
+      onSubmit(user.id, formData);
     } else if (mode === 'delete') {
-      onSubmit(admin.id);
+      onSubmit(user.id);
     }
     onClose();
   };
@@ -45,7 +45,7 @@ const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>{mode === 'edit' ? 'Edit Admin' : 'Delete Admin'}</h2>
+        <h2>{mode === 'edit' ? 'Edit User' : 'Delete User'}</h2>
 
         {mode === 'edit' ? (
           <form>
@@ -71,8 +71,8 @@ const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
           </form>
         ) : (
           <p>
-            Are you sure you want to <strong>delete</strong> admin:{' '}
-            <strong>{admin.name}</strong>?
+            Are you sure you want to <strong>delete</strong> user:{' '}
+            <strong>{user.name}</strong>?
           </p>
         )}
 
@@ -87,4 +87,4 @@ const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
   );
 };
 
-export default EditDeleteAdminForm;
+export default EditDeleteUserForm;
