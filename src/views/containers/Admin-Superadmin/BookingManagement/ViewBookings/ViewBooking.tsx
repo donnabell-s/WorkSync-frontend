@@ -2,6 +2,7 @@ import React from 'react';
 
 interface ViewBookingProps {
   mode?: 'view' | 'approved';
+  onApprove?: () => void;
 }
 
 const dummyBooking = {
@@ -18,95 +19,85 @@ const dummyBooking = {
   status: 'AVAILABLE',
 };
 
-const ViewBooking: React.FC<ViewBookingProps> = ({ mode = 'view' }) => {
+const ViewBooking: React.FC<ViewBookingProps> = ({ mode = 'view', onApprove }) => {
   return (
-    <div className="w-full flex flex-col items-center justify-center py-10 bg-gray-100 min-h-screen">
-      <div className="w-full max-w-5xl bg-white rounded shadow p-8 relative">
-        {/* Back Link */}
-        <a href="#" className="text-blue-600 text-sm font-semibold mb-6 inline-block hover:underline">
+    <div className="min-h-screen w-full bg-white p-8 md:px-20 xl:px-32 overflow-y-auto">
+      <div className="flex justify-between items-start mb-8">
+        <a href="#" className="text-[#5B5B5B] text-sm font-medium hover:underline">
           &lt; Back to View Bookings
         </a>
-
-        {/* Edit Button */}
         {mode === 'view' && (
-          <button className="absolute top-8 right-8 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold px-4 py-2 rounded text-sm shadow">
+          <button className="bg-[#FFC107] text-white text-sm font-semibold py-2 px-5 rounded-md hover:bg-yellow-600 shadow">
             Edit
           </button>
         )}
+      </div>
 
-        <h2 className="text-xl font-bold text-gray-800 mb-8">BOOKING DETAILS</h2>
+      <h1 className="text-2xl font-bold text-[#2D2D2D] mb-10">BOOKING DETAILS</h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
-          <div>
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Organizer</div>
-              <div>{dummyBooking.organizer}</div>
-            </div>
+      <div className="flex flex-col lg:flex-row gap-12">
 
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Meeting/Event Title</div>
-              <div>{dummyBooking.title}</div>
-            </div>
-
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Date/Time</div>
-              <div>
-                {dummyBooking.date} <br />
-                {dummyBooking.day} <br />
-                {dummyBooking.time}
-              </div>
-            </div>
-
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Expected Attendees</div>
-              <div>{dummyBooking.attendees}</div>
-            </div>
-
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Selected Room</div>
-              <div className="flex items-center gap-4">
-                <span>{dummyBooking.room}</span>
-                <img
-                  src={dummyBooking.roomImage}
-                  alt="Room"
-                  className="w-36 h-20 object-cover rounded"
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="font-semibold text-gray-700">Status on Booking Date</div>
-              <div className="text-green-600 font-bold">{dummyBooking.status}</div>
-            </div>
-          </div>
-
-          <div>
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">User ID</div>
-              <div>{dummyBooking.userId}</div>
-            </div>
-
-            <div className="mb-4">
-              <div className="font-semibold text-gray-700">Description</div>
-              <div>{dummyBooking.description}</div>
-            </div>
-          </div>
+        
+        {/* Left Column */}
+        <div className="flex-1 space-y-4">
+          <Detail label="Organizer" value={dummyBooking.organizer} />
+          <Detail label="User ID" value={dummyBooking.userId} />
+          <Detail label="Event Title" value={dummyBooking.title} />
+          <Detail label="Date" value={dummyBooking.date} />
+          <Detail label="Day" value={dummyBooking.day} />
+          <Detail label="Time" value={dummyBooking.time} />
+          <Detail label="Description" value={dummyBooking.description} />
+          <Detail label="Number of Attendees" value={dummyBooking.attendees.toString()} />
+          <Detail
+            label="Status on Booking Date"
+            value={mode === 'approved' ? 'APPROVED' : dummyBooking.status}
+            color={mode === 'approved' ? 'text-[#0077CC]' : 'text-[#28A745]'}
+            bold
+          />
         </div>
 
-        {/* Action Buttons */}
-        {mode === 'view' && (
-          <div className="flex justify-start gap-4 mt-8">
-            <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded">
-              Approve
-            </button>
-            <button className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-6 rounded">
-              Decline
-            </button>
+        {/* Right Column */}
+        <div className="flex-1 space-y-4">
+          <Detail label="Room" value={dummyBooking.room} />
+          <div className="w-full h-[300px] rounded overflow-hidden">
+            <img
+              src={dummyBooking.roomImage}
+              alt="Meeting Room"
+              className="w-full h-full object-cover rounded"
+            />
           </div>
-        )}
+        </div>
       </div>
+
+      {mode === 'view' && (
+        <div className="mt-10 flex gap-4">
+          <button
+            onClick={onApprove}
+            className="bg-[#28A745] hover:bg-green-700 text-white font-semibold py-2 px-8 rounded-md shadow-md"
+          >
+            Approve
+          </button>
+          <button className="bg-[#DC3545] hover:bg-red-700 text-white font-semibold py-2 px-8 rounded-md shadow-md">
+            Decline
+          </button>
+        </div>
+      )}
     </div>
   );
 };
+
+interface DetailProps {
+  label: string;
+  value: string;
+  color?: string;
+  bold?: boolean;
+}
+
+const Detail: React.FC<DetailProps> = ({ label, value, color = 'text-[#333]', bold = false }) => (
+  <div>
+    <div className="text-sm text-[#5B5B5B] font-medium mb-1">{label}</div>
+    <div className={`text-base ${color} ${bold ? 'font-bold' : 'font-normal'}`}>{value}</div>
+  </div>
+);
 
 export default ViewBooking;
