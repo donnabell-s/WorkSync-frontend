@@ -1,5 +1,5 @@
 import React from "react";
-import AccountPreferences from "./account";
+import AccountPreferences from "./preferences";
 
 const Settings: React.FC = () => {
   return (
