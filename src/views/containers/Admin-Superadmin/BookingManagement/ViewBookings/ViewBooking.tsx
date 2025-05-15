@@ -27,11 +27,11 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
   onCancel,
 }) => {
   return (
-    <div className="min-h-screen w-full bg-[#F7F8FA] p-2 md:p-4 flex justify-center items-start">
-      <div className="w-full max-w-5xl mx-auto pt-8">
+    <div className="min-h-screen w-full bg-[#F7F8FA] p-0 m-0">
+      <div className="w-full pt-8 px-0 md:px-8">
         <a
           href="/admin/bookings"
-          className="flex items-center text-[#0077CC] text-sm font-medium hover:underline mb-6"
+          className="flex items-center text-[#0077CC] text-sm font-medium hover:underline mb-6 ml-4 md:ml-0"
         >
           <span className="mr-2 text-lg">&lt;</span> Back to View Bookings
         </a>
