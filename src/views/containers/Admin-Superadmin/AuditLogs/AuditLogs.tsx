@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface AuditLogsProps {
-  mode: 'rooms' | 'bookings';
+  mode: 'rooms' | 'bookings';  
 }
 
 const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
@@ -25,4 +25,4 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
   );
 };
 
-export default AuditLogs;
+export default   AuditLogs;
