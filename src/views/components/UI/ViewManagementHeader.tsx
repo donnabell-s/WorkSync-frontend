@@ -4,13 +4,13 @@ import AdminFilter from './AdminFilter'
 import AdminButton from './AdminButton'
 import { IoAddOutline } from 'react-icons/io5'
 import { meetingRooms } from "./../Feature/RoomListInterface"
-
-const bookings: any[] = []
+import { sampleBookingList as bookings } from '../Feature/UserBookingListInterface'
 
 interface ViewManagementHeaderProps {
     view: 'rooms' | 'bookings';
     setFunction?: React.Dispatch<React.SetStateAction<any[]>>;
 }
+
 
 const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFunction }) => {
 
@@ -22,6 +22,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     const [activeTab, setActiveTab] = useState<string>(initTab);
     const [activeTab2, setActiveTab2] = useState<string>(initTab2);
     const [searchQuery, setSearchQuery] = useState<string>('');
+    
 
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
@@ -51,22 +52,24 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             }
         } else {
             for (const bookingTab of bookingTabs) {
-                if (tab === bookingTab) {
-                    filtered = bookings.filter(booking => booking.status === bookingTab.toLowerCase());
-                    break;
-                } else if (tab === "All") {
+                if (tab === "All") {
                     filtered = bookings;
                     break;
                 }
+                else if (tab === bookingTab) {
+                    filtered = bookings.filter(booking => booking.status.toLowerCase() === bookingTab.toLowerCase());
+                    break;
+                } 
             }
 
             for (const bookingTab of bookingTabs2) {
-                if (tab === bookingTab) {
-                    filtered = filtered.filter(booking => booking.status === bookingTab.toLowerCase());
-                    break;
-                } else if (tab === "All") {
+                if (tab === "All") {
                     filtered = filtered;
                 }
+                else if (tab === bookingTab) {
+                    filtered = filtered.filter(booking => booking.recurrence.toLowerCase() === bookingTab.toLowerCase());
+                    break;
+                } 
             }
         }
 
@@ -85,7 +88,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             });
         } else {
             filtered = bookings.filter(booking => {
-                const bookingDetails = `${booking.roomCode} ${booking.roomName} ${booking.location}`.toLowerCase();
+                const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
                 return bookingDetails.includes(event.target.value.toLowerCase());
             });
         }
@@ -105,7 +108,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             });
         } else {
             filtered = bookings.filter(booking => {
-                const bookingDetails = `${booking.roomCode} ${booking.roomName} ${booking.location}`.toLowerCase();
+                const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
                 return bookingDetails.includes(searchQuery.toLowerCase());
             });
         }

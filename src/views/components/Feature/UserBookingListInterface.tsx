@@ -1,13 +1,16 @@
 export interface Booking {
-    id: string;
-    name: string;
-    room: string;
-    location: string;
-    date: string;
-    time: string;
-    status: 'Upcoming' | 'Completed' | 'Cancelled';
-  }
-  
+  id: string;
+  name: string;
+  room: string;
+  location: string;
+  date: string;
+  time: string;
+  status: 'Upcoming' | 'Completed' | 'Cancelled' | 'Completed' | 'Approved' | 'Pending' | 'Declined';
+  recurrence: 'recurring' | 'non-recurring';
+  // roomCode?: string; // Optional field for room code
+  // roomName?: string; // Optional field for room name
+}
+
 export const sampleBookingList: Booking[] = [
   {
     id: 'MTG12',
@@ -17,6 +20,7 @@ export const sampleBookingList: Booking[] = [
     date: '28-April-2024',
     time: '16:00-18:30',
     status: 'Cancelled',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG13',
@@ -26,6 +30,7 @@ export const sampleBookingList: Booking[] = [
     date: '05-May-2025',
     time: '10:00-12:00',
     status: 'Upcoming',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG14',
@@ -35,6 +40,7 @@ export const sampleBookingList: Booking[] = [
     date: '15-May-2025',
     time: '14:00-15:30',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG15',
@@ -44,6 +50,7 @@ export const sampleBookingList: Booking[] = [
     date: '12-June-2024',
     time: '09:00-11:00',
     status: 'Completed',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG16',
@@ -53,6 +60,7 @@ export const sampleBookingList: Booking[] = [
     date: '23-June-2025',
     time: '13:30-16:00',
     status: 'Cancelled',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG17',
@@ -62,6 +70,7 @@ export const sampleBookingList: Booking[] = [
     date: '05-July-2025',
     time: '11:00-12:30',
     status: 'Upcoming',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG18',
@@ -71,6 +80,7 @@ export const sampleBookingList: Booking[] = [
     date: '28-July-2025',
     time: '15:00-18:00',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG19',
@@ -80,6 +90,7 @@ export const sampleBookingList: Booking[] = [
     date: '12-August-2024',
     time: '09:00-12:00',
     status: 'Completed',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG20',
@@ -89,6 +100,7 @@ export const sampleBookingList: Booking[] = [
     date: '03-September-2025',
     time: '14:00-17:00',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG21',
@@ -98,6 +110,7 @@ export const sampleBookingList: Booking[] = [
     date: '10-September-2025',
     time: '10:00-11:30',
     status: 'Cancelled',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG22',
@@ -107,6 +120,7 @@ export const sampleBookingList: Booking[] = [
     date: '01-October-2024',
     time: '13:00-15:00',
     status: 'Completed',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG23',
@@ -116,6 +130,7 @@ export const sampleBookingList: Booking[] = [
     date: '17-October-2025',
     time: '09:00-11:00',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG24',
@@ -125,6 +140,7 @@ export const sampleBookingList: Booking[] = [
     date: '22-October-2024',
     time: '14:00-16:30',
     status: 'Completed',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG25',
@@ -134,6 +150,7 @@ export const sampleBookingList: Booking[] = [
     date: '04-November-2025',
     time: '10:00-13:00',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG26',
@@ -143,6 +160,7 @@ export const sampleBookingList: Booking[] = [
     date: '18-November-2024',
     time: '15:00-17:00',
     status: 'Completed',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG27',
@@ -152,6 +170,7 @@ export const sampleBookingList: Booking[] = [
     date: '02-December-2025',
     time: '13:30-15:00',
     status: 'Upcoming',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG28',
@@ -161,6 +180,7 @@ export const sampleBookingList: Booking[] = [
     date: '20-January-2024',
     time: '11:00-13:00',
     status: 'Completed',
+    recurrence: 'recurring',
   },
   {
     id: 'MTG29',
@@ -170,6 +190,7 @@ export const sampleBookingList: Booking[] = [
     date: '15-February-2025',
     time: '14:00-16:00',
     status: 'Upcoming',
+    recurrence: 'non-recurring',
   },
   {
     id: 'MTG30',
@@ -179,6 +200,56 @@ export const sampleBookingList: Booking[] = [
     date: '01-March-2025',
     time: '09:00-12:00',
     status: 'Upcoming',
-  }
+    recurrence: 'recurring',
+  },
+  {
+  id: 'MTG31',
+  name: 'Vendor Contract Review',
+  room: 'Legal Room P-101',
+  location: 'Tower D, 1st Floor',
+  date: '12-March-2025',
+  time: '11:00-12:30',
+  status: 'Approved',
+  recurrence: 'non-recurring',
+},
+{
+  id: 'MTG32',
+  name: 'Internal Training Session',
+  room: 'Training Room Q-202',
+  location: 'Tower E, 2nd Floor',
+  date: '19-March-2025',
+  time: '14:00-16:00',
+  status: 'Pending',
+  recurrence: 'recurring',
+},
+{
+  id: 'MTG33',
+  name: 'Partner Onboarding',
+  room: 'Partner Room R-303',
+  location: 'Tower A, 3rd Floor',
+  date: '25-March-2025',
+  time: '10:00-11:30',
+  status: 'Declined',
+  recurrence: 'non-recurring',
+},
+{
+  id: 'MTG34',
+  name: 'Executive Committee Briefing',
+  room: 'Briefing Room S-404',
+  location: 'Tower B, 4th Floor',
+  date: '02-April-2025',
+  time: '09:00-10:30',
+  status: 'Approved',
+  recurrence: 'recurring',
+},
+{
+  id: 'MTG35',
+  name: 'System Upgrade Planning',
+  room: 'IT Room T-505',
+  location: 'Tower C, 5th Floor',
+  date: '08-April-2025',
+  time: '15:00-17:00',
+  status: 'Pending',
+  recurrence: 'non-recurring',
+}
 ];
-  
