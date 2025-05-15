@@ -49,13 +49,13 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
             <div className='w-full max-h-max grid flex-wrap justify-start gap-5 p-2 xl:grid-cols-7 lg:grid-cols-3 grid-cols-1'>
                 <div className='h-full lg:col-span-3 flex text-sm items-center justify-start text-[#acb3b9] font-medium'>
                     <div className={`px-6 p-2 cursor-pointer ${activeTab === 'Calendar' ? 'border-b-2 border-blue-600 text-blue-600' : ''}`} onClick={() => handleTabClick('Calendar')}>
-                        <p className='w-full'>Calendar</p>
+                        <p className='w-full text-center'>Calendar</p>
                     </div>
                     <div className={`px-6 p-2 cursor-pointer ${activeTab === 'History' ? 'border-b-2 border-blue-600 text-blue-600' : ''}`} onClick={() => handleTabClick('History')}>
-                        <p className='w-full'>Booking History</p>
+                        <p className='w-full text-center'>Booking History</p>
                     </div>
                     <div className={`px-6 p-2 cursor-pointer ${activeTab === 'Reservations' ? 'border-b-2 border-blue-600 text-blue-600' : ''}`} onClick={() => handleTabClick('Reservations')}>
-                        <p className='w-full'>Current/Pending Reservations</p>
+                        <p className='w-full text-center'>Current/Pending Reservations</p>
                     </div>
                 </div>
 
