@@ -4,6 +4,7 @@ import { FaCheck, FaTimes, FaEdit } from 'react-icons/fa';
 interface ViewBookingProps {
   mode?: 'view' | 'approved';
   onApprove?: () => void;
+  onCancel?: () => void;
 }
 
 const dummyBooking = {
@@ -20,18 +21,22 @@ const dummyBooking = {
   status: 'AVAILABLE',
 };
 
-const ViewBooking: React.FC<ViewBookingProps> = ({ mode = 'view', onApprove }) => {
+const ViewBooking: React.FC<ViewBookingProps> = ({
+  mode = 'view',
+  onApprove,
+  onCancel,
+}) => {
   return (
-    <div className="min-h-screen w-full bg-[#F7F8FA] p-0 md:px-0 xl:px-0 overflow-y-auto">
-      <div className="max-w-5xl mx-auto pt-8">
+    <div className="min-h-screen w-full bg-[#F7F8FA] p-2 md:p-4 flex justify-center items-start">
+      <div className="w-full max-w-5xl mx-auto pt-8">
         <a
           href="/admin/bookings"
           className="flex items-center text-[#0077CC] text-sm font-medium hover:underline mb-6"
         >
           <span className="mr-2 text-lg">&lt;</span> Back to View Bookings
         </a>
-        <div className="bg-white rounded-xl shadow p-0 overflow-hidden border border-[#E5E7EB]">
-          <div className="flex justify-between items-center px-8 pt-8 pb-2">
+        <div className="bg-white rounded-xl shadow p-0 overflow-hidden border border-[#E5E7EB] w-full">
+          <div className="flex justify-between items-center px-4 md:px-8 pt-8 pb-2">
             <h1 className="text-2xl font-bold text-[#2D2D2D]">BOOKING DETAILS</h1>
             {mode === 'view' && (
               <button className="flex items-center gap-2 bg-[#FFC107] hover:bg-yellow-600 text-white text-sm font-semibold py-2 px-5 rounded-md shadow transition">
@@ -65,37 +70,52 @@ const ViewBooking: React.FC<ViewBookingProps> = ({ mode = 'view', onApprove }) =
           <DetailRow label="Expected Attendees" value={dummyBooking.attendees.toString()} />
           <Divider />
           {/* Selected Room + Status + Image row */}
-          <div className="flex px-8 py-4 items-center">
-            <div className="w-1/3 min-w-[160px] text-[#2D2D2D] text-sm font-semibold flex flex-col gap-6">
+          <div className="flex flex-col lg:flex-row px-4 md:px-8 py-4 items-start lg:items-center">
+            <div className="w-full lg:w-1/3 min-w-[160px] text-[#2D2D2D] text-sm font-semibold flex flex-col gap-6">
               <span>Selected Room</span>
               <span>Status on Booking Date</span>
             </div>
-            <div className="flex-1 flex items-center">
-              <div className="flex flex-col gap-6 flex-1">
+            <div className="flex-1 w-full flex flex-col lg:flex-row items-start lg:items-center mt-4 lg:mt-0">
+              <div className="flex flex-col gap-6 flex-1 w-full">
                 <span className="text-base text-[#333]">{dummyBooking.room}</span>
                 <span className="font-bold text-[#28A745]">{dummyBooking.status}</span>
               </div>
               <img
                 src={dummyBooking.roomImage}
                 alt="Meeting Room"
-                className="h-[80px] w-[220px] object-cover rounded ml-6"
+                className="h-[80px] w-full max-w-[220px] object-cover rounded mt-4 lg:mt-0 lg:ml-6"
               />
             </div>
           </div>
           <div className="border-t border-[#E5E7EB] mx-0" />
           {/* Action Buttons */}
           {mode === 'view' && (
-            <div className="flex gap-4 px-8 py-6 bg-white">
+            <div className="flex flex-col sm:flex-row gap-4 px-4 md:px-8 py-6 bg-white">
               <button
                 onClick={onApprove}
-                className="flex items-center gap-2 bg-[#28A745] hover:bg-green-700 text-white font-semibold py-2 px-8 rounded-md shadow-md transition"
+                className="flex items-center justify-center gap-2 bg-[#28A745] hover:bg-green-700 text-white font-semibold py-2 px-8 rounded-md shadow-md transition w-full sm:w-auto"
               >
                 <FaCheck className="text-lg" />
                 Approve
               </button>
-              <button className="flex items-center gap-2 bg-[#DC3545] hover:bg-red-700 text-white font-semibold py-2 px-8 rounded-md shadow-md transition">
+              <button className="flex items-center justify-center gap-2 bg-[#DC3545] hover:bg-red-700 text-white font-semibold py-2 px-8 rounded-md shadow-md transition w-full sm:w-auto">
                 <FaTimes className="text-lg" />
                 Decline
+              </button>
+            </div>
+          )}
+          {mode === 'approved' && (
+            <div className="flex flex-col sm:flex-row gap-4 px-4 md:px-8 py-6 bg-white">
+              <div className="flex items-center gap-2 text-[#28A745] font-bold text-base">
+                <FaCheck className="text-lg" />
+                APPROVED
+              </div>
+              <button
+                onClick={onCancel}
+                className="flex items-center gap-2 bg-[#DC3545] hover:bg-red-700 text-white font-semibold py-2 px-8 rounded-md shadow-md transition w-full sm:w-auto"
+              >
+                <FaTimes className="text-lg" />
+                Cancel
               </button>
             </div>
           )}
@@ -112,8 +132,8 @@ interface DetailRowProps {
 }
 
 const DetailRow: React.FC<DetailRowProps> = ({ label, value, multiLine = false }) => (
-  <div className={`flex ${multiLine ? 'items-start' : 'items-center'} px-8 py-4`}>
-    <div className="w-1/3 min-w-[160px] text-[#2D2D2D] text-sm font-semibold">{label}</div>
+  <div className={`flex ${multiLine ? 'items-start' : 'items-center'} px-4 md:px-8 py-4`}>
+    <div className="w-full lg:w-1/3 min-w-[160px] text-[#2D2D2D] text-sm font-semibold">{label}</div>
     <div className={`flex-1 text-base text-[#333] ${multiLine ? 'space-y-0' : ''}`}>{value}</div>
   </div>
 );
