@@ -1,4 +1,3 @@
-import React from 'react'
 import SideContainer from "../../../components/Layout/UserLayout/SideContainer"
 
 const Settings = () => {
@@ -10,4 +9,4 @@ const Settings = () => {
   )
 }
 
-export default Settings
+export default Settings;
