@@ -100,7 +100,8 @@ const AccountPreferences: React.FC = () => {
             <option value="30 minutes">30 minutes</option>
             <option value="1 hour">1 hour</option>
             <option value="2 hours">2 hours</option>
-            <option value="Half day">Half day</option>
+            <option value="12 hours">12 hours</option>
+            <option value="24 hours">24 hours</option>
           </select>
         </div>
       </div>
