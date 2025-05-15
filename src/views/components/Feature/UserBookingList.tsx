@@ -69,7 +69,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   return (
     <div>
       <div className="overflow-x-auto shadow-[0_0_4px_rgba(0,0,0,0.1)] rounded-lg">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm text-[#1F2937]">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-[#1F2937]">
           <thead>
             <tr className="text-left text-sm">
               <th className={getThClasses()}>ID</th>
