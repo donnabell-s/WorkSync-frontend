@@ -30,7 +30,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
     <div className="min-h-screen w-full bg-[#F7F8FA] p-0 m-0">
       <div className="w-full pt-8 px-0 md:px-8">
         <a
-          href="/admin/bookings"
+          href="/admin/bookings/view"
           className="flex items-center text-[#0077CC] text-sm font-medium hover:underline mb-6 ml-4 md:ml-0"
         >
           <span className="mr-2 text-lg">&lt;</span> Back to View Bookings
@@ -46,7 +46,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             )}
           </div>
           <div className="border-t border-[#E5E7EB] mt-4 mx-0" />
-          {/* Details */}
+          
           <DetailRow label="Organizer" value={dummyBooking.organizer} />
           <Divider />
           <DetailRow label="User ID" value={dummyBooking.userId} />
@@ -69,7 +69,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
           <Divider />
           <DetailRow label="Expected Attendees" value={dummyBooking.attendees.toString()} />
           <Divider />
-          {/* Selected Room + Status + Image row */}
+          
           <div className="flex flex-col lg:flex-row px-4 md:px-8 py-4 items-start lg:items-center">
             <div className="w-full lg:w-1/3 min-w-[160px] text-[#2D2D2D] text-sm font-semibold flex flex-col gap-6">
               <span>Selected Room</span>
@@ -88,7 +88,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             </div>
           </div>
           <div className="border-t border-[#E5E7EB] mx-0" />
-          {/* Action Buttons */}
+        
           {mode === 'view' && (
             <div className="flex flex-col sm:flex-row gap-4 px-4 md:px-8 py-6 bg-white">
               <button
