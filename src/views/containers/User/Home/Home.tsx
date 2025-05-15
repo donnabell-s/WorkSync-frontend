@@ -14,7 +14,7 @@ const Home = () => {
       <Components.SideContainer>
         <div className="flex flex-col gap-7 text-[#4B5563]">
           <div>
-            <button className="border border-[#C7C9CD] flex flex-row items-center px-4 py-3.5 w-30 rounded-full gap-2 text-[#1F2937]">
+            <button className="border border-[#C7C9CD] flex flex-row items-center px-4 py-3.5 w-30 rounded-full gap-2 text-[#1F2937]  shadow-sm hover:bg-[#F5F5F5] cursor-pointer">
               <AiOutlinePlus className="text-[#059669] h-5 w-5" /> Create
             </button>
           </div>

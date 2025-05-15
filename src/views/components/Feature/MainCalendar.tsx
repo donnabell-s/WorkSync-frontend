@@ -27,7 +27,6 @@ const MainCalendar = () => {
     const lastDay = new Date(year, month + 1, 0);
     const days = [];
 
-    // Fill preceding days from previous month
     for (let i = 0; i < firstDay.getDay(); i++) {
       const lastDateOfPrevMonth = new Date(year, month, 0);
       days.push(
@@ -39,7 +38,6 @@ const MainCalendar = () => {
       );
     }
 
-    // Fill current month days
     for (let day = 1; day <= lastDay.getDate(); day++) {
       days.push(new Date(year, month, day));
     }
@@ -85,9 +83,7 @@ const MainCalendar = () => {
 
   return (
     <div>
-      {/* Calendar Container */}
       <div className="bg-white rounded-md shadow-[0_0_4px_rgba(0,0,0,0.1)]">
-        {/* Header */}
         <div className="flex justify-start items-center p-6 gap-5">
           <button
             onClick={() => {
@@ -95,21 +91,21 @@ const MainCalendar = () => {
               setCurrentYear(now.getFullYear());
               setCurrentMonth(now.getMonth());
             }}
-            className="border border-[#D2D4D8] px-5 py-1 rounded-md text-[#1F2937]"
+            className="border border-[#D2D4D8] px-5 py-1 rounded-md text-[#1F2937] cursor-pointer hover:bg-[#F5F5F5] "
           >
             Today
           </button>
 
           <button
             onClick={prevMonth}
-            className="text-[#4B5563] hover:text-[#4B5563] transition duration-300"
+            className="text-[#4B5563] hover:text-[#4B5563] transition duration-300 cursor-pointer"
             aria-label="Previous Month"
           >
             <FaChevronLeft />
           </button>
           <button
             onClick={nextMonth}
-            className="text-[#4B5563] hover:text-[#4B5563] transition duration-300"
+            className="text-[#4B5563] hover:text-[#4B5563] transition duration-300 cursor-pointer"
             aria-label="Next Month"
           >
             <FaChevronRight />
@@ -119,7 +115,6 @@ const MainCalendar = () => {
           </h2>
         </div>
 
-        {/* Calendar Grid */}
         <table className="w-full border-collapse table-fixed">
           <tbody>
             {weeks.map((week, weekIndex) => (
@@ -166,7 +161,6 @@ const MainCalendar = () => {
                   </td>
                 ))}
 
-                {/* Empty Cells for Short Weeks */}
                 {week.length < 7 &&
                   [...Array(7 - week.length)].map((_, idx) => (
                     <td
@@ -185,7 +179,6 @@ const MainCalendar = () => {
         </table>
       </div>
 
-      {/* Modal */}
       {isModalOpen && selectedDate && (
         <Components.CalendarBookingModal
           isOpen={isModalOpen}
