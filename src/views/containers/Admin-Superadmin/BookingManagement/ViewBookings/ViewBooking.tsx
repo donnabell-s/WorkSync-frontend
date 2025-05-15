@@ -1,4 +1,5 @@
 import React from 'react';
+import { FaCheck, FaTimes, FaEdit} from 'react-icons/fa';
 
 interface ViewBookingProps {
   mode?: 'view' | 'approved';
