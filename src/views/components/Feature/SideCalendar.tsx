@@ -10,19 +10,15 @@ const SideCalendar = () => {
   const [currentMonth, setCurrentMonth] = useState(today.getMonth())
 
   const getDaysInMonth = (year: number, month: number) => {
-    // First day of the month
     const firstDay = new Date(year, month, 1);
-    // Last day of previous month
     const prevMonthLastDay = new Date(year, month, 0);
     const days = [];
 
-    // Add days from previous month to align the first day
-    const daysFromPrevMonth = firstDay.getDay(); // 0 (Sun) to 6 (Sat)
+    const daysFromPrevMonth = firstDay.getDay();
     for (let i = daysFromPrevMonth - 1; i >= 0; i--) {
       days.push(new Date(year, month - 1, prevMonthLastDay.getDate() - i));
     }
 
-    // Add days of current month
     const lastDay = new Date(year, month + 1, 0);
     for (let day = 1; day <= lastDay.getDate(); day++) {
       days.push(new Date(year, month, day));
@@ -58,35 +54,32 @@ const SideCalendar = () => {
 
   return (
     <div>
-      {/* Header with month and year navigation */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-[#1F2937]">
           {monthNames[currentMonth]} {currentYear}
         </h2>
         <button
           onClick={prevMonth}
-          className="text-[#4B5563] hover:text-gray-700 transition duration-300"
+          className="text-[#4B5563] hover:text-gray-700 transition duration-300 cursor-pointer"
           aria-label="Previous Month"
         >
           <FaChevronLeft />
         </button>
         <button
           onClick={nextMonth}
-          className="text-[#4B5563] hover:text-gray-700 transition duration-300"
+          className="text-[#4B5563] hover:text-gray-700 transition duration-300 cursor-pointer"
           aria-label="Next Month"
         >
           <FaChevronRight />
         </button>
       </div>
 
-      {/* Weekday labels */}
       <div className="grid grid-cols-7 text-center text-xs font-medium text-[#4B5563] mb-2 select-none">
         {DAYS.map((day) => (
           <div key={day}>{day}</div>
         ))}
       </div>
 
-      {/* Days grid */}
       <div className="grid grid-cols-7 gap-2.5 text-center text-xs text-[#1F2937]">
         {days.map((date, index) => (
           <div
