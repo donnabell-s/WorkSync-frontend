@@ -30,7 +30,7 @@ const Home = () => {
         </div>
 
         {search.trim() === "" ? (
-          <Components.MainCalendar />
+          <Components.MainCalendar isAdmin={false}/>
         ) : (
           <Components.CalendarListView search={search} />
         )}

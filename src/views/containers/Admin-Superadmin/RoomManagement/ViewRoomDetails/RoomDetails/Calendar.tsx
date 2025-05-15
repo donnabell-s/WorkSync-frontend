@@ -1,8 +1,8 @@
-import React from 'react'
+import * as Components from "../../../../../components";
 
 const Calendar = () => {
   return (
-    <div>Calendar</div>
+    <Components.MainCalendar isAdmin={true}/>
   )
 }
 
