@@ -9,7 +9,7 @@ const bookings: any[] = []
 
 interface ViewManagementHeaderProps {
     view: 'rooms' | 'bookings';
-    setFunction: React.Dispatch<React.SetStateAction<any[]>>;
+    setFunction?: React.Dispatch<React.SetStateAction<any[]>>;
 }
 
 const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFunction }) => {
@@ -70,7 +70,9 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             }
         }
 
-        setFunction(filtered);
+        if (setFunction) {
+            setFunction(filtered);
+        }
     }
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,7 +89,10 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
                 return bookingDetails.includes(event.target.value.toLowerCase());
             });
         }
-        setFunction(filtered);
+        
+        if (setFunction) {
+            setFunction(filtered);
+        }
     }
 
     useEffect(() => {
@@ -105,12 +110,14 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             });
         }
 
-        setFunction(filtered);
+        if (setFunction) {
+            setFunction(filtered);
+        }
     }, [searchQuery]);
 
     return (
         <div>
-            <div className='p-3'>
+            <div className={`p-3 ${view === 'bookings' ? 'flex gap-5' : ''}`}>
                 <div className='bg-[#F3F4F6] p-1 rounded-md flex flex-wrap gap-2 max-w-max'>
                     {
                         view === 'rooms' ? roomTabs.map((tab, index) => (
