@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { Booking, sampleBookingList } from './UserBookingListInterface';
+import { useNavigate } from 'react-router';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
   statusFilter: 'Completed' | 'Upcoming' | 'Cancelled' | 'See All';
-  searchQuery: string;  // Accept search query as a prop
+  searchQuery: string;
 }
 
 const getStatusColor = (status: Booking['status']) => {
@@ -23,6 +24,7 @@ const getThClasses = () => 'py-5 px-4 border-b-[1px] border-b-[#D2D4D8] text-bas
 const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const navigate = useNavigate();
 
   // Filter by search query (search by id, name, room, location)
   let filtered = [...sampleBookingList];
@@ -67,7 +69,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   return (
     <div>
       <div className="overflow-x-auto shadow-[0_0_4px_rgba(0,0,0,0.1)] rounded-lg">
-        <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm text-[#1F2937]">
+        <table className="min-w-full bg-white border border-gray-200 rounded-lg text-[#1F2937]">
           <thead>
             <tr className="text-left text-sm">
               <th className={getThClasses()}>ID</th>
@@ -81,7 +83,17 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
           </thead>
           <tbody>
             {visibleBookings.map((booking) => (
-              <tr key={booking.id} className="text-sm hover:bg-gray-50">
+              // <tr key={booking.id} className="text-sm hover:bg-gray-50">
+              <tr
+                key={booking.id}
+                className={`text-sm ${booking.status === "Upcoming" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                onClick={() => {
+                  if (booking.status === "Upcoming") {
+                    navigate(`/user/edit-booking`);
+                  }
+                }}
+              >
+
                 <td className={getTdClasses()}>{booking.id}</td>
                 <td className={getTdClasses()}>{booking.name}</td>
                 <td className={getTdClasses()}>{booking.room}</td>
