@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import EditDeleteAdminForm from './EditDeleteAdminForm';
 
 type Mode = 'edit' | 'delete';
 
@@ -18,178 +19,107 @@ interface AdminData {
   };
 }
 
-interface EditDeleteAdminFormProps {
-  mode: Mode;
-  admin: AdminData;
-  onSubmit: (id: string, updatedData?: Partial<AdminData>) => void;
-  onClose: () => void;
-}
-
-const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
-  mode,
-  admin,
-  onSubmit,
-  onClose,
-}) => {
-  const [formData, setFormData] = useState<Partial<AdminData>>({
-    name: admin.name,
-    email: admin.email,
-    role: admin.role,
-    status: admin.status,
-    permissions: { ...admin.permissions },
-  });
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handlePermissionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
+const AdminDashboard: React.FC = () => {
+  const [admins, setAdmins] = useState<AdminData[]>([
+    {
+      id: '1',
+      name: 'John',
+      email: 'john@faebookings.com',
+      role: 'Admin',
+      status: 'Active',
       permissions: {
-        ...(prevState.permissions ?? {
-          viewAuditLogs: false,
-          viewEditRooms: false,
-          manageBookings: false,
-          manageAdmins: false,
-          manageUsers: false,
-          systemSettings: false,
-        }),
-        [name]: checked,
-      } as AdminData['permissions'],
-    }));
+        viewAuditLogs: true,
+        viewEditRooms: true,
+        manageBookings: true,
+        manageAdmins: true,
+        manageUsers: true,
+        systemSettings: false,
+      },
+    },
+    // Add more admins if needed
+  ]);
+
+  const [selectedAdmin, setSelectedAdmin] = useState<AdminData | null>(null);
+  const [mode, setMode] = useState<Mode | null>(null);
+
+  const openEditModal = (admin: AdminData) => {
+    setSelectedAdmin(admin);
+    setMode('edit');
   };
 
-  const handleSubmit = () => {
-    if (mode === 'edit') {
-      onSubmit(admin.id, formData);
+  const openDeleteModal = (admin: AdminData) => {
+    setSelectedAdmin(admin);
+    setMode('delete');
+  };
+
+  const closeModal = () => {
+    setSelectedAdmin(null);
+    setMode(null);
+  };
+
+  const handleSubmit = (id: string, updatedData?: Partial<AdminData>) => {
+    if (mode === 'edit' && updatedData) {
+      setAdmins((prev) =>
+        prev.map((admin) =>
+          admin.id === id ? { ...admin, ...updatedData } : admin
+        )
+      );
     } else if (mode === 'delete') {
-      onSubmit(admin.id);
+      setAdmins((prev) => prev.filter((admin) => admin.id !== id));
     }
-    onClose();
+    closeModal();
   };
 
   return (
-    <div className="modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="modal-content p-6 bg-white rounded shadow-md w-full max-w-xl">
-        <h2 className="text-xl font-bold mb-4">
-          {mode === 'edit' ? 'Edit Admin Information' : 'Delete Admin'}
-        </h2>
-
-        {mode === 'edit' ? (
-          <form className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium">Name</label>
-              <input
-                type="text"
-                name="name"
-                className="w-full border px-3 py-2 rounded-md"
-                value={formData.name || ''}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium">Email</label>
-              <input
-                type="email"
-                name="email"
-                className="w-full border px-3 py-2 rounded-md"
-                value={formData.email || ''}
-                onChange={handleChange}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium">Role</label>
-                <select
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded-md"
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Admins</h1>
+      <table className="w-full table-auto border">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border px-4 py-2">Name</th>
+            <th className="border px-4 py-2">Email</th>
+            <th className="border px-4 py-2">Role</th>
+            <th className="border px-4 py-2">Status</th>
+            <th className="border px-4 py-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {admins.map((admin) => (
+            <tr key={admin.id}>
+              <td className="border px-4 py-2">{admin.name}</td>
+              <td className="border px-4 py-2">{admin.email}</td>
+              <td className="border px-4 py-2">{admin.role}</td>
+              <td className="border px-4 py-2">{admin.status}</td>
+              <td className="border px-4 py-2 space-x-2">
+                <button
+                  onClick={() => openEditModal(admin)}
+                  className="px-2 py-1 bg-blue-500 text-white rounded"
                 >
-                  <option value="Admin">Admin</option>
-                  <option value="Superadmin">Superadmin</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Status</label>
-                <select
-                  name="status"
-                  value={formData.status}
-                  onChange={handleChange}
-                  className="w-full border px-3 py-2 rounded-md"
+                  Edit
+                </button>
+                <button
+                  onClick={() => openDeleteModal(admin)}
+                  className="px-2 py-1 bg-red-500 text-white rounded"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </select>
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Permissions</label>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { key: 'viewAuditLogs', label: 'View Audit Logs' },
-                  { key: 'viewEditRooms', label: 'View & Edit Rooms' },
-                  { key: 'manageBookings', label: 'Manage Bookings' },
-                  { key: 'manageAdmins', label: 'Manage Admins' },
-                  { key: 'manageUsers', label: 'Manage Users' },
-                  { key: 'systemSettings', label: 'System Settings' },
-                ].map((perm) => (
-                  <label key={perm.key} className="inline-flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      name={perm.key}
-                      checked={
-                        formData.permissions?.[perm.key as keyof AdminData['permissions']] || false
-                      }
-                      onChange={handlePermissionChange}
-                    />
-                    <span>{perm.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          </form>
-        ) : (
-          <p className="text-red-600">
-            Are you sure you want to <strong>delete</strong> admin:{" "}
-            <strong>{admin?.name || 'N/A'}</strong>?
-          </p>
-        )}
+                  Delete
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
 
-        <div className="mt-6 flex justify-end gap-2">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 rounded bg-gray-500 text-white"
-          >
-            Cancel
-          </button>
-          {mode === 'edit' ? (
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 rounded bg-indigo-600 text-white"
-            >
-              Save
-            </button>
-          ) : (
-            <button
-              onClick={handleSubmit}
-              className="px-4 py-2 rounded bg-red-600 text-white"
-            >
-              Confirm Delete
-            </button>
-          )}
-        </div>
-      </div>
+      {/* Show modal if needed */}
+      {selectedAdmin && mode && (
+        <EditDeleteAdminForm
+          mode={mode}
+          admin={selectedAdmin}
+          onSubmit={handleSubmit}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
 
-export default EditDeleteAdminForm;
+export default AdminDashboard;
