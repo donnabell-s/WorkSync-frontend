@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router";
 import * as Views from "./views/containers";
 import { PATHS } from "./constant";
 
@@ -7,6 +7,8 @@ export const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to={PATHS.LOGIN.path} />} />
+
         <Route path={PATHS.ADMIN_MAIN.path} element={<Views.AdminMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}
           <Route path={PATHS.ADMIN_VIEW.DASHBOARD.path} element={<Views.Dashboard />} />
