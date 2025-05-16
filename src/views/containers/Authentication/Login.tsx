@@ -10,9 +10,8 @@ const Login = () => {
       className="w-screen h-screen min-h-screen min-w-screen flex items-stretch bg-cover bg-center overflow-hidden font-sans bg-[url('/src/assets/login-bg2.png')]"
     >
       {/* Left Side */}
-       <div
-        className="flex-1 flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl"
-      >
+             <div className="basis-[55%] flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl"
+             >
   
         <div className="absolute inset-0 bg-white/40 rounded-tl-3xl rounded-bl-3xl pointer-events-none z-0" />
     
