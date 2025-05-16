@@ -6,3 +6,4 @@ export * from "./UserHeading";
 export * from "./UserSearch";
 export * from "./DetailsContainer";
 export * from "./SecondaryButton";
+export * from "./BookingTableRow";

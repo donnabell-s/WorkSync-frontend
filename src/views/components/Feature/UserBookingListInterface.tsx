@@ -6,8 +6,8 @@ export interface Booking {
     date: string;
     time: string;
     status: 'Upcoming' | 'Completed' | 'Cancelled';
-  }
-  
+}
+
 export const sampleBookingList: Booking[] = [
   {
     id: 'MTG12',
@@ -179,6 +179,47 @@ export const sampleBookingList: Booking[] = [
     date: '01-March-2025',
     time: '09:00-12:00',
     status: 'Upcoming',
-  }
+  },
 ];
-  
+
+export const bookingHistory: Booking[] = [
+  {
+    id: 'B001',
+    name: 'John Smith',
+    room: 'Meeting Room 1',
+    location: 'HQ, Level 3',
+    date: '2023-10-01',
+    time: '10:00 AM - 11:00 AM',
+    status: 'Completed',
+  },
+  {
+    id: 'B002',
+    name: 'Jane Doe',
+    room: 'Conference Room B',
+    location: 'HQ, Level 5',
+    date: '2023-10-02',
+    time: '1:00 PM - 2:00 PM',
+    status: 'Cancelled',
+  },
+];
+
+export const reservations: Booking[] = [
+  {
+    id: 'B003',
+    name: 'Alice Johnson',
+    room: 'Conference Room A',
+    location: 'Branch 1, Level 5',
+    date: '2023-10-05',
+    time: '2:00 PM - 3:00 PM',
+    status: 'Upcoming', 
+  },
+  {
+    id: 'B004',
+    name: 'Bob Williams',
+    room: 'Meeting Room 2',
+    location: 'Branch 2, Level 2',
+    date: '2023-10-06',
+    time: '9:00 AM - 10:00 AM',
+    status: 'Upcoming', 
+  },
+];
