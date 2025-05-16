@@ -13,14 +13,14 @@ const AccountPreferences: React.FC = () => {
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <SideContainer>
+      {/* <SideContainer>
         <div className="text-lg font-semibold mb-6">Settings</div>
         <ul className="space-y-4">
           <li className="text-purple-600 font-medium">Account Preferences</li>
           <li className="text-gray-600 hover:text-purple-600 cursor-pointer">Notification Settings</li>
           <li className="text-gray-600 hover:text-purple-600 cursor-pointer">Booking Defaults</li>
         </ul>
-      </SideContainer>
+      </SideContainer> */}
 
       {/* Main Content */}
       <div className="ml-[270px] w-full p-6 bg-gray-50">
