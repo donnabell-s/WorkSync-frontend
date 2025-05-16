@@ -21,4 +21,4 @@ const AdminButton: React.FC<AdminButtonProps> = ({ label, icon, variant, onClick
     )
 }
 
-export default AdminButton
+export default AdminButton;

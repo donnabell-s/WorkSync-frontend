@@ -27,4 +27,4 @@ const ProfileDropdownLink:React.FC<ProfileDropdownProps> = ({icon, label, path})
     )
 }
 
-export default ProfileDropdownLink
+export default ProfileDropdownLink;

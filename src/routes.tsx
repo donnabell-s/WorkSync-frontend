@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import * as Views from "./views/containers";
 import { PATHS } from "./constant";
 
+
 export const AppRoutes = () => {
   return (
     <BrowserRouter>

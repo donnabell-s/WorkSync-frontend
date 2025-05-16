@@ -42,4 +42,4 @@ const HeaderLink: React.FC<SideNavLinkProps> = ({ label, selected, path }) => {
   };
   
 
-export default HeaderLink
+export default HeaderLink;

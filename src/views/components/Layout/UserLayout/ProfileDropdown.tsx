@@ -40,4 +40,4 @@ const ProfileDropdown: React.FC = () => {
     )
 }
 
-export default ProfileDropdown
+export default ProfileDropdown;
