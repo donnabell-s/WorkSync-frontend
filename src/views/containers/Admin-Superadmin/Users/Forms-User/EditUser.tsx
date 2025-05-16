@@ -8,19 +8,26 @@ interface UserData {
   email: string;
 }
 
-interface EditDeleteUserFormProps {
-  mode: Mode;
-  user: UserData;
-  onSubmit: (id: string, updatedData?: Partial<UserData>) => void;
-  onClose: () => void;
-}
+const EditUser: React.FC = () => {
+  const mode: Mode = 'edit'; // or 'delete'
+  const user: UserData = {
+    id: '123',
+    name: 'John Doe',
+    email: 'john@example.com',
+  };
 
-const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
-  mode,
-  user,
-  onSubmit,
-  onClose,
-}) => {
+  const onSubmit = (id: string, updatedData?: Partial<UserData>) => {
+    if (mode === 'edit') {
+      console.log('Updated user:', id, updatedData);
+    } else if (mode === 'delete') {
+      console.log('Deleted user:', id);
+    }
+  };
+
+  const onClose = () => {
+    console.log('Modal closed');
+  };
+
   const [formData, setFormData] = useState<Partial<UserData>>({
     name: user.name,
     email: user.email,
@@ -87,4 +94,4 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
   );
 };
 
-export default EditDeleteUserForm;
+export default EditUser;
