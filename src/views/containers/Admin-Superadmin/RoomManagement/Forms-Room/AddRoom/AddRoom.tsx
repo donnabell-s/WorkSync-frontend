@@ -56,8 +56,8 @@ const AddRoom: React.FC = () => {
             <div className="flex-1">
 
                 <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/room-detail')}>
-                        {'< Back to Room Details'}
+                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/view')}>
+                        {'< Back to View Rooms'}
                     </div>
                     <AdminHeading label="ADD ROOM" />
                     <RoomFormLayout

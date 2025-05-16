@@ -23,7 +23,7 @@ const getStatusClass = (status: string) => {
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const navigate = useNavigate();
 
-  const path = role === "admin" ? "/admin/room-management" : "/user/book-room";
+  const path = role === "admin" ? "/admin/rooms/room-detail" : "/user/book-room";
   const label = role === "admin" ? "View Room Details" : "Book Room";
 
   
