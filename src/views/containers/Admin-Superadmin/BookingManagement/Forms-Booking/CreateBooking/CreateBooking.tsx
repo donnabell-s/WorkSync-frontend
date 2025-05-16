@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react'
+import React, { useState } from 'react'
 import AdminHeading from '../../../../../components/UI/AdminHeading'
 import AdminBackLink from '../../../../../components/UI/AdminBackLink'
 import Input from '../../../../../components/UI/AdminForms/Input'
@@ -9,22 +9,43 @@ import MultipleDateInput from '../../../../../components/UI/AdminForms/MultipleD
 import TextAreaInput from '../../../../../components/UI/AdminForms/TextAreaInput'
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput'
 import AdminButton from '../../../../../components/UI/AdminButton'
+import RoomModal from '../../../../../components/UI/AdminForms/RoomModal'
 import { RiNumber1 } from "react-icons/ri";
 import { FaArrowRotateRight } from "react-icons/fa6";
+import { useNavigate } from 'react-router'
 
 const CreateBooking = () => {
-  const [toggle, setToggle] = useState(false);
+  const navigate = useNavigate();
+  const [toggle, setToggle] = useState(true);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>('');
+
+  const handleSelection = (event: React.MouseEvent<HTMLButtonElement>, room: string) => {
+    event.preventDefault();
+    setSelectedRoom(room);
+    setOpenModal(!openModal);
+  }
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setToggle(!toggle);
   }
 
+  const handleModal = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    setOpenModal(!openModal);
+  }
+
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    navigate('/admin/bookings/view');
+  }
+
   return (
     <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
       <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
 
-      <div className='max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
+      <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
         <AdminHeading label="CREATE BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
@@ -55,18 +76,22 @@ const CreateBooking = () => {
 
           <div className='flex flex-col gap-4'>
             <TextAreaInput label='Description' placeholder='Enter description' />
-            <Input label='Expected Attendees' placeholder='Enter number of expected attendees' type='number' />
           </div>
 
           <div className='flex flex-col gap-4'>
-            <SelectInput label='Select Room Type' placeholder='Select Room Type' />
-            <SelectInput label='Select Room Size' placeholder='Select Room Size' />
-            <SelectInput label='Select Room' placeholder='Select Room' />
+            <Input label='Expected Attendees' placeholder='Enter number of expected attendees' type='number' />
+            <SelectInput label='Select Room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
+
+            {
+              openModal ? (
+                <RoomModal closeFunction={handleModal} value={selectedRoom} selectFunction={handleSelection} />
+              ) : null
+            }
           </div>
 
           <div className='flex gap-4 pt-5'>
-            <AdminButton label='Save' variant='primary' />
-            <AdminButton label='Cancel' variant='secondary' />
+            <AdminButton label='Save' variant='primary' onClick={handleBack} />
+            <AdminButton label='Cancel' variant='secondary' onClick={handleBack} />
           </div>
         </form>
       </div>
