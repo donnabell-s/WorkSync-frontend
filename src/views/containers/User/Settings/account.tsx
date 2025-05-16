@@ -30,15 +30,6 @@ const Account: React.FC = () => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
-      <SideContainer>
-        <div className="text-lg font-semibold mb-6">Navigation</div>
-        <ul className="space-y-4 text-sm">
-          <li className="text-purple-600 font-medium">Account</li>
-          <li className="text-gray-600 hover:text-purple-600 cursor-pointer">Notifications</li>
-          <li className="text-gray-600 hover:text-purple-600 cursor-pointer">Preferences</li>
-          <li className="text-gray-600 hover:text-purple-600 cursor-pointer">Security</li>
-        </ul>
-      </SideContainer>
 
       {/* Main Account Content */}
       <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md mt-6 ml-auto xl:ml-[270px] w-full">
