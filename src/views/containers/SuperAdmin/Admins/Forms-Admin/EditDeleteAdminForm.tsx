@@ -18,36 +18,29 @@ interface AdminData {
   };
 }
 
-const EditAdmin: React.FC = () => {
-  const mode: Mode = 'edit'; // or 'delete'
+interface EditDeleteAdminFormProps {
+  mode?: Mode;
+  admin?: AdminData;
+  onSubmit?: (id: string, updatedData?: Partial<AdminData>) => void;
+  onClose?: () => void;
+}
 
-  const admin: AdminData = {
-    id: 'admin001',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'Admin',
-    status: 'Active',
-    permissions: {
-      viewAuditLogs: true,
-      viewEditRooms: true,
-      manageBookings: true,
-      manageAdmins: false,
-      manageUsers: true,
-      systemSettings: false,
-    },
-  };
-
-  const onSubmit = (id: string, updatedData?: Partial<AdminData>) => {
-    if (mode === 'edit') {
-      console.log('Edited Admin:', id, updatedData);
-    } else {
-      console.log('Deleted Admin:', id);
-    }
-  };
-
-  const onClose = () => {
-    console.log('Modal closed');
-  };
+const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
+  mode,
+  admin,
+  onSubmit,
+  onClose,
+}) => {
+  // Block direct route render
+  if (!admin || !mode || !onSubmit || !onClose) {
+    return (
+      <div className="p-6">
+        <p className="text-red-500 font-semibold">
+          This form must be opened from the Admin Dashboard.
+        </p>
+      </div>
+    );
+  }
 
   const [formData, setFormData] = useState<Partial<AdminData>>({
     name: admin.name,
@@ -71,14 +64,14 @@ const EditAdmin: React.FC = () => {
   const handleSubmit = () => {
     if (mode === 'edit') {
       onSubmit(admin.id, formData);
-    } else {
+    } else if (mode === 'delete') {
       onSubmit(admin.id);
     }
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
       <div className="bg-white p-6 rounded shadow-md w-96">
         <h2 className="text-xl font-bold mb-4">
           {mode === 'edit' ? 'Edit Admin' : 'Delete Admin'}
@@ -143,4 +136,4 @@ const EditAdmin: React.FC = () => {
   );
 };
 
-export default EditAdmin;
+export default EditDeleteAdminForm;
