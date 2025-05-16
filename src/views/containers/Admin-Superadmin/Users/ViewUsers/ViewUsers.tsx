@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import SideNav from '../../../../components/Layout/AdminSuperAdminLayout/SideNav';
 
 interface User {
   name: string;
@@ -42,8 +41,7 @@ const ViewUser: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <SideNav nav={true} />
-      <main className="flex-1 ml-[270px] p-8">
+      <main className="flex-1 p-8">
         <h2 className="text-xl font-semibold mb-6">USER MANAGEMENT</h2>
 
         <div className="flex items-center justify-between mb-4">
