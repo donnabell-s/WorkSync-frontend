@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Booking } from './UserBookingListInterface';
 import { LuClock } from 'react-icons/lu';
 
@@ -16,6 +17,12 @@ const statusColors: Record<Booking['status'], string> = {
 };
 
 const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
+  const navigate = useNavigate();
+
+  const handleViewDetails = (booking: Booking) => {
+    navigate('/admin/bookings/booking-detail', { state: { booking } });
+  };
+
   return (
     <div className="space-y-4">
       {bookings.map((booking) => {
@@ -52,11 +59,11 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
             </div>
 
             <div className="grid grid-cols-2 gap-x-9 w-full md:w-52 text-sm text-[#1F2937]">
-            <span className="font-medium text-gray-500 whitespace-nowrap">Organizer</span>
-            <span className="truncate">John Doe</span>
+              <span className="font-medium text-gray-500 whitespace-nowrap">Organizer</span>
+              <span className="truncate">John Doe</span>
 
-            <span className="font-medium text-gray-500 whitespace-nowrap">Date Requested</span>
-            <span className="truncate">May 10, 2023</span>
+              <span className="font-medium text-gray-500 whitespace-nowrap">Date Requested</span>
+              <span className="truncate">May 10, 2023</span>
             </div>
 
             <div className="flex flex-col items-end w-full md:w-28">
@@ -65,7 +72,10 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
               >
                 {booking.status}
               </span>
-              <button className="text-sm text-white bg-[#10B981] px-3 py-1 rounded-md hover:bg-[#1BAC7C] font-medium  transform translate-y-2.5">
+              <button
+                className="text-sm text-white bg-[#10B981] px-3 py-1 rounded-md hover:bg-[#1BAC7C] font-medium  transform translate-y-2.5 cursor-pointer"
+                onClick={() => handleViewDetails(booking)}
+              >
                 View Details
               </button>
             </div>

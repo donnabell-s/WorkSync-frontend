@@ -12,8 +12,10 @@ import AdminButton from '../../../../../components/UI/AdminButton'
 import RoomModal from '../../../../../components/UI/AdminForms/RoomModal'
 import { RiNumber1 } from "react-icons/ri";
 import { FaArrowRotateRight } from "react-icons/fa6";
+import { useNavigate } from 'react-router'
 
 const CreateBooking = () => {
+  const navigate = useNavigate();
   const [toggle, setToggle] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>('');
@@ -32,6 +34,11 @@ const CreateBooking = () => {
   const handleModal = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setOpenModal(!openModal);
+  }
+
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    navigate('/admin/bookings/view');
   }
 
   return (
@@ -83,8 +90,8 @@ const CreateBooking = () => {
           </div>
 
           <div className='flex gap-4 pt-5'>
-            <AdminButton label='Save' variant='primary' />
-            <AdminButton label='Cancel' variant='secondary' />
+            <AdminButton label='Save' variant='primary' onClick={handleBack} />
+            <AdminButton label='Cancel' variant='secondary' onClick={handleBack} />
           </div>
         </form>
       </div>

@@ -5,6 +5,7 @@ import AdminButton from './AdminButton'
 import { IoAddOutline } from 'react-icons/io5'
 import { meetingRooms } from "./../Feature/RoomListInterface"
 import { sampleBookingList as bookings } from '../Feature/UserBookingListInterface'
+import { useNavigate } from 'react-router'
 
 interface ViewManagementHeaderProps {
     view: 'rooms' | 'bookings';
@@ -14,6 +15,7 @@ interface ViewManagementHeaderProps {
 
 const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFunction }) => {
 
+    const navigate = useNavigate();
     const roomTabs: string[] = ["All", "Available", "Occupied", "Under Maintenance", "Reserved"];
     const bookingTabs: string[] = ["All", "Approved", "Pending", "Declined"];
     const bookingTabs2: string[] = ["All", "Recurring", "Non-Recurring"];
@@ -98,6 +100,14 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
         }
     }
 
+    const handleAddBooking = () => {
+        navigate('/admin/bookings/add');
+    }
+
+    const handleAddRoom = () => {
+        navigate('/admin/rooms/add');
+    }
+
     useEffect(() => {
         let filtered = view === "rooms" ? meetingRooms : bookings;
 
@@ -158,12 +168,12 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             <div className='flex sm:flex-row flex-col p-3 justify-between gap-3'>
                 <div className='flex md:flex-row flex-col gap-4 items-center'>
                     <AdminSearch value={searchQuery} onChange={handleSearchChange} />
-                    <AdminFilter />
+                    <AdminFilter onChange={() => {}} filters={['All']} />
                 </div>
                 {
                     view === "rooms" ?
-                        <AdminButton label="Add Room" icon={<IoAddOutline className='size-5 font-bold' />} /> :
-                        <AdminButton label="Create Booking" icon={<IoAddOutline className='size-5 font-bold' />} />
+                        <AdminButton label="Add Room" icon={<IoAddOutline className='size-5 font-bold' />} onClick={handleAddRoom} /> :
+                        <AdminButton label="Create Booking" icon={<IoAddOutline className='size-5 font-bold' onClick={handleAddBooking} />} />
                 }
             </div>
         </div>
