@@ -1,0 +1,22 @@
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.booking-table th,
+.booking-table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.booking-table th {
+  background-color: #1a73e8;
+  color: white;
+}
+
+#booking-history h3 {
+  font-size: 16px;
+  margin: 20px 0 10px;
+}

@@ -1,1 +1,1 @@
-export { default as ViewAdmins } from "./ViewAdmins";
+export { default } from './ViewAdmins';

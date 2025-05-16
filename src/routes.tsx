@@ -8,10 +8,10 @@ export const AppRoutes = () => {
       <Routes>
         <Route path={PATHS.ADMIN_MAIN.path} element={<Views.AdminMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}
-          <Route path={PATHS.ADMIN_VIEW.DASHBOARD.path} element={<Views.Dashboard />} />
+          {/* <Route path={PATHS.ADMIN_VIEW.DASHBOARD.path} element={<Views.Dashboard />} />
           <Route path={PATHS.ADMIN_VIEW.NOTIFICATION.path} element={<Views.Notifications />} />
 
-          <Route path={PATHS.ROOM_MGNT.VIEW.path} element={<Views.ViewRooms />} />
+          <Route path={PATHS.ROOM_MGNT.VIEW.path} element={<Views.ViewRooms />} /> */}
           <Route path={PATHS.ROOM_MGNT.ADD.path} element={<Views.AddRoom />} />
           <Route path={PATHS.ROOM_MGNT.EDIT.path} element={<Views.EditRoom />} />
           <Route path={PATHS.ROOM_MGNT.DELETE.path} element={<Views.DeleteRoom />} />
@@ -32,6 +32,7 @@ export const AppRoutes = () => {
           <Route path={PATHS.ADMIN_MGNT.VIEW.path} element={<Views.ViewAdmins />} />
           <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<Views.EditAdmin />} />
         </Route>
+        
         <Route path={PATHS.USER_MAIN.path} element={<Views.UserMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}
           <Route path={PATHS.USER_VIEW.HOME.path} element={<Views.Home />} />
@@ -48,7 +49,7 @@ export const AppRoutes = () => {
         <Route path={PATHS.FORGOT_PASS.path} element={<Views.ForgotPassword />} />
         <Route path={PATHS.RESET_PASS.path} element={<Views.ResetPassword />} />
         <Route path={PATHS.SIGNUP.path} element={<Views.Signup />} />
-        <Route path={PATHS.NOT_FOUND.path} element={<Views.NotFound />} />
+        {/* <Route path={PATHS.NOT_FOUND.path} element={<Views.NotFound />} /> */}
       </Routes>
     </BrowserRouter>
   );
