@@ -1,4 +1,4 @@
-interface MeetingRoom {
+export interface MeetingRoom {
     roomCode: string; // e.g. "CR-101A"
     roomName: string; // e.g. "Strategy Room"
     location: string;

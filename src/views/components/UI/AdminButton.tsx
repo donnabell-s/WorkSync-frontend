@@ -3,12 +3,18 @@ import React from 'react'
 interface AdminButtonProps {
     label: string;
     icon?: React.ReactNode;
+    variant?: 'primary' | 'secondary';
+    onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | ((room: string) => void);
 }
 
-const AdminButton: React.FC<AdminButtonProps> = ({ label, icon }) => {
+const AdminButton: React.FC<AdminButtonProps> = ({ label, icon, variant, onClick }) => {
     return (
         <button
-            className='max-h-15 max-w-max bg-[#2563EB] p-3 flex items-center text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-[#1E40AF] transform transform-all duration-200'>
+            className={`max-h-15 p-3 flex items-center text-white text-sm font-semibold rounded-md cursor-pointer transform transform-all duration-200
+                ${variant === 'primary' ? 'bg-[#2563EB] hover:bg-[#1E40AF] w-25 justify-center' : (variant === 'secondary' ? 'bg-[#64748B] hover:bg-[#4C515B] w-25 justify-center' : 'bg-[#2563EB] hover:bg-[#1E40AF] w-32')}
+            `}
+            onClick={onClick}
+            >
             {icon && <span className='mr-2'>{icon}</span>}
             {label}
         </button>

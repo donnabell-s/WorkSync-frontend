@@ -29,4 +29,4 @@ const ViewBookings = () => {
   )
 }
 
-export default ViewBookings
+export default ViewBookings;
