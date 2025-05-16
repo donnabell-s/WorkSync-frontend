@@ -15,4 +15,4 @@ const AdminButton: React.FC<AdminButtonProps> = ({ label, icon }) => {
     )
 }
 
-export default AdminButton
+export default AdminButton;

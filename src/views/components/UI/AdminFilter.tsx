@@ -11,4 +11,4 @@ const AdminFilter: React.FC = () => {
   )
 }
 
-export default AdminFilter
+export default AdminFilter;
