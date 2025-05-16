@@ -1,139 +1,135 @@
 import React, { useState } from 'react';
+import SideContainer from "../../../../views/components/Layout/UserLayout/SideContainer";
 
 const Account: React.FC = () => {
-  const [profilePicture, setProfilePicture] = useState<string | null>(null);
-
-const [userInfo, setUserInfo] = useState({
-  firstName: 'John',
-  lastName: 'Doe',
-  email: 'johndoe@gmail.com',
-  phone: '09123456789',
-  country: 'Philippines',
-  cityState: 'Cebu, Cebu City',
-});
- 
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
-  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setProfilePicture(reader.result as string);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+
+  const [personalInfo, setPersonalInfo] = useState({
+    firstName: 'Alliyana Rose',
+    lastName: 'Garcia',
+    email: 'alliyanarose.garcia.22@usjr.edu.ph',
+    phone: '+63 999 999 9999',
+  });
+
+  const [addressInfo, setAddressInfo] = useState({
+    country: 'Philippines',
+    city: 'Cebu, Cebu City',
+  });
+
+  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setProfilePhoto(url);
     }
   };
 
-  const handleRemove = () => {
-    setProfilePicture(null);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserInfo((prev) => ({ ...prev, [name]: value }));
-  };
-
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Account</h2>
-        <button className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100 text-sm">
-          Change Password
-        </button>
-      </div>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* Sidebar */}
 
-      {/* Profile Picture */}
-      <div className="flex items-center space-x-6 mb-8">
-        <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-3xl text-purple-600">
-          {profilePicture ? (
-            <img src={profilePicture} alt="Profile" className="w-full h-full rounded-full object-cover" />
-          ) : (
-            <span>👤</span>
-          )}
-        </div>
-        <div className="space-x-2">
-          <label className="text-sm font-medium cursor-pointer text-white bg-green-500 px-3 py-1.5 rounded">
-            Upload New Photo
-            <input type="file" accept="image/*" onChange={handleUpload} className="hidden" />
-          </label>
-          <button onClick={handleRemove} className="text-sm text-gray-700 border px-3 py-1.5 rounded hover:bg-gray-100">
-            Remove
-          </button>
-        </div>
-      </div>
+      {/* Main Account Content */}
+      <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md mt-6 ml-auto xl:ml-[270px] w-full">
+        <h1 className="text-2xl font-bold border-b pb-4 mb-4">Account</h1>
 
-      {/* Personal Information */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6 relative">
-        <h3 className="text-lg font-semibold mb-4">Personal Information</h3>
-        {isEditingPersonal ? (
-          <button
-            onClick={() => setIsEditingPersonal(false)}
-            className="absolute top-6 right-6 text-sm text-blue-600 hover:underline"
-          >
-            Save
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsEditingPersonal(true)}
-            className="absolute top-6 right-6 text-sm text-gray-600 hover:underline"
-          >
-            ✎ Edit
-          </button>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['firstName', 'lastName', 'email', 'phone'].map((field) => (
-            <div key={field}>
-              <p className="text-gray-500 text-sm capitalize">{field.replace(/([A-Z])/g, ' $1')}</p>
-              {isEditingPersonal ? (
-                <input
-                  name={field}
-                  value={(userInfo as any)[field]}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                />
-              ) : (
-                <p className="text-gray-900">{(userInfo as any)[field]}</p>
+        {/* Profile Picture */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <img
+              src={profilePhoto || '/default-avatar.png'}
+              alt="Profile"
+              className="w-16 h-16 rounded-full border"
+            />
+            <div>
+              <input type="file" accept="image/*" onChange={handleProfileUpload} />
+              {profilePhoto && (
+                <button
+                  onClick={() => setProfilePhoto(null)}
+                  className="text-red-500 text-sm ml-2"
+                >
+                  Remove
+                </button>
               )}
             </div>
-          ))}
+          </div>
+          <button className="border px-4 py-2 rounded-md text-sm">Change Password</button>
         </div>
-      </div>
 
-      {/* Address */}
-      <div className="bg-white rounded-lg shadow p-6 relative">
-        <h3 className="text-lg font-semibold mb-4">Address</h3>
-        {isEditingAddress ? (
-          <button
-            onClick={() => setIsEditingAddress(false)}
-            className="absolute top-6 right-6 text-sm text-blue-600 hover:underline"
-          >
-            Save
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsEditingAddress(true)}
-            className="absolute top-6 right-6 text-sm text-gray-600 hover:underline"
-          >
-            ✎ Edit
-          </button>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['country', 'cityState'].map((field) => (
-            <div key={field}>
-              <p className="text-gray-500 text-sm">{field === 'cityState' ? 'City/State' : 'Country'}</p>
-              {isEditingAddress ? (
-                <input
-                  name={field}
-                  value={(userInfo as any)[field]}
-                  onChange={handleChange}
-                  className="w-full border rounded px-3 py-2 mt-1"
-                />
-              ) : (
-                <p className="text-gray-900">{(userInfo as any)[field]}</p>
-              )}
-            </div>
-          ))}
+        {/* Personal Information */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-lg font-semibold">Personal Information</h2>
+            <button
+              onClick={() => setIsEditingPersonal(!isEditingPersonal)}
+              className="text-sm text-blue-600"
+            >
+              {isEditingPersonal ? 'Save Changes' : 'Edit'}
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {['firstName', 'lastName', 'email', 'phone'].map((field, i) => (
+              <div key={i}>
+                <label className="block text-sm text-gray-600 capitalize">
+                  {field === 'firstName'
+                    ? 'First Name'
+                    : field === 'lastName'
+                    ? 'Last Name'
+                    : field === 'email'
+                    ? 'Email Address'
+                    : 'Phone'}
+                </label>
+                {isEditingPersonal ? (
+                  <input
+                    type="text"
+                    className="w-full border px-3 py-2 rounded-md"
+                    value={personalInfo[field as keyof typeof personalInfo]}
+                    onChange={(e) =>
+                      setPersonalInfo({ ...personalInfo, [field]: e.target.value })
+                    }
+                  />
+                ) : (
+                  <p>{personalInfo[field as keyof typeof personalInfo]}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Address */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <h2 className="text-lg font-semibold">Address</h2>
+            <button
+              onClick={() => setIsEditingAddress(!isEditingAddress)}
+              className="text-sm text-blue-600"
+            >
+              {isEditingAddress ? 'Save Changes' : 'Edit'}
+            </button>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {['country', 'city'].map((field, i) => (
+              <div key={i}>
+                <label className="block text-sm text-gray-600 capitalize">
+                  {field === 'city' ? 'City/State' : 'Country'}
+                </label>
+                {isEditingAddress ? (
+                  <input
+                    type="text"
+                    className="w-full border px-3 py-2 rounded-md"
+                    value={addressInfo[field as keyof typeof addressInfo]}
+                    onChange={(e) =>
+                      setAddressInfo({ ...addressInfo, [field]: e.target.value })
+                    }
+                  />
+                ) : (
+                  <p>{addressInfo[field as keyof typeof addressInfo]}</p>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
