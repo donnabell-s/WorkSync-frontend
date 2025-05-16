@@ -5,49 +5,57 @@ import { MdMeetingRoom } from "react-icons/md";
 import { FaBookBookmark, FaUser } from "react-icons/fa6";
 import { FaUserCog } from 'react-icons/fa';
 
-export const navLinks: Record<string, Record<string, { label: string; icon: React.ReactNode }>> = {
+export const navLinks: Record<string, Record<string, { label: string; icon: React.ReactNode; path: string }>> = {
     superadmin: {
         dashboard: {
             label: 'Dashboard',
             icon: React.createElement(RiDashboardHorizontalFill, { className: 'size-5' }),
+            path: '/admin/dashboard',
         },
         notifications: {
             label: 'Notifications',
             icon: React.createElement(IoNotifications, { className: 'size-5' }),
+            path: '/admin/notifications',
         },
     },
     room_mgnt: {
         rooms: {
             label: 'View Rooms',
             icon: React.createElement(MdMeetingRoom, { className: 'size-5' }),
+            path: '/admin/rooms/view',
         },
     },
     booking_mgnt: {
         bookings: {
             label: 'View Bookings',
             icon: React.createElement(FaBookBookmark, { className: 'size-5' }),
+            path: '/admin/bookings/view',
         },
     },
     logs: {
         room: {
             label: 'Room Logs',
             icon: React.createElement(MdMeetingRoom, { className: 'size-5' }),
+            path: '/admin/logs/rooms',
         },
         booking: {
             label: 'Booking Logs',
             icon: React.createElement(FaBookBookmark, { className: 'size-5' }),
+            path: '/admin/logs/bookings',
         },
     },
     admins: {
         admins: {
             label: 'View Admins',
             icon: React.createElement(FaUserCog, { className: 'size-5' }),
+            path: '/admin/admins/view',
         },
     },
     users: {
         users: {
             label: 'View Users',
             icon: React.createElement(FaUser, { className: 'size-5' }),
+            path: '/admin/users/view',
         },
     },
 }

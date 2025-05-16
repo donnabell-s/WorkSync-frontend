@@ -8,7 +8,11 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-const MainCalendar = () => {
+interface MainCalendarProps {
+  isAdmin: boolean;
+}
+
+const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
   const today = new Date();
   const [currentYear, setCurrentYear] = useState(today.getFullYear());
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());
@@ -83,7 +87,7 @@ const MainCalendar = () => {
 
   return (
     <div>
-      <div className="bg-white rounded-md shadow-[0_0_4px_rgba(0,0,0,0.1)]">
+      <div className={`bg-white rounded-md ${!isAdmin ? 'shadow-[0_0_4px_rgba(0,0,0,0.1)]' : ''}`}>
         <div className="flex justify-start items-center p-6 gap-5">
           <button
             onClick={() => {
