@@ -3,6 +3,7 @@ import React from 'react'
 interface AdminButtonProps {
     label: string;
     icon?: React.ReactNode;
+    onClick?: () => void; 
 }
 
 const AdminButton: React.FC<AdminButtonProps> = ({ label, icon }) => {

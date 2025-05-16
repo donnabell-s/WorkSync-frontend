@@ -46,7 +46,6 @@ const AddRoom: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        // Handle form submission (e.g., API call to add the room)
         console.log('Form Data:', formData);
         navigate('/admin/room-management');
     };
