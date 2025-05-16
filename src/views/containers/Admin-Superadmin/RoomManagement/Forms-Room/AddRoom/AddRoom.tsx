@@ -1,177 +1,86 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Header from '../../../../../components/Layout/AdminSuperAdminLayout/Header';
-import SideContainer from '../../../../../components/Layout/UserLayout/SideContainer';
 import SideNav from '../../../../../components/Layout/AdminSuperAdminLayout/SideNav';
 import AdminHeading from '../../../../../components/UI/AdminHeading';
 import AdminButton from '../../../../../components/UI/AdminButton';
-import AdminFilter from '../../../../../components/UI/AdminFilter';
+import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
 
-interface RoomFormData {
-  name: string;
-  number: string;
-  location: string;
-  floorLevel: string;
-  size: string;
-  seats: number;
-  status: string;
-  facilities: string;
-  image: File | null;
-}
+const AddRoom: React.FC = () => {
+    const [nav, setNav] = useState(false);
+    const navigate = useNavigate();
 
-interface AddRoomProps {
-  onAdd: (room: RoomFormData) => void;
-  onCancel: () => void;
-}
+    const toggleNav = () => setNav(!nav);
 
-const AddRoom: React.FC<AddRoomProps> = ({ onAdd, onCancel }) => {
-  const [formData, setFormData] = useState<RoomFormData>({
-    name: '',
-    number: '',
-    location: '',
-    floorLevel: '',
-    size: '',
-    seats: 0,
-    status: '',
-    facilities: '',
-    image: null,
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'seats' ? parseInt(value) || 0 : value,
-    }));
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, image: e.target.files![0] }));
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.number && formData.seats > 0) {
-      onAdd(formData);
-      setFormData({
-        name: '',
-        number: '',
+    const [formData, setFormData] = useState({
+        roomName: '',
+        roomNumber: '',
         location: '',
-        floorLevel: '',
+        floor: '',
         size: '',
-        seats: 0,
-        status: '',
-        facilities: '',
-        image: null,
-      });
-    }
-  };
+        seats: '',
+        status: 'Available',
+        facilities: [] as string[],
+        image: null as File | null,
+        imagePreview: '',
+    });
 
-  return (
-    <div className="flex">
-      <SideContainer>
-        <SideNav nav={true} />
-      </SideContainer>
-      <div className="flex-1 ml-67">
-        <Header nav={true} toggleNav={() => {}} />
-        <div className="p-6">
-          <AdminHeading label="ADD ROOM" />
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 mt-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Room Name *</label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    const handleFacilitiesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedFacilities = Array.from(e.target.selectedOptions, option => option.value);
+        setFormData({ ...formData, facilities: selectedFacilities });
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            setFormData({
+                ...formData,
+                image: e.target.files[0],
+                imagePreview: URL.createObjectURL(e.target.files[0]),
+            });
+        }
+    };
+
+    const handleSubmit = () => {
+        // Handle form submission (e.g., API call to add the room)
+        console.log('Form Data:', formData);
+        navigate('/admin/room-management');
+    };
+
+    return (
+        <div className="flex min-h-screen bg-gray-100">
+            <SideNav nav={nav} />
+            <div className="flex-1">
+                <Header nav={nav} toggleNav={toggleNav} />
+                <div className="p-6">
+                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/room-management')}>
+                        {'< Back to View Rooms'}
+                    </div>
+                    <AdminHeading label="ADD ROOM" />
+                    <RoomFormLayout
+                        formData={formData}
+                        onInputChange={handleInputChange}
+                        onFacilitiesChange={handleFacilitiesChange}
+                        onImageChange={handleImageChange}
+                    >
+                        <div onClick={handleSubmit}>
+                            <AdminButton label="SAVE CHANGES" />
+                        </div>
+                        <button
+                            className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                            onClick={() => navigate('/admin/room-management')}
+                        >
+                            CANCEL
+                        </button>
+                    </RoomFormLayout>
+                </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Room Number *</label>
-              <input
-                type="text"
-                name="number"
-                value={formData.number}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Location *</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Floor/Level *</label>
-              <input
-                type="text"
-                name="floorLevel"
-                value={formData.floorLevel}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Size *</label>
-              <input
-                type="text"
-                name="size"
-                value={formData.size}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Seats *</label>
-              <input
-                type="number"
-                name="seats"
-                value={formData.seats}
-                onChange={handleChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Status *</label>
-              <AdminFilter />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Facilities *</label>
-              <AdminFilter />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700">Room Image *</label>
-              <input
-                type="file"
-                onChange={handleImageChange}
-                className="mt-1 p-2 border rounded w-full"
-                required
-              />
-            </div>
-            <div className="col-span-2 flex justify-end gap-4 mt-4">
-              <AdminButton label="Save" />
-              <div onClick={onCancel}>
-                <AdminButton label="Cancel" />
-              </div>
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default AddRoom;
