@@ -42,9 +42,7 @@ const ViewAdmins: React.FC = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <SideNav nav={true} />
-      <main className="flex-1 ml-[270px] p-8">
+    <div className="flex flex-col px-5 pt-5 min-h-screen bg-gray-100">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">ADMIN MANAGEMENT</h2>
 
         {/* Search & Sort */}
@@ -145,7 +143,6 @@ const ViewAdmins: React.FC = () => {
             Add Admin
           </button>
         </div>
-      </main>
     </div>
   );
 };
