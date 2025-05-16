@@ -1,30 +1,20 @@
 import React, { useState } from 'react';
 
-type Mode = 'edit' | 'delete';
+const EditDeleteUserForm: React.FC = () => {
+  type Mode = 'edit' | 'delete';
 
-interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  number: string;
-  status: 'Active' | 'Inactive';
-  password: string;
-}
+  const mode: Mode = 'edit'; // or 'delete' statically set here
 
-interface EditDeleteUserFormProps {
-  mode: Mode;
-  user: UserData;
-  onSubmit: (id: string, updatedData?: Partial<UserData>) => void;
-  onClose: () => void;
-}
+  const user = {
+    id: '1',
+    name: 'Juan Dela Cruz',
+    email: 'juan@example.com',
+    number: '09123456789',
+    status: 'Active',
+    password: 'password123',
+  };
 
-const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
-  mode,
-  user,
-  onSubmit,
-  onClose,
-}) => {
-  const [formData, setFormData] = useState<Partial<UserData>>({
+  const [formData, setFormData] = useState({
     name: user.name,
     email: user.email,
     number: user.number,
@@ -43,12 +33,15 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
   };
 
   const handleSubmit = () => {
-    if (mode === 'edit') {
-      onSubmit(user.id, formData);
-    } else if (mode === 'delete') {
-      onSubmit(user.id);
-    }
-    onClose();
+    console.log(`${mode === 'edit' ? 'Saving changes' : 'Deleting user'}`, {
+      id: user.id,
+      updatedData: formData,
+    });
+    alert(`${mode === 'edit' ? 'User info updated' : 'User deleted'}`);
+  };
+
+  const handleClose = () => {
+    alert('Modal closed');
   };
 
   return (
@@ -65,7 +58,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
               <input
                 type="text"
                 name="name"
-                value={formData.name || ''}
+                value={formData.name}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
               />
@@ -76,7 +69,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
               <input
                 type="text"
                 name="number"
-                value={formData.number || ''}
+                value={formData.number}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
               />
@@ -87,7 +80,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
               <input
                 type="email"
                 name="email"
-                value={formData.email || ''}
+                value={formData.email}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
               />
@@ -97,7 +90,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
               <label className="block text-sm font-medium">Status</label>
               <select
                 name="status"
-                value={formData.status || 'Active'}
+                value={formData.status}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
               >
@@ -111,7 +104,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
               <input
                 type="password"
                 name="password"
-                value={formData.password || ''}
+                value={formData.password}
                 onChange={handleChange}
                 className="w-full px-3 py-2 border rounded"
               />
@@ -126,7 +119,7 @@ const EditDeleteUserForm: React.FC<EditDeleteUserFormProps> = ({
 
         <div className="mt-6 flex justify-end space-x-3">
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="px-5 py-2 rounded bg-gray-600 text-white"
           >
             Cancel
