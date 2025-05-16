@@ -5,7 +5,7 @@ const Account: React.FC = () => {
   const [isEditingPersonal, setIsEditingPersonal] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
-  const [profilePhoto, setProfilePhoto] = useState<string | null>(null);
+  const [profilePhoto, setProfilePhoto] = useState<string | null>('/user-avatar.svg');
 
   const [personalInfo, setPersonalInfo] = useState({
     firstName: 'Alliyana Rose',
