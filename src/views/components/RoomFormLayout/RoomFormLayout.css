@@ -1,0 +1,68 @@
+.room-card {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.room-card img {
+  max-width: 450px;
+  margin-right: 20px;
+  border-radius: 8px;
+}
+
+.room-card .details {
+  flex-grow: 1;
+}
+
+.room-card h2 {
+  margin: 0;
+  color: #1a73e8;
+  font-size: 18px;
+}
+
+.room-card p {
+  margin: 5px 0;
+  font-size: 14px;
+}
+
+.status-available {
+  color: green;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.status-booked {
+  color: red;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.room-card .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.room-card .edit-button {
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 70px;
+  border-radius: 5px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+}
+
+.room-card .delete-button {
+  padding: 5px 10px;
+  cursor: pointer;
+  width: 70px;
+  border-radius: 5px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+}
