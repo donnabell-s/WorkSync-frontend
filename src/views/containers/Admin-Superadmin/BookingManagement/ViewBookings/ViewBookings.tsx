@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react';
 
 const ViewBookings = () => {
-  return (
-    <div>ViewBookings</div>
-  )
-}
+  
 
-export default ViewBookings
+  return (
+    <div>ViewBooking
+    </div>
+  );
+};
+
+export default ViewBookings;

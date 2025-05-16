@@ -1,9 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react';
+import ViewBooking from './ViewBooking';
 
 const ViewBookingDetails = () => {
+  const [mode, setMode] = useState<'view' | 'approved'>('view');
+
+  const handleApprove = () => {
+    setMode('approved');
+  };
+
   return (
-    <div>ViewBookingDetails</div>
-  )
-}
+    <div className="w-full h-full flex flex-col items-center justify-center">
+      <ViewBooking mode={mode} onApprove={handleApprove} />
+    </div>
+  );
+};
+
 
 export default ViewBookingDetails
