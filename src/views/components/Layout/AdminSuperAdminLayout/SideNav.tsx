@@ -23,4 +23,4 @@ const SideNav: React.FC<SideNavProps> = ({ nav }) => {
     )
 }
 
-export default SideNav
+export default SideNav;
