@@ -21,4 +21,4 @@ const AdminFilter: React.FC<AdminFilterProps> = ({ onChange, filters }) => {
   )
 }
 
-export default AdminFilter
+export default AdminFilter;
