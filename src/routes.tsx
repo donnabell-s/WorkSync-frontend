@@ -32,6 +32,7 @@ export const AppRoutes = () => {
           <Route path={PATHS.ADMIN_MGNT.VIEW.path} element={<Views.ViewAdmins />} />
           <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<Views.EditAdmin />} />
         </Route>
+        
         <Route path={PATHS.USER_MAIN.path} element={<Views.UserMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}
           <Route path={PATHS.USER_VIEW.HOME.path} element={<Views.Home />} />
