@@ -6,7 +6,7 @@ interface MeetingRoom {
     numberOfSeats: number;
     additionalFacilities: string[];
     imageFile: string;
-    status: 'available' | 'occupied';
+    status: 'available' | 'occupied' | 'under maintenance' | 'reserved';
 }
   
 
