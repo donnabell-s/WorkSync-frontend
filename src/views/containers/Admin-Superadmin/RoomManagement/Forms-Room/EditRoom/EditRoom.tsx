@@ -56,14 +56,11 @@ const EditRoom: React.FC = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-            <SideNav nav={nav} />
             <div className="flex-1">
-                <Header nav={nav} toggleNav={toggleNav} />
                 <div className="p-6">
                     <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/room-management')}>
                         &lt; Back to View Rooms
                     </div>
-                    <AdminHeading label="EDIT ROOM" />
                     <RoomFormLayout
                         formData={formData}
                         onInputChange={handleInputChange}
