@@ -36,11 +36,11 @@ const ViewAdmin: React.FC = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-            <SideNav nav={nav} />
+
             <div className="flex-1">
-                <Header nav={nav} toggleNav={toggleNav} />
+
                 <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/admins')}>
+                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/admins/view')}>
                         &lt; Back to Admin List
                     </div>
                     <AdminHeading label="VIEW ADMIN DETAILS" />

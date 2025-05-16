@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
+import {useNavigate} from 'react-router-dom';
 
 interface ViewRoomHeaderProps {
     activeTab: string;
@@ -8,6 +9,7 @@ interface ViewRoomHeaderProps {
 }
 
 const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabClick }) => {
+    const navigate = useNavigate();
 
     return (
         <div className='max-h-max flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
@@ -36,11 +38,13 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </div>
                 </div>
                 <div className='max-h-max rounded-md lg:w-1/6 w-full flex lg:flex-col flex-row gap-2 items-end'>
-                    <button className='text-white text-sm bg-[#F59E0B] hover:bg-[#f5740b] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer'>
+                    <button className='text-white text-sm bg-[#F59E0B] hover:bg-[#f5740b] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer' 
+                    onClick={() => navigate('/admin/rooms/edit')}>
                         <MdEdit className='size-5 text-white' />
                         Edit
                     </button>
-                    <button className='text-white text-sm bg-[#DC2626] hover:bg-[#b71e1e] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer'>
+                    <button className='text-white text-sm bg-[#DC2626] hover:bg-[#b71e1e] flex gap-4 p-2 rounded-md items-center w-25 justify-center transform transition-all duration-300 cursor-pointer' 
+                    onClick={() => navigate('/admin/rooms/delete')}>
                         <MdDelete className='size-5 text-white' />
                         Delete
                     </button>

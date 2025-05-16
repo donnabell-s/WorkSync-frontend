@@ -11,7 +11,7 @@ const History: React.FC = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-            <SideNav nav={nav} />
+
             <div className="flex-1">
                 <div className="p-6">
                     <AdminHeading label="BOOKING HISTORY" />

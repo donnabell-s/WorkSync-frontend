@@ -41,7 +41,7 @@ const DeleteRoom: React.FC = () => {
         <div className="flex min-h-screen bg-gray-100">
             <div className="flex-1">
                 <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/room-management')}>
+                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/room-detail')}>
                         {'<'} Back to Room Details
                     </div>
                     <AdminHeading label="DELETE ROOM" />
