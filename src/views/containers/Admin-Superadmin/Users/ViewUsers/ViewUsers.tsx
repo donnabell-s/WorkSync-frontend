@@ -41,9 +41,7 @@ const ViewUser: React.FC = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      <SideNav nav={true} />
-      <main className="flex-1 ml-[270px] p-8">
+    <div className="flex flex-col pt-5 px-5 min-h-screen bg-gray-100">
         <h2 className="text-xl font-semibold mb-6">USER MANAGEMENT</h2>
 
         <div className="flex items-center justify-between mb-4">
@@ -128,7 +126,6 @@ const ViewUser: React.FC = () => {
             Add User
           </button>
         </div>
-      </main>
     </div>
   );
 };
