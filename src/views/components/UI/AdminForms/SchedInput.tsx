@@ -21,7 +21,16 @@ const SchedInput: React.FC<SchedInputProps> = ({ label, className, value1, value
             <div className='flex flex-col gap-2 text-sm'>
                 <div className='flex gap-6 items-center'>
                     <label htmlFor="">Date</label>
-                    <input value={value1} type="date" className={`w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer`} />
+                    <input
+                        type="date"
+                        className={`w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer`}
+                        value={(value1 || value2) && (() => {
+                            const start = new Date();
+                            start.setFullYear(start.getFullYear() - 1);
+                            const end = new Date();
+                            const randomDate = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+                            return randomDate.toISOString().split('T')[0];
+                        })()} />
                 </div>
                 <div className='flex gap-6 items-center'>
                     <label htmlFor="">Time</label>
