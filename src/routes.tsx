@@ -15,7 +15,7 @@ export const AppRoutes = () => {
           <Route
             path={PATHS.ADMIN_MAIN.path}
             element={
-              <ProtectedRoute roles={["admin"]}>
+              <ProtectedRoute roles={["admin", "superadmin"]}>
                 <Views.AdminMain />
               </ProtectedRoute>
             }
@@ -49,7 +49,7 @@ export const AppRoutes = () => {
           <Route
             path={PATHS.USER_MAIN.path}
             element={
-              <ProtectedRoute>
+              <ProtectedRoute roles={["user"]}>
                 <Views.UserMain />
               </ProtectedRoute>
             }
