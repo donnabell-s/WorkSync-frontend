@@ -1,0 +1,135 @@
+{
+  "users": [
+    {
+      "id": "50q5Mc2vKWQcr20rrpgqE",
+      "email": "donna@email.com",
+      "password": "$2b$10$Z7IYtvR1t/fBej0rCwdyM.3MQXeZE8H23sK3x1kTkCzfsG2w2nZ52",
+      "fname": "Donna",
+      "lname": "Sembrano",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-18T07:55:40.143Z",
+      "updatedAt": "2025-05-18T07:55:40.143Z"
+    },
+    {
+      "id": "ldk06K3V_U3O6xOKb-xFb",
+      "email": "yana@email.com",
+      "password": "$2b$10$sDlmHITH9zZyKoj0RD6tNeyq4iGvjua2m92GMVAnwan24X7BrNRhO",
+      "fname": "Yana",
+      "lname": "Garcia",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-18T07:57:47.650Z",
+      "updatedAt": "2025-05-18T07:57:47.650Z"
+    },
+    {
+      "id": "w_W2qSw-6bZRuAHL438I8",
+      "email": "chaz@email.com",
+      "password": "$2b$10$Tj3P7FUDT9c9tlLAncmsaOum/DKRFIo1LEEkGMFd7cn6bcY3qAfIG",
+      "fname": "Chaz",
+      "lname": "Garcia",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-18T08:35:25.649Z",
+      "updatedAt": "2025-05-18T08:35:25.649Z"
+    }
+  ],
+  "preferences": [
+    {
+      "id": 1,
+      "userId": 1,
+      "preferences": {
+        "bookingEmailConfirm": false,
+        "cancellationNotif": true,
+        "reminders": {
+          "bookingReminder": true,
+          "notif": {
+            "time": 10,
+            "unit": "minutes"
+          }
+        },
+        "bookingDefaultDuration": 60
+      }
+    }
+  ],
+  "rooms": [
+    {
+      "id": 1,
+      "name": "Conference Room A",
+      "code": "CRA-102A",
+      "seats": 10,
+      "location": "North Tower",
+      "level": 2,
+      "size": "Medium",
+      "status": "Available",
+      "operatingHours": {
+        "weekdays": {
+          "open": "08:00",
+          "close": "20:00"
+        },
+        "weekends": {
+          "open": "09:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Projector",
+        "Whiteboard",
+        "Video Conferencing"
+      ],
+      "createdAt": "2023-01-15T09:00:00Z",
+      "updatedAt": "2023-06-20T14:30:00Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "roomId": 1,
+      "userId": 1,
+      "title": "Weekly Team Meeting",
+      "description": "Project sync",
+      "startDateTime": "2023-10-01T10:00:00",
+      "endDateTime": "2023-10-01T11:00:00",
+      "recurrence": {
+        "isRecurring": true,
+        "pattern": "weekly",
+        "interval": 1,
+        "daysOfWeek": [
+          1
+        ],
+        "dates": [
+          "2023-10-01",
+          "2023-10-08",
+          "2023-10-15"
+        ],
+        "endDate": "2023-12-31"
+      },
+      "status": "confirmed",
+      "createdAt": "2023-09-20T08:00:00",
+      "updatedAt": "2023-09-20T08:00:00"
+    }
+  ],
+  "logs": {
+    "roomLogs": [
+      {
+        "id": 1,
+        "roomId": 1,
+        "userId": "u123",
+        "eventType": "Room Created",
+        "currentStatus": "available",
+        "timestamp": "2023-10-15T09:02:15Z"
+      }
+    ],
+    "bookingLogs": [
+      {
+        "id": 1,
+        "bookingId": 1,
+        "userId": 1,
+        "eventType": "cancellation",
+        "currentStatus": "available",
+        "timestamp": "2023-10-15T09:05:00Z"
+      }
+    ]
+  },
+  "sessions": []
+}

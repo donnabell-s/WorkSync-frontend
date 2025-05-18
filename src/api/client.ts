@@ -1,0 +1,109 @@
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { User, Room, Booking, Preference } from '../types';
+
+// Create axios instance with auth handling
+const createApiClient = (): AxiosInstance => {
+    const instance = axios.create({
+        baseURL: 'http://localhost:3001',
+    });
+
+    // Add request interceptor for auth token
+    instance.interceptors.request.use((config) => {
+        const token = localStorage.getItem('token');
+        if (token &&
+            config.url &&
+            !config.url.endsWith('/auth/login') &&
+            !config.url.endsWith('/auth/signup')) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    });
+
+    // Add response interceptor for error handling
+    instance.interceptors.response.use(
+        (response) => response,
+        (error) => {
+            if (error.response?.status === 401 &&
+                window.location.pathname !== '/login' &&
+                window.location.pathname !== '/signup') {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+            return Promise.reject(error);
+        }
+    );
+
+    return instance;
+};
+
+export const api = createApiClient();
+
+// API Paths
+export const API_PATHS = {
+    AUTH: {
+        LOGIN: '/auth/login',
+        SIGNUP: '/auth/signup',
+        LOGOUT: '/auth/logout',
+    },
+    ROOMS: '/rooms',
+    USERS: '/users/me',
+};
+
+// Auth API
+export const authApi = {
+    login: (credentials: { email: string; password: string }) =>
+        api.post<{
+            token: string;
+            user: User
+        }>(API_PATHS.AUTH.LOGIN, credentials),
+
+    signup: (userData: {
+        fname: string;
+        lname: string;
+        email: string;
+        password: string
+    }) => api.post<{
+        token: string;
+        user: User
+    }>(API_PATHS.AUTH.SIGNUP, userData),
+
+    logout: () => {
+        const token = localStorage.getItem('token');
+        return api.post(
+            API_PATHS.AUTH.LOGOUT,
+            {},
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+    },
+
+    getCurrent: (): Promise<AxiosResponse<User>> =>
+        api.get(API_PATHS.USERS)
+};
+
+// Rooms API
+export const roomsApi = {
+    getAll: (config?: AxiosRequestConfig) =>
+        api.get<Room[]>(API_PATHS.ROOMS, config),
+
+    create: (data: { title: string }, config?: AxiosRequestConfig) =>
+        api.post<Room>(API_PATHS.ROOMS, data, config),
+
+    update: (id: string, data: { title: string }, config?: AxiosRequestConfig) =>
+        api.put<Room>(`${API_PATHS.ROOMS}/${id}`, data, config),
+
+    delete: (id: string, config?: AxiosRequestConfig) =>
+        api.delete(`${API_PATHS.ROOMS}/${id}`, config)
+};
+
+// Generic API functions (optional)
+export const createApiFunctions = <T extends { id: string }>(endpoint: string) => ({
+    getAll: (config?: AxiosRequestConfig) => api.get<T[]>(endpoint, config),
+    getById: (id: string, config?: AxiosRequestConfig) =>
+        api.get<T>(`${endpoint}/${id}`, config),
+    create: (data: Omit<T, 'id'>, config?: AxiosRequestConfig) =>
+        api.post<T>(endpoint, data, config),
+    update: (id: string, data: Partial<T>, config?: AxiosRequestConfig) =>
+        api.put<T>(`${endpoint}/${id}`, data, config),
+    delete: (id: string, config?: AxiosRequestConfig) =>
+        api.delete(`${endpoint}/${id}`, config),
+});

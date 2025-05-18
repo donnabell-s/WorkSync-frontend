@@ -1,113 +1,27 @@
 {
-    "user": [
-        {
-            "id": 1,
-            "fname": "John",
-            "lname": "Doe",
-            "email": "",
-            "password": "password123",
-            "phone": "1234567890",
-            "role": "user",
-            "isActive": true,
-            "createdAt": "2023-01-15T09:00:00Z",
-            "updatedAt": "2023-06-20T14:30:00Z"
-        }
-    ],
-    "preferences": [
-        {
-            "id": 1,
-            "userId": 1,
-            "preferences": {
-                "bookingEmailConfirm": false,
-                "cancellationNotif": true,
-                "reminders": {
-                    "bookingReminder": true,
-                    "notif": {
-                        "time": 10,
-                        "unit": "minutes"
-                    }
-                },
-                "bookingDefaultDuration": 60
-            }
-        }
-    ],
-    "rooms": [
-        {
-            "id": 1,
-            "name": "Conference Room A",
-            "code": "CRA-102A",
-            "seats": 10,
-            "location": "North Tower",
-            "level": 2,
-            "size": "Medium",
-            "status": "Available",
-            "operatingHours": {
-                "weekdays": {
-                    "open": "08:00",
-                    "close": "20:00"
-                },
-                "weekends": {
-                    "open": "09:00",
-                    "close": "16:00"
-                }
-            },
-            "amenities": [
-                "Projector",
-                "Whiteboard",
-                "Video Conferencing"
-            ],
-            "createdAt": "2023-01-15T09:00:00Z",
-            "updatedAt": "2023-06-20T14:30:00Z"
-        }
-    ],
-    "bookings": [
-        {
-            "id": 1,
-            "roomId": 1,
-            "userId": 1,
-            "title": "Weekly Team Meeting",
-            "description": "Project sync",
-            "startDateTime": "2023-10-01T10:00:00",
-            "endDateTime": "2023-10-01T11:00:00",
-            "recurrence": {
-                "isRecurring": true,
-                "pattern": "weekly",
-                "interval": 1,
-                "daysOfWeek": [
-                    1
-                ],
-                "dates": [
-                    "2023-10-01",
-                    "2023-10-08",
-                    "2023-10-15"
-                ],
-                "endDate": "2023-12-31"
-            },
-            "status": "confirmed",
-            "createdAt": "2023-09-20T08:00:00",
-            "updatedAt": "2023-09-20T08:00:00"
-        }
-    ],
-    "logs": {
-        "roomLogs": [
-            {
-                "id": 1,
-                "roomId": 1,
-                "userId": "u123",
-                "eventType": "Room Created",
-                "currentStatus": "available",
-                "timestamp": "2023-10-15T09:02:15Z"
-            }
-        ],
-        "bookingLogs": [
-            {
-                "id": 1,
-                "bookingId": 1,
-                "userId": 1,
-                "eventType": "cancellation",
-                "currentStatus": "available",
-                "timestamp": "2023-10-15T09:05:00Z"
-            }
-        ]
+  "users": [
+    {
+      "id": "QCnkQ0zfwoEkcTaBDWd2n",
+      "email": "donna@email.com",
+      "password": "$2b$10$Gyw4TXtG8vDDKKxU9GqO4.CzILpcsdS2rT9nJEUtyuR2WPbdE0BWq",
+      "fname": "Donna",
+      "lname": "Sembrano",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-18T07:39:21.199Z",
+      "updatedAt": "2025-05-18T07:39:21.199Z"
     }
+  ],
+  "rooms": [],
+  "bookings": [],
+  "preferences": [],
+  "bookingLogs": [],
+  "roomLogs": [],
+  "sessions": [
+    {
+      "id": "6nvZitJZpWPJap17d_56P",
+      "userId": "QCnkQ0zfwoEkcTaBDWd2n",
+      "createdAt": "2025-05-18T07:39:21.199Z"
+    }
+  ]
 }

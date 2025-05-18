@@ -3,18 +3,34 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "set NODE_OPTIONS=--experimental-require-module&& tsx server/server.ts",
+    "server:simple": "json-server --watch server/db.json --port 3001",
+    "dev:all": "concurrently -n \"FRONTEND,BACKEND\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev\" \"npm run server\"",
+    "dev:simple": "concurrently \"npm run dev\" \"npm run server:simple\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^7.0.2",
     "@tailwindcss/vite": "^4.1.5",
+    "@types/bcrypt": "^5.0.2",
+    "@types/nanoid": "^2.1.0",
+    "axios": "^1.9.0",
+    "bcrypt": "^6.0.0",
     "chart.js": "^4.4.9",
+    "cors": "^2.8.5",
+    "esm": "^3.2.25",
+    "express": "^5.1.0",
+    "lowdb": "^7.0.1",
+    "nanoid": "^5.1.5",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
@@ -24,24 +40,36 @@
     "react-router-dom": "^7.6.0",
     "recharts": "^2.15.3",
     "tailwind-scrollbar-hide": "^2.0.0",
-    "tailwindcss": "^4.1.5"
+    "tailwindcss": "^4.1.5",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/json-server": "^0.14.8",
+    "@types/node": "^22.15.18",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
     "@types/recharts": "^1.8.29",
+    "@types/uuid": "^10.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
     "eslint": "^9.22.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "json-server": "^1.0.0-beta.3",
+    "json-server-auth": "^2.1.0",
     "postcss": "^8.5.3",
     "tailwindcss": "^4.1.5",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.26.1",
-    "vite": "^6.3.5"
+    "vite": "^6.3.5",
+    "vite-node": "^3.1.3"
   }
 }

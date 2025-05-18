@@ -1,4 +1,4 @@
-export interface PreferenceInterface {
+export interface Preference {
     id: number;
     userId: number;
     preferences: {

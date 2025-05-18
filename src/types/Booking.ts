@@ -1,4 +1,4 @@
-export interface BookingInterface {
+export interface Booking {
     id: number;
     userId: number; // ID of the user who made the booking
     roomId: number; // ID of the booked room

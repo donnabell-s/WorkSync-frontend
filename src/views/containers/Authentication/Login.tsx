@@ -2,40 +2,34 @@ import { MdEmail, MdLock } from "react-icons/md";
 import userBrandLogo from "../../../assets/user-brand-logo.svg";
 import { useNavigate } from "react-router";
 import React, { useState } from "react";
-
-const dummyAccounts = {
-  user: {
-    email: "user@example.com",
-    password: "user123",
-    redirect: "/user/home",
-  },
-  admin: {
-    email: "admin@example.com",
-    password: "admin123",
-    redirect: "/admin/dashboard",
-  },
-  superadmin: {
-    email: "superadmin@example.com",
-    password: "superadmin123",
-    redirect: "/admin/dashboard",
-  },
-};
+import { useAuth } from "../../../context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const { user, login } = useAuth();
 
-  const UserLogin = () => {
-    // Find matching dummy account
-    const account = Object.values(dummyAccounts).find(
-      (acc) => acc.email === email && acc.password === password
-    );
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
-    if (account) {
-      navigate(account.redirect);
-    } else {
-      alert("Invalid credentials");
+    try {
+      const loggedUser = await login(email, password);
+
+      if (loggedUser!.role === "admin" || loggedUser!.role === "superadmin") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/home");
+      }
+    } catch (error: any) {
+      setError("Invalid credentials. Please try again.");
+      console.error("Login error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -48,13 +42,20 @@ const Login = () => {
         <div className="absolute top-8 left-8">
           <img src={userBrandLogo} alt="WorkSync Logo" className="w-14 h-14" />
         </div>
-        <div className="w-full flex flex-col items-center px-2 z-10">
+        <form onSubmit={handleSubmit} className="w-full flex flex-col items-center px-2 z-10">
           <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-800 w-[320px]">
             Sign In to WorkSync
           </h2>
           <p className="text-gray-500 text-center mb-8 text-base w-[320px]">
             Book. Meet. Repeat.
           </p>
+
+          {error && (
+            <div className="mb-4 w-[260px] p-2 bg-red-100 text-red-700 text-sm rounded-md">
+              {error}
+            </div>
+          )}
+
           <div className="w-[320px] flex flex-col items-center">
             <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white shadow-sm mb-4 w-[260px]">
               <MdEmail className="text-gray-400 mr-2 text-xl" />
@@ -64,6 +65,7 @@ const Login = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full outline-none bg-transparent text-gray-700 text-base placeholder-gray-400"
+                required
               />
             </div>
             <div className="flex items-center border border-gray-300 rounded-md px-3 py-2 bg-white shadow-sm w-[260px]">
@@ -74,35 +76,37 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full outline-none bg-transparent text-gray-700 text-base placeholder-gray-400"
+                required
               />
             </div>
             <div className="w-full flex justify-center mt-2 mb-6">
               <button
                 type="button"
                 className="text-sm text-gray-500 hover:underline bg-transparent border-none p-0 m-0"
-                onClick={() => navigate("/forgot-password")}
+                onClick={() => navigate('/forgot-password')}
               >
                 Forgot your password?
               </button>
             </div>
             <button
+              type="submit"
               className="bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-md mb-6 transition-colors text-base shadow-md w-[140px] mx-auto"
-              onClick={UserLogin}
+              disabled={loading}
             >
-              SIGN IN
+              {loading ? "LOADING..." : "SIGN IN"}
             </button>
             <p className="text-gray-500 text-sm w-[260px] text-center">
               Don't have an account?{" "}
               <button
                 type="button"
                 className="text-teal-600 font-semibold hover:underline bg-transparent border-none p-0 m-0"
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate('/signup')}
               >
                 Sign up
               </button>
             </p>
           </div>
-        </div>
+        </form>
       </div>
 
       {/* Right Side */}
