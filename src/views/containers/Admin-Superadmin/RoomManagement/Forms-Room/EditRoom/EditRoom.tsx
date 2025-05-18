@@ -1,16 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../../../components/Layout/AdminSuperAdminLayout/Header';
-import SideNav from '../../../../../components/Layout/AdminSuperAdminLayout/SideNav';
-import AdminHeading from '../../../../../components/UI/AdminHeading';
-import AdminButton from '../../../../../components/UI/AdminButton';
 import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
 import { meetingRooms } from "../../../../../components/Feature";
+import AdminButton from '../../../../../components/UI/AdminButton';
 
 const EditRoom: React.FC = () => {
-    const [nav, setNav] = useState(false);
     const navigate = useNavigate();
-    const toggleNav = () => setNav(!nav);
 
     // For this example, we'll use the room with roomCode "CR-102A" as shown in the screenshot
     const room = meetingRooms.find(r => r.roomCode === 'CR-102A');
@@ -25,7 +20,7 @@ const EditRoom: React.FC = () => {
         status: room?.status || 'Available',
         facilities: room?.additionalFacilities || [],
         image: null as File | null,
-        imagePreview: `/meetingroom/${room?.imageFile}` || '',
+        imagePreview: `/meetingroom/${room?.imageFile}` || 'https://via.placeholder.com/150', // Sample image
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -49,34 +44,39 @@ const EditRoom: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        // Handle form submission (e.g., API call to update the room)
         console.log('Updated Form Data:', formData);
         navigate('/admin/room-management');
     };
-
+    
     return (
         <div className="flex min-h-screen bg-gray-100">
             <div className="flex-1">
                 <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/room-detail')}>
-                        &lt; Back to Room Details
+                    <div className="text-blue-600 font-bold cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/view')}>
+                        {'<  Back to View Rooms'}
                     </div>
-                    <RoomFormLayout
-                        formData={formData}
-                        onInputChange={handleInputChange}
-                        onFacilitiesChange={handleFacilitiesChange}
-                        onImageChange={handleImageChange}
-                    >
-                        <div onClick={handleSubmit}>
-                            <AdminButton label="SAVE CHANGES" />
-                        </div>
-                        <button
-                            className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
-                            onClick={() => navigate('/admin/room-management')}
+                    <div className="bg-white p-10 rounded-lg shadow-md mt-4">
+                        <h2 className="text-4xl font-bold mb-6">EDIT ROOM</h2>
+                        {/* <div className="w-[100px] ml-auto"></div> */}
+                        <RoomFormLayout
+                        mode="edit"
+                            formData={formData}
+                            onInputChange={handleInputChange}
+                            onImageChange={handleImageChange}
+                            onSubmit={handleSubmit}
+                            onCancel={() => navigate('/admin/room-management')}
                         >
-                            CANCEL
-                        </button>
-                    </RoomFormLayout>
+                            <div onClick={handleSubmit}>
+                                <AdminButton label="SAVE" />
+                            </div>
+                            <button
+                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                                onClick={() => navigate('/admin/room-management')}
+                            >
+                                CANCEL
+                            </button>
+                        </RoomFormLayout>
+                    </div>
                 </div>
             </div>
         </div>

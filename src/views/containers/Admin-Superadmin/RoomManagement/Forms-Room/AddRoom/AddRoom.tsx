@@ -30,11 +30,6 @@ const AddRoom: React.FC = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleFacilitiesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedFacilities = Array.from(e.target.selectedOptions, option => option.value);
-        setFormData({ ...formData, facilities: selectedFacilities });
-    };
-
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFormData({
@@ -45,37 +40,40 @@ const AddRoom: React.FC = () => {
         }
     };
 
-    const handleSubmit = () => {
+    const handleSave = () => {
         console.log('Form Data:', formData);
         navigate('/admin/room-management');
     };
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-  
             <div className="flex-1">
-
                 <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/view')}>
-                        {'< Back to View Rooms'}
+                    <div className="text-blue-600 font-bold cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/view')}>
+                        {'<  Back to View Rooms'}
                     </div>
-                    <AdminHeading label="ADD ROOM" />
-                    <RoomFormLayout
-                        formData={formData}
-                        onInputChange={handleInputChange}
-                        onFacilitiesChange={handleFacilitiesChange}
-                        onImageChange={handleImageChange}
-                    >
-                        <div onClick={handleSubmit}>
-                            <AdminButton label="SAVE CHANGES" />
-                        </div>
-                        <button
-                            className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
-                            onClick={() => navigate('/admin/room-management')}
+                    <div className="bg-white p-10 rounded-lg shadow-md mt-4">
+                        <h2 className="text-4xl font-bold mb-6">ADD ROOM</h2>
+                        <div className="w-[100px] ml-auto"></div>
+                        <RoomFormLayout
+                            formData={formData}
+                            onInputChange={handleInputChange}
+                            onImageChange={handleImageChange}
+                            mode="add"
+                            onSubmit={handleSave}
+                            onCancel={() => navigate('/admin/room-management')}
                         >
-                            CANCEL
-                        </button>
-                    </RoomFormLayout>
+                            <div onClick={handleSave}>
+                                <AdminButton label="SAVE" />
+                            </div>
+                            <button
+                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                                onClick={() => navigate('/admin/room-management')}
+                            >
+                                CANCEL
+                            </button>
+                        </RoomFormLayout>
+                    </div>
                 </div>
             </div>
         </div>
