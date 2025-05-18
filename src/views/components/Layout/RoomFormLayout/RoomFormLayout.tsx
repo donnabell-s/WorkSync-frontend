@@ -129,7 +129,7 @@ const RoomFormLayout: React.FC<RoomFormProps> = ({
                     }`}
                     placeholder={readOnly ? '' : 'Choose File'}
                 />
-                {/* {formData.imagePreview && (
+                {formData.imagePreview && (
                     <div className="mt-2">
                         <img
                             src={formData.imagePreview}
@@ -137,7 +137,7 @@ const RoomFormLayout: React.FC<RoomFormProps> = ({
                             className="w-40 h-40 object-cover rounded-md"
                         />
                     </div>
-                )} */}
+                )}
             </div>
 
             {/* Floor/Level */}
