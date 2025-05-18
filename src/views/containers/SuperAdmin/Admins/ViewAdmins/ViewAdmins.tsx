@@ -100,9 +100,12 @@ const ViewAdmins: React.FC = () => {
                       {admin.status}
                     </td>
                     <td className="px-6 py-4">
-                      <button className="border px-3 py-1 rounded-md bg-white-400 hover:bg-blue-400">
-                        EDIT
-                      </button>
+              {/*Add Admin button */}
+              <button 
+              className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              EDIT
+          </button>
                     </td>
                   </tr>
                 ))

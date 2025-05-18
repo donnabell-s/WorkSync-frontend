@@ -131,11 +131,11 @@ const RoomFormLayout: React.FC<RoomFormProps> = ({
                 />
                 {formData.imagePreview && (
                     <div className="mt-2">
-                        <img
+                        {/* <img
                             src={formData.imagePreview}
                             alt="Room Preview"
                             className="w-40 h-40 object-cover rounded-md"
-                        />
+                        /> */}
                     </div>
                 )}
             </div>
