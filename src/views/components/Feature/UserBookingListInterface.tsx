@@ -8,6 +8,8 @@ export interface Booking {
   location: string;
   date: string;
   time: string;
+  organizer?: string; // Optional field for organizer
+  dateBooked?: string; // Optional field for date booked
   status: 'Upcoming' | 'Completed' | 'Cancelled' | 'Approved' | 'Pending' | 'Declined';
   recurrence: 'recurring' | 'non-recurring';
   roomCode?: string; // Optional field for room code

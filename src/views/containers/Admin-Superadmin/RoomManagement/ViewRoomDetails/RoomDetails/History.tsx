@@ -9,29 +9,42 @@ const History: React.FC = () => {
 
     const toggleNav = () => setNav(!nav);
 
+    // Function to get the day of the week from a date string
+    const getDayOfWeek = (dateString: string): string => {
+        const date = new Date(dateString);
+        const days = ['SUN', 'MON', 'TUE', 'WED', 'THUR', 'FRI', 'SAT'];
+        return days[date.getDay()];
+    };
+
     return (
         <div className="flex min-h-screen bg-gray-100">
             <div className="flex-1">
                 <div className="p-6">
                     <AdminHeading label="BOOKING HISTORY" />
-                    <div className="bg-white p-6 rounded-lg shadow-md mt-4">
-                        <table className="min-w-full divide-y divide-gray-200">
-                            <tbody className="bg-green divide-y divide-gray-10000">
-                                {bookingHistory.map(booking => (
-                                    <BookingTableRow
-                                        name={booking.name}
-                                        key={booking.id}
-                                        id={booking.id}
-                                        room={booking.room}
-                                        location={booking.location}
-                                        date={booking.date}
-                                        time={booking.time}
-                                        status={booking.status}
-                                        statusColor={booking.status === 'Completed' ? 'text-green-600' : 'text-red-600'}
-                                    />
-                                ))}
-                            </tbody>
-                        </table>
+
+                    {/* TODAY Section */}
+                    <div className="mt-4">
+                        <h2 className="text-lg font-semibold">TODAY</h2>
+                        <p className="text-gray-600">No Bookings</p>
+                    </div>
+
+                    {/* Previous History Section */}
+                    <div className="mt-6">
+                        <h2 className="text-lg font-semibold">May 9, 2022 - May 11, 2022</h2>
+                        <div className="mt-4">
+                        {bookingHistory.map(booking => (
+                            <BookingTableRow
+                                key={booking.id}
+                                name={booking.name ?? ''}
+                                time={booking.time ?? ''}
+                                organizer={booking.organizer ?? ''}
+                                dateBooked={booking.dateBooked ?? ''}
+                                notes={booking.note ?? ''}
+                                day={getDayOfWeek(booking.date)}
+                                recurringBooking={booking.recurrence ?? false}
+                            />
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
