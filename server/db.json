@@ -17,7 +17,7 @@
       "password": "$2b$10$sDlmHITH9zZyKoj0RD6tNeyq4iGvjua2m92GMVAnwan24X7BrNRhO",
       "fname": "Yana",
       "lname": "Garcia",
-      "role": "user",
+      "role": "admin",
       "isActive": false,
       "createdAt": "2025-05-18T07:57:47.650Z",
       "updatedAt": "2025-05-18T07:57:47.650Z"

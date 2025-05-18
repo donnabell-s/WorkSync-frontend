@@ -3,6 +3,7 @@ import Logo from '../../../../assets/admin-brand-logo.png'
 import { IoNotifications } from "react-icons/io5";
 import { CgProfile } from "react-icons/cg";
 import { IoMenu, IoClose } from "react-icons/io5";
+import ProfileDropdown from './ProfileDropdown';
 
 interface HeaderProps {
     nav: boolean;
@@ -21,7 +22,7 @@ const Header: React.FC<HeaderProps> = ({ nav, toggleNav }) => {
                 <IoNotifications className='size-6 cursor-pointer' />
                 <div className='flex items-center gap-4'>
                     <p className='font-medium cursor-pointer'>John Doe</p>
-                    <CgProfile className='size-8 cursor-pointer' />
+                    <ProfileDropdown />
                 </div>
             </div>
         </div>

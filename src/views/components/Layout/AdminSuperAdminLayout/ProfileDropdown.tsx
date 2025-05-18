@@ -1,34 +1,34 @@
-import React, { useState, useRef, useEffect }  from "react"
+import React, { useState, useRef, useEffect } from "react"
 import Avatar from "../../../../assets/user-avatar.svg"
-import ProfileDropdownLink from "./ProfileDropdownLink";
+import ProfileDropdownLink from "./ProfileDropdownLink.tsx";
 import { FiLogOut, FiSettings } from "react-icons/fi";
 import { useAuth } from "../../../../context/AuthContext";
 import { useNavigate } from "react-router";
 
 const ProfileDropdown: React.FC = () => {
-  const [open, setOpen] = useState(false);
-  const { logout } = useAuth();
-  const navigate = useNavigate();
-  const dropdownRef = useRef<HTMLDivElement>(null);
+    const [open, setOpen] = useState(false);
+    const { logout } = useAuth();
+    const navigate = useNavigate();
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      navigate("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-  };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setOpen(false);
-      }
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate("/login");
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <div className="relative flex items-center h-full" ref={dropdownRef}>
@@ -45,8 +45,8 @@ const ProfileDropdown: React.FC = () => {
                 </div>
                 <div className="border-t border-gray-200 my-2"></div>
                 <div className="flex flex-col gap-3 mt-3 mx-1">
-                    <ProfileDropdownLink label="Settings" icon={<FiSettings size={20}/>} path="/user/settings"/>
-                    <ProfileDropdownLink label="Logout" icon={<FiLogOut size={20}/>} onClick={handleLogout} />
+                    {/* <ProfileDropdownLink label="Settings" icon={<FiSettings size={20}/>} path="/user/settings"/> */}
+                    <ProfileDropdownLink label="Logout" icon={<FiLogOut size={20} />} onClick={handleLogout} />
                 </div>
             </div>
         </div>
