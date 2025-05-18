@@ -28,24 +28,64 @@ const BOOKING_LOGS_COLUMNS = [
 // Dummy data for demonstration
 const roomLogs = [
   {
-    action: 'Admin added room',
+    action: 'Room created',
     room: 'Training Room | TR-110',
     location: 'Southwing, Level 15',
     capacity: 12,
     status: 'AVAILABLE',
-    date: '03/04/25\n01:00PM - 05:30PM',
+    date: '05/10/25\n09:00AM - 10:00AM',
     statusColor: 'text-green-500',
     dateColor: 'text-green-500',
   },
   {
-    action: 'Room booked by user',
+    action: 'Room reserved by user',
     room: 'Executive Boardroom | CR-102A',
     location: 'North Tower, Level 12',
     capacity: 10,
-    status: 'BOOKED',
-    date: '03/01/25\n01:00PM - 05:30PM',
-    statusColor: 'text-yellow-500',
+    status: 'RESERVED',
+    date: '04/15/25\n01:00PM - 05:30PM',
+    statusColor: 'text-blue-500',
+    dateColor: 'text-blue-500',
+  },
+  {
+    action: 'Room under maintenance',
+    room: 'Meeting Room | MR-201',
+    location: 'East Wing, Level 2',
+    capacity: 8,
+    status: 'UNDER MAINTENANCE',
+    date: '03/20/25\n09:00AM - 10:00AM',
+    statusColor: 'text-red-500',
     dateColor: 'text-red-500',
+  },
+  {
+    action: 'Room occupied',
+    room: 'Conference Room | CR-210',
+    location: 'West Wing, Level 3',
+    capacity: 20,
+    status: 'OCCUPIED',
+    date: '05/14/25\n02:00PM - 04:00PM',
+    statusColor: 'text-orange-500',
+    dateColor: 'text-orange-500',
+  },
+  {
+    action: 'Room reserved by admin',
+    room: 'Board Room | BR-101',
+    location: 'Main Tower, Level 1',
+    capacity: 15,
+    status: 'RESERVED',
+    date: '04/28/25\n11:00AM - 12:00PM',
+    statusColor: 'text-blue-500',
+    dateColor: 'text-blue-500',
+  },
+  {
+    action: 'Room available after cleaning',
+    room: 'Training Room | TR-111',
+    location: 'Southwing, Level 16',
+    capacity: 14,
+    status: 'AVAILABLE',
+    date: '05/16/25\n10:00AM - 12:00PM',
+    statusColor: 'text-green-500',
+    dateColor: 'text-green-500',
   },
 ];
 
@@ -56,28 +96,128 @@ const bookingLogs = [
     user: 'John',
     roomNumber: 'TR-110',
     location: 'Southwing, Level 15',
-    bookingDate: '03/04/25\n01:00PM - 05:30PM',
+    bookingDate: '05/09/25\n01:00PM - 05:30PM',
     status: 'COMPLETED',
-    statusColor: 'text-green-500',
-    dateColor: 'text-green-500',
+    statusColor: 'text-orange-500',
+    dateColor: 'text-orange-500',
   },
   {
-    action: 'User canceled booking',
+    action: 'Booking cancelled by user',
     bookingId: '0390241',
     user: 'Mark',
     roomNumber: 'CR-102A',
     location: 'North Tower, Level 12',
-    bookingDate: '03/01/25\n01:00PM - 05:30PM',
-    status: 'CANCELED',
+    bookingDate: '04/18/25\n01:00PM - 05:30PM',
+    status: 'CANCELLED',
     statusColor: 'text-red-500',
     dateColor: 'text-red-500',
   },
+  {
+    action: 'Booking available for new user',
+    bookingId: '2021202',
+    user: 'Alice',
+    roomNumber: 'MR-201',
+    location: 'East Wing, Level 2',
+    bookingDate: '03/22/25\n09:00AM - 10:00AM',
+    status: 'AVAILABLE',
+    statusColor: 'text-green-500',
+    dateColor: 'text-green-500',
+  },
+  {
+    action: 'Booking completed',
+    bookingId: '2021203',
+    user: 'Bob',
+    roomNumber: 'CR-210',
+    location: 'West Wing, Level 3',
+    bookingDate: '05/15/25\n02:00PM - 04:00PM',
+    status: 'COMPLETED',
+    statusColor: 'text-orange-500',
+    dateColor: 'text-orange-500',
+  },
+  {
+    action: 'Booking cancelled by admin',
+    bookingId: '2021204',
+    user: 'Jane',
+    roomNumber: 'BR-101',
+    location: 'Main Tower, Level 1',
+    bookingDate: '04/29/25\n11:00AM - 12:00PM',
+    status: 'CANCELLED',
+    statusColor: 'text-red-500',
+    dateColor: 'text-red-500',
+  },
+  {
+    action: 'Booking available after release',
+    bookingId: '2021205',
+    user: 'Mike',
+    roomNumber: 'TR-111',
+    location: 'Southwing, Level 16',
+    bookingDate: '05/16/25\n10:00AM - 12:00PM',
+    status: 'AVAILABLE',
+    statusColor: 'text-green-500',
+    dateColor: 'text-green-500',
+  },
 ];
+
+const ITEMS_PER_PAGE = 5;
+
+function getMonthYear(dateStr: string) {
+  const [date] = dateStr.split('\n');
+  const [month, , year] = date.split('/');
+  return { month, year };
+}
 
 const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('This Month');
+  const [page, setPage] = useState(1);
 
+  const today = new Date();
+  const thisMonth = String(today.getMonth() + 1).padStart(2, '0');
+  const thisYear = String(today.getFullYear()).slice(-2);
+  const lastMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+  const lastMonth = String(lastMonthDate.getMonth() + 1).padStart(2, '0');
+  const lastMonthYear = String(lastMonthDate.getFullYear()).slice(-2);
+
+  const data = mode === 'rooms' ? roomLogs : bookingLogs;
+
+  const filteredData = data.filter(item => {
+    let dateStr = mode === 'rooms' ? item.date : item.bookingDate;
+    const { month, year } = getMonthYear(dateStr);
+
+    let dateMatch = true;
+    if (filter === 'This Month') {
+      dateMatch = month === thisMonth && year === thisYear;
+    } else if (filter === 'Last Month') {
+      dateMatch = month === lastMonth && year === lastMonthYear;
+    } else if (filter === 'This Year') {
+      dateMatch = year === thisYear;
+    }
+
+    // Search filtering
+    let searchMatch = true;
+    if (search.trim()) {
+      const s = search.toLowerCase();
+      searchMatch = Object.values(item).some(val =>
+        typeof val === 'string' && val.toLowerCase().includes(s)
+      );
+    }
+
+    return dateMatch && searchMatch;
+  });
+
+  // Pagination
+  const total = filteredData.length;
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
+  const pagedData = filteredData.slice(
+    (page - 1) * ITEMS_PER_PAGE,
+    page * ITEMS_PER_PAGE
+  );
+  const startIdx = total === 0 ? 0 : (page - 1) * ITEMS_PER_PAGE + 1;
+  const endIdx = Math.min(page * ITEMS_PER_PAGE, total);
+
+  React.useEffect(() => {
+    setPage(1);
+  }, [search, filter, mode]);
 
   return (
     <div className="w-full h-full p-6">
@@ -130,65 +270,69 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
             </tr>
           </thead>
           <tbody>
-            {mode === 'rooms'
-              ? roomLogs.map((log, idx) => (
-                  <tr key={idx} className="border-b border-gray-100">
-                    <td className="py-3 px-4">{log.action}</td>
-                    <td className="py-3 px-4">{log.room}</td>
-                    <td className="py-3 px-4">{log.location}</td>
-                    <td className="py-3 px-4">{log.capacity}</td>
-                    <td className={`py-3 px-4 font-semibold ${log.statusColor}`}>{log.status}</td>
-                    <td className="py-3 px-4">
-                      <span className={`${log.dateColor} block whitespace-pre-line font-medium`}>
-                        {log.date}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              : bookingLogs.map((log, idx) => (
-                  <tr key={idx} className="border-b border-gray-100">
-                    <td className="py-3 px-4">{log.action}</td>
-                    <td className="py-3 px-4">{log.bookingId}</td>
-                    <td className="py-3 px-4">{log.user}</td>
-                    <td className="py-3 px-4">{log.roomNumber}</td>
-                    <td className="py-3 px-4">{log.location}</td>
-                    <td className="py-3 px-4">
-                      <span className={`${log.dateColor} block whitespace-pre-line font-medium`}>
-                        {log.bookingDate}
-                      </span>
-                    </td>
-                    <td className={`py-3 px-4 font-semibold ${log.statusColor}`}>{log.status}</td>
-                  </tr>
-                ))}
-          
-            {[...Array(3 - (mode === 'rooms' ? roomLogs.length : bookingLogs.length))].map((_, idx) => (
-              <tr key={`empty-${idx}`}>
-                {(mode === 'rooms' ? ROOM_LOGS_COLUMNS : BOOKING_LOGS_COLUMNS).map((_, cidx) => (
-                  <td key={cidx} className="py-3 px-4">&nbsp;</td>
-                ))}
+            {pagedData.length === 0 ? (
+              <tr>
+                <td colSpan={mode === 'rooms' ? ROOM_LOGS_COLUMNS.length : BOOKING_LOGS_COLUMNS.length} className="py-6 text-center text-gray-400">
+                  No logs found.
+                </td>
               </tr>
-            ))}
+            ) : mode === 'rooms' ? (
+              pagedData.map((log, idx) => (
+                <tr key={idx} className="border-b border-gray-100">
+                  <td className="py-3 px-4">{log.action}</td>
+                  <td className="py-3 px-4">{log.room}</td>
+                  <td className="py-3 px-4">{log.location}</td>
+                  <td className="py-3 px-4">{log.capacity}</td>
+                  <td className={`py-3 px-4 font-semibold ${log.statusColor}`}>{log.status}</td>
+                  <td className="py-3 px-4">
+                    <span className={`${log.dateColor} block whitespace-pre-line font-medium`}>
+                      {log.date}
+                    </span>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              pagedData.map((log, idx) => (
+                <tr key={idx} className="border-b border-gray-100">
+                  <td className="py-3 px-4">{log.action}</td>
+                  <td className="py-3 px-4">{log.bookingId}</td>
+                  <td className="py-3 px-4">{log.user}</td>
+                  <td className="py-3 px-4">{log.roomNumber}</td>
+                  <td className="py-3 px-4">{log.location}</td>
+                  <td className="py-3 px-4">
+                    <span className={`${log.dateColor} block whitespace-pre-line font-medium`}>
+                      {log.bookingDate}
+                    </span>
+                  </td>
+                  <td className={`py-3 px-4 font-semibold ${log.statusColor}`}>{log.status}</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
       <div className="flex justify-end items-center mt-2 text-sm text-gray-600 gap-4">
         <span>Items per page:</span>
-        <span className="font-semibold text-blue-700">5</span>
+        <span className="font-semibold text-blue-700">{ITEMS_PER_PAGE}</span>
         <span className="mx-2">•</span>
-        <span>1-3 of 3</span>
+        <span>{startIdx}-{endIdx} of {total}</span>
         <button
-          className="mx-1 text-gray-400 hover:text-gray-700"
+          className={`mx-1 ${page === 1 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
           aria-label="Previous page"
           title="Previous page"
+          onClick={() => setPage(p => Math.max(1, p - 1))}
+          disabled={page === 1}
         >
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </button>
         <button
-          className="mx-1 text-gray-400 hover:text-gray-700"
+          className={`mx-1 ${page === totalPages || total === 0 ? 'text-gray-300 cursor-not-allowed' : 'text-gray-400 hover:text-gray-700'}`}
           aria-label="Next page"
           title="Next page"
+          onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+          disabled={page === totalPages || total === 0}
         >
           <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
             <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
