@@ -11,18 +11,17 @@ const History: React.FC = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-100">
-
             <div className="flex-1">
                 <div className="p-6">
                     <AdminHeading label="BOOKING HISTORY" />
                     <div className="bg-white p-6 rounded-lg shadow-md mt-4">
                         <table className="min-w-full divide-y divide-gray-200">
-                            <tbody className="bg-white divide-y divide-gray-200">
+                            <tbody className="bg-green divide-y divide-gray-10000">
                                 {bookingHistory.map(booking => (
                                     <BookingTableRow
+                                        name={booking.name}
                                         key={booking.id}
                                         id={booking.id}
-                                        name={booking.name}
                                         room={booking.room}
                                         location={booking.location}
                                         date={booking.date}

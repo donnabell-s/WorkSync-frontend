@@ -12,6 +12,7 @@ export interface Booking {
   recurrence: 'recurring' | 'non-recurring';
   roomCode?: string; // Optional field for room code
   roomName?: string; // Optional field for room name
+  note?: string; // Optional field for notes
 }
 
 export const sampleBookingList: Booking[] = [
@@ -311,6 +312,11 @@ export const bookingHistory: Booking[] = [
     date: '2023-10-01',
     time: '10:00 AM - 11:00 AM',
     status: 'Completed',
+    user: "",
+    description: "",
+    attendees: 0,
+    recurrence: "recurring",
+    note: '',
   },
   {
     id: 'B002',
@@ -320,6 +326,11 @@ export const bookingHistory: Booking[] = [
     date: '2023-10-02',
     time: '1:00 PM - 2:00 PM',
     status: 'Cancelled',
+    user: "",
+    description: "",
+    attendees: 0,
+    recurrence: "non-recurring",
+    note: '',
   },
 ];
 
@@ -331,7 +342,11 @@ export const reservations: Booking[] = [
     location: 'Branch 1, Level 5',
     date: '2023-10-05',
     time: '2:00 PM - 3:00 PM',
-    status: 'Upcoming', 
+    status: 'Upcoming',
+    user: "",
+    description: "",
+    attendees: 0,
+    recurrence: "non-recurring"
   },
   {
     id: 'B004',
@@ -340,6 +355,10 @@ export const reservations: Booking[] = [
     location: 'Branch 2, Level 2',
     date: '2023-10-06',
     time: '9:00 AM - 10:00 AM',
-    status: 'Upcoming', 
+    status: 'Upcoming',
+    user: "",
+    description: "",
+    attendees: 0,
+    recurrence: "recurring"
   },
 ];
