@@ -54,7 +54,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           className="bg-white rounded-md  shadow-[0_0_4px_rgba(0,0,0,0.1)] p-4 flex flex-col"
         >
           <img
-            src={`/meetingroom/${getImageSrc(room.size)}`}
+            src={`${getImageSrc(room.size)}`}
             alt={room.name}
             className="w-full h-40 object-cover rounded-md"
           />

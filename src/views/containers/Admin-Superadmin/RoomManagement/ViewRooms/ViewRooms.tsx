@@ -1,12 +1,17 @@
 import AdminHeading from '../../../../components/UI/AdminHeading'
 import RoomList from '../../../../components/Feature/RoomList'
 import ViewManagementHeader from '../../../../components/UI/ViewManagementHeader'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRooms } from '../../../../../context/RoomContext'
+import { Room } from '../../../../../../server/types'
 
 const ViewRooms = () => {
   const { rooms } = useRooms()
-  const [filteredRooms, setFilteredRooms] = useState(rooms)
+  const [filteredRooms, setFilteredRooms] = useState<Room[]>(rooms)
+
+  useEffect(() => {
+    setFilteredRooms(rooms);
+  }, [rooms]);
 
   return (
     <div className='h-[calc(100%-3rem)] flex flex-col p-3 px-7'>

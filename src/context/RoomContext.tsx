@@ -28,6 +28,7 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
       const response = await roomsApi.getAll();
       console.log('Fetched rooms:', response.data);
       setRooms(response.data);
+      console.log('Fetched rooms:', rooms);
     } catch (err) {
       setError('Failed to fetch rooms');
     } finally {

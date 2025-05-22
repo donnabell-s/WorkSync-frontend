@@ -49,7 +49,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             } else {
                 for (const roomTab of roomTabs) {
                     if (tab === roomTab) {
-                        filtered = rooms.filter(room => room.status === roomTab.toLowerCase());
+                        filtered = rooms.filter(room => room.status === roomTab);
                         break;
                     }
                 }
@@ -115,24 +115,10 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }
 
     useEffect(() => {
-        let filtered = view === "rooms" ? rooms : bookings;
-
-        if (view === "rooms") {
-            filtered = rooms.filter(room => {
-                const roomDetails = `${room.code} ${room.name} ${room.location}`.toLowerCase();
-                return roomDetails.includes(searchQuery.toLowerCase());
-            });
-        } else {
-            filtered = bookings.filter(booking => {
-                const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
-                return bookingDetails.includes(searchQuery.toLowerCase());
-            });
-        }
-
         if (setFunction) {
-            setFunction(filtered);
+            setFunction(rooms);
         }
-    }, [searchQuery]);
+    }, []);
 
     return (
         <div>
@@ -174,7 +160,6 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             <div className='flex sm:flex-row flex-col p-3 justify-between gap-3'>
                 <div className='flex md:flex-row flex-col gap-4 items-center'>
                     <AdminSearch value={searchQuery} onChange={handleSearchChange} />
-                    <AdminFilter onChange={() => { }} filters={['All']} />
                 </div>
                 {
                     view === "rooms" ?
