@@ -12,7 +12,6 @@ const DeleteRoom: React.FC = () => {
     const navigate = useNavigate();
     const toggleNav = () => setNav(!nav);
 
-    // For this example, we'll use the room with roomCode "CR-102A" as shown in the screenshot
     const room = meetingRooms.find((r: typeof meetingRooms[number]) => r.roomCode === 'CR-102A');
 
     const formData = {
@@ -29,12 +28,10 @@ const DeleteRoom: React.FC = () => {
     };
 
     const handleDelete = () => {
-        // Handle room deletion (e.g., API call to delete the room)
         console.log('Room Deleted:', formData);
         navigate('/admin/room-management');
     };
 
-    // Dummy handlers for read-only form
     const noop = () => {};
 
     return (

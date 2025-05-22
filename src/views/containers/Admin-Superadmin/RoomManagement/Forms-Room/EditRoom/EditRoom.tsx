@@ -12,7 +12,6 @@ const EditRoom: React.FC = () => {
     const navigate = useNavigate();
     const toggleNav = () => setNav(!nav);
 
-    // For this example, we'll use the room with roomCode "CR-102A" as shown in the screenshot
     const room = meetingRooms.find(r => r.roomCode === 'CR-102A');
 
     const [formData, setFormData] = useState({
@@ -49,7 +48,6 @@ const EditRoom: React.FC = () => {
     };
 
     const handleSubmit = () => {
-        // Handle form submission (e.g., API call to update the room)
         console.log('Updated Form Data:', formData);
         navigate('/admin/room-management');
     };

@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
-// import { getRooms, createRoom } from './controllers/room.controller';
+import { getRooms } from './controllers/room.controller';
 // import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
@@ -68,7 +68,7 @@ app.use(authMiddleware);
 
 // Protected routes
 app.post('/auth/logout', logoutHandler);
-// app.get('/rooms', (getRooms as any) as express.RequestHandler);
+app.get('/rooms', (getRooms as any) as express.RequestHandler);
 // app.post('/rooms', (createRoom as any) as express.RequestHandler);
 
 app.listen(3001, () => {
