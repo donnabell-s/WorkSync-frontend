@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { LuClock } from "react-icons/lu";
 
@@ -9,9 +10,11 @@ interface CalendarBookingModalProps {
 }
 
 const CalendarBookingModal: React.FC<CalendarBookingModalProps> = ({ isOpen, onClose, date }) => {
+  const [title, setTitle] = useState("");
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
-  // Format date as "Wednesday, May 15, 2024"
   const formattedDate = date.toLocaleDateString(undefined, {
     weekday: "long",
     year: "numeric",
@@ -19,10 +22,18 @@ const CalendarBookingModal: React.FC<CalendarBookingModalProps> = ({ isOpen, onC
     day: "numeric",
   });
 
-  // Compose date range string as per example (same start and end)
   const dateRangeText = `${formattedDate} - ${formattedDate}`;
-
   const repeatText = "Does not repeat";
+
+  const handleBookRoom = () => {
+    const payload = {
+      title,
+      date: date.toISOString(),
+    };
+
+    localStorage.setItem("tempBooking", JSON.stringify(payload));
+    navigate("/user/room-explorer");
+  };
 
   return (
     <div
@@ -42,6 +53,8 @@ const CalendarBookingModal: React.FC<CalendarBookingModalProps> = ({ isOpen, onC
         <input
           type="text"
           placeholder="Add Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
           className="border-0 border-b border-[#4B5563] p-1 mt-3 w-[85%] text-xl min-w-0 focus:outline-none focus:border-black transition-colors duration-200"
         />
 
@@ -56,7 +69,12 @@ const CalendarBookingModal: React.FC<CalendarBookingModalProps> = ({ isOpen, onC
         </div>
 
         <div className="flex flex-row justify-end mt-10">
-          <button className="bg-[#1E40AF] text-white py-1 px-6 rounded-full">Book a Room</button>
+          <button
+            className="bg-[#1E40AF] text-white py-1 px-6 rounded-full"
+            onClick={handleBookRoom}
+          >
+            Book a Room
+          </button>
         </div>
       </div>
     </div>

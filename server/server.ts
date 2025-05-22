@@ -2,6 +2,9 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
+import { getUsers, updateUser, getUserById } from './controllers/user.controller';
+import { getBooking, getBookingById } from './controllers/booking.controller';
+// import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
 const app = express();
@@ -66,18 +69,18 @@ const authMiddleware: RequestHandler = async (req, res, next) => {
 app.use(authMiddleware);
 
 // Protected routes
+app.post('/auth/logout', logoutHandler);
+app.get('/users', getUsers as express.RequestHandler);
+app.get('/user/:id', getUserById as express.RequestHandler);
+app.put('/user/:id', updateUser as express.RequestHandler);
+
 app.get('/rooms', makeHandler(getRooms));
 app.post('/rooms', makeHandler(createRoom));
 app.get('/rooms/:id', makeHandler(getRoomById));
 app.put('/rooms/:id', makeHandler(updateRoom));
 app.delete('/rooms/:id', makeHandler(deleteRoom));
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
+app.get('/bookings', (getBooking as any) as express.RequestHandler);
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');
 });

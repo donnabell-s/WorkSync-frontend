@@ -1,23 +1,50 @@
-import React, { useState } from 'react';
-import SideContainer from "../../../../views/components/Layout/UserLayout/SideContainer";
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../../../context/AuthContext';
+import { usersApi } from '../../../../api/client';
+import { User } from '../../../../types';
 
 const Account: React.FC = () => {
-  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
-
-  const [profilePhoto, setProfilePhoto] = useState<string | null>('/user-avatar.svg');
+  const { user: authUser } = useAuth();
 
   const [personalInfo, setPersonalInfo] = useState({
-    firstName: 'Alliyana Rose',
-    lastName: 'Garcia',
-    email: 'alliyanarose.garcia.22@usjr.edu.ph',
-    phone: '+63 999 999 9999',
+    fname: authUser?.fname || '',
+    lname: authUser?.lname || '',
+    email: authUser?.email || '',
+    phone: authUser?.phone || '',
   });
 
   const [addressInfo, setAddressInfo] = useState({
-    country: 'Philippines',
-    city: 'Cebu, Cebu City',
+    country: '',
+    city: '',
   });
+
+  const [profilePhoto, setProfilePhoto] = useState<string | null>('/user-avatar.svg');
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+
+  useEffect(() => {
+    async function fetchUser() {
+      if (!authUser?.id) return;
+      try {
+        const response = await usersApi.getUserById(String(authUser.id));
+        const freshUser: User = response.data;
+        setPersonalInfo({
+          fname: freshUser.fname,
+          lname: freshUser.lname,
+          email: freshUser.email,
+          phone: freshUser.phone || '',
+        });
+        setAddressInfo({
+          country: '',
+          city: '',
+        });
+        setProfilePhoto('/user-avatar.svg');
+      } catch (err) {
+        console.error('Failed to fetch fresh user data:', err);
+      }
+    }
+    fetchUser();
+  }, [authUser]);
 
   const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -27,11 +54,32 @@ const Account: React.FC = () => {
     }
   };
 
+  const handleSavePersonalInfo = async () => {
+    if (!authUser?.id) return;
+
+    try {
+      // Assuming your usersApi has an updateUser method that accepts (id, updatedData)
+      await usersApi.updateUser(String(authUser.id), {
+        fname: personalInfo.fname,
+        lname: personalInfo.lname,
+        email: personalInfo.email,
+      });
+
+      // Optionally refetch fresh data or just disable editing after save
+      setIsEditingPersonal(false);
+      // You may want to also update authUser context or refetch user data here
+
+    } catch (error) {
+      console.error('Failed to update user:', error);
+      alert('Failed to save changes. Please try again.');
+    }
+  };
+
+
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar */}
 
-      {/* Main Account Content */}
       <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md mt-6 ml-auto xl:ml-[270px] w-full">
         <h1 className="text-2xl font-bold border-b pb-4 mb-4">Account</h1>
 
@@ -58,24 +106,30 @@ const Account: React.FC = () => {
           <button className="border px-4 py-2 rounded-md text-sm">Change Password</button>
         </div>
 
-        {/* Personal Information */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Personal Information</h2>
             <button
-              onClick={() => setIsEditingPersonal(!isEditingPersonal)}
+              onClick={() => {
+                if (isEditingPersonal) {
+                  handleSavePersonalInfo();
+                } else {
+                  setIsEditingPersonal(true);
+                }
+              }}
               className="text-sm text-blue-600"
             >
               {isEditingPersonal ? 'Save Changes' : 'Edit'}
             </button>
+
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {['firstName', 'lastName', 'email', 'phone'].map((field, i) => (
+            {['fname', 'lname', 'email', 'phone'].map((field, i) => (
               <div key={i}>
                 <label className="block text-sm text-gray-600 capitalize">
-                  {field === 'firstName'
+                  {field === 'fname'
                     ? 'First Name'
-                    : field === 'lastName'
+                    : field === 'lname'
                     ? 'Last Name'
                     : field === 'email'
                     ? 'Email Address'
