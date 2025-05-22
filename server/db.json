@@ -54,13 +54,40 @@
   ],
   "rooms": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Conference Room A",
       "code": "CRA-102A",
       "seats": 10,
       "location": "North Tower",
       "level": 2,
       "size": "Medium",
+      "status": "Available",
+      "operatingHours": {
+        "weekdays": {
+          "open": "08:00",
+          "close": "20:00"
+        },
+        "weekends": {
+          "open": "09:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Projector",
+        "Whiteboard",
+        "Video Conferencing"
+      ],
+      "createdAt": "2023-01-15T09:00:00Z",
+      "updatedAt": "2023-06-20T14:30:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Conference Room A",
+      "code": "CRA-102A",
+      "seats": 10,
+      "location": "North Tower",
+      "level": 2,
+      "size": "Small",
       "status": "Available",
       "operatingHours": {
         "weekdays": {
@@ -141,6 +168,16 @@
       "id": "nop0z-fEDd3OyNCcptaff",
       "userId": "ldk06K3V_U3O6xOKb-xFb",
       "createdAt": "2025-05-18T08:58:51.815Z"
+    },
+    {
+      "id": "Ypc_Ta0BDormEahMqcizS",
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-22T16:38:40.435Z"
+    },
+    {
+      "id": "ycVuTi36DjKO6XPRvqrzC",
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-22T18:12:30.493Z"
     }
   ]
 }

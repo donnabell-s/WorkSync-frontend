@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { authApi } from '../api/client';
-import { User } from '../types';
+import { User } from '../../server/types';
 
 type AuthContextType = {
   user: User | null;

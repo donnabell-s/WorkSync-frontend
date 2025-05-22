@@ -1,11 +1,11 @@
 import React from "react";
-import { meetingRooms } from "./RoomListInterface";
 import { useNavigate } from "react-router";
 import { LuCalendar1 } from "react-icons/lu";
+import { Room } from "../../../../server/types";
 
 interface RoomListProps {
   role: "admin" | "user";
-  rooms: typeof meetingRooms;
+  rooms: Room[];
 }
 
 const getStatusClass = (status: string) => {
@@ -18,6 +18,19 @@ const getStatusClass = (status: string) => {
       return "text-gray-500";
   }
 };
+
+const getImageSrc = (size: string) => {
+  switch (size.toLowerCase()) {
+    case "small":
+      return "/meetingroom/small.jpg";
+    case "medium":
+      return "/meetingroom/medium.jpg";
+    case "large":
+      return "/meetingroom/large.jpg";
+    default:
+      return "/meetingroom/default.jpg";
+  }
+}
 
 
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
@@ -41,15 +54,15 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           className="bg-white rounded-md  shadow-[0_0_4px_rgba(0,0,0,0.1)] p-4 flex flex-col"
         >
           <img
-            src={`/meetingroom/${room.imageFile}`}
-            alt={room.roomName}
+            src={`/meetingroom/${getImageSrc(room.size)}`}
+            alt={room.name}
             className="w-full h-40 object-cover rounded-md"
           />
           <div className="pt-4 pb-2">
             <h2 className="text-xl font-semibold text-[#1F2937]">
-              {room.roomCode} – {room.roomName}
+              {room.code} – {room.name}
             </h2>
-            <p className="text-sm text-gray-600 font-semibold">{room.location}</p>
+            <p className="text-sm text-gray-600 font-semibold">{room.location} - Level {room.level}</p>
           </div>
           <div className="text-sm text-[#4B5563]">
             <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
@@ -58,11 +71,11 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
             </div>
             <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
               <p className="w-35 font-semibold">Seats:</p>
-              <p>{room.numberOfSeats}</p>
+              <p>{room.seats}</p>
             </div>
             <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
               <p className="min-w-35 font-semibold">Facilities:</p>
-              <p>{room.additionalFacilities.join(", ")}</p>
+              <p>{Array.isArray(room.amenities) ? room.amenities.join(", ") : ""}</p>
             </div>
             {role === "admin" && (
               <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
@@ -75,7 +88,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           </div>
           <div className="flex flex-grow items-end mt-4">
             <button
-            onClick={() => handleClick(room.roomCode)} // Assuming room has an `id` field
+            onClick={() => handleClick(room.code)} // Assuming room has an `id` field
             className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
               role === "admin" ? "p-3" : "p-6"
             }`}

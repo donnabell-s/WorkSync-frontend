@@ -37,7 +37,7 @@ export interface Preference {
 }
 
 export interface Room {
-    id: number;
+    id: string;
     name: string;
     code: string;
     seats: number;

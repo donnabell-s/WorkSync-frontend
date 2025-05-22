@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction, RequestHandler } from 'express';
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
-import { getRooms } from './controllers/room.controller';
+import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
 // import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
@@ -24,20 +24,17 @@ declare global {
 // Initialize database
 initializeDB();
 
-const signupHandler: RequestHandler = (req, res, next) => {
-  console.log(req.body);
-  signup(req, res, next).catch(next);
-};
 // Wrapper function for login
-const loginHandler: RequestHandler = (req, res, next) => {
-  console.log(req.body);
-  login(req, res, next).catch(next);
-};
+function makeHandler(controller: (req: Request, res: Response, next: NextFunction) => Promise<any>): RequestHandler {
+  return (req, res, next) => {
+    console.log('req body: ' + req.body);
+    controller(req, res, next).catch(next);
+  };
+}
 
-const logoutHandler: RequestHandler = (req, res, next) => {
-  console.log(req.body);
-  logout(req, res, next).catch(next);
-};
+const loginHandler = makeHandler(login);
+const signupHandler = makeHandler(signup);
+const logoutHandler = makeHandler(logout);
 
 // Auth routes
 app.post('/auth/signup', signupHandler);
@@ -68,8 +65,12 @@ app.use(authMiddleware);
 
 // Protected routes
 app.post('/auth/logout', logoutHandler);
-app.get('/rooms', (getRooms as any) as express.RequestHandler);
-// app.post('/rooms', (createRoom as any) as express.RequestHandler);
+
+app.get('/rooms', makeHandler(getRooms));
+app.get('/rooms/id', makeHandler(getRoomById));
+app.post('/rooms', makeHandler(createRoom));
+app.put('/rooms/id', makeHandler(updateRoom));
+app.delete('/rooms/id', makeHandler(deleteRoom));
 
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');

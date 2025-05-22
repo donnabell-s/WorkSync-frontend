@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { User, Room, Booking, Preference } from '../types';
+import { User, Room, Booking, Preference } from '../../server/types';
+import { get } from 'http';
 
 // Create axios instance with auth handling
 const createApiClient = (): AxiosInstance => {
@@ -82,13 +83,26 @@ export const authApi = {
 
 // Rooms API
 export const roomsApi = {
-    getAll: (config?: AxiosRequestConfig) =>
-        api.get<Room[]>(API_PATHS.ROOMS, config),
+    getAll: async (config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<Room[]>(API_PATHS.ROOMS, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Rooms not found:', error);
+                return { data: [], status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
 
-    create: (data: { title: string }, config?: AxiosRequestConfig) =>
+    getById: (id: string, config?: AxiosRequestConfig) =>
+        api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config),
+
+    create: (data: { room: Omit<Room, 'id'> }, config?: AxiosRequestConfig) =>
         api.post<Room>(API_PATHS.ROOMS, data, config),
 
-    update: (id: string, data: { title: string }, config?: AxiosRequestConfig) =>
+    update: (id: string, data: { room: Partial<Room> }, config?: AxiosRequestConfig) =>
         api.put<Room>(`${API_PATHS.ROOMS}/${id}`, data, config),
 
     delete: (id: string, config?: AxiosRequestConfig) =>

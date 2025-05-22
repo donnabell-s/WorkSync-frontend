@@ -3,7 +3,8 @@ import AdminSearch from './AdminSearch'
 import AdminFilter from './AdminFilter'
 import AdminButton from './AdminButton'
 import { IoAddOutline } from 'react-icons/io5'
-import { meetingRooms } from "./../Feature/RoomListInterface"
+// import { rooms } from "./../Feature/RoomListInterface"
+import { useRooms } from '../../../context/RoomContext'
 import { sampleBookingList as bookings } from '../Feature/UserBookingListInterface'
 import { useNavigate } from 'react-router'
 
@@ -16,6 +17,7 @@ interface ViewManagementHeaderProps {
 const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFunction }) => {
 
     const navigate = useNavigate();
+    const { rooms } = useRooms();
     const roomTabs: string[] = ["All", "Available", "Occupied", "Under Maintenance", "Reserved"];
     const bookingTabs: string[] = ["All", "Approved", "Pending", "Declined"];
     const bookingTabs2: string[] = ["All", "Recurring", "Non-Recurring"];
@@ -24,7 +26,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     const [activeTab, setActiveTab] = useState<string>(initTab);
     const [activeTab2, setActiveTab2] = useState<string>(initTab2);
     const [searchQuery, setSearchQuery] = useState<string>('');
-    
+
 
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
@@ -39,15 +41,15 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }
 
     const handleFilter = (tab: string) => {
-        let filtered = view === "rooms" ? meetingRooms : bookings;
+        let filtered = view === "rooms" ? rooms : bookings;
 
         if (view === "rooms") {
             if (tab === "All") {
-                filtered = meetingRooms;
+                filtered = rooms;
             } else {
                 for (const roomTab of roomTabs) {
                     if (tab === roomTab) {
-                        filtered = meetingRooms.filter(room => room.status === roomTab.toLowerCase());
+                        filtered = rooms.filter(room => room.status === roomTab.toLowerCase());
                         break;
                     }
                 }
@@ -61,7 +63,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
                 else if (tab === bookingTab) {
                     filtered = bookings.filter(booking => booking.status.toLowerCase() === bookingTab.toLowerCase());
                     break;
-                } 
+                }
             }
 
             for (const bookingTab of bookingTabs2) {
@@ -71,7 +73,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
                 else if (tab === bookingTab) {
                     filtered = filtered.filter(booking => booking.recurrence.toLowerCase() === bookingTab.toLowerCase());
                     break;
-                } 
+                }
             }
         }
 
@@ -82,19 +84,23 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(event.target.value);
-        let filtered = view === "rooms" ? meetingRooms : bookings;
+        let filtered = view === "rooms" ? rooms : bookings;
         if (view === "rooms") {
-            filtered = meetingRooms.filter(room => {
-                const roomDetails = `${room.roomCode} ${room.roomName} ${room.location}`.toLowerCase();
-                return roomDetails.includes(event.target.value.toLowerCase());
-            });
+            if (event.target.value === "") {
+                filtered = rooms;
+            } else {
+                filtered = rooms.filter(room => {
+                    const roomDetails = `${room.code} ${room.name} ${room.location}`.toLowerCase();
+                    return roomDetails.includes(event.target.value.toLowerCase());
+                });
+            }
         } else {
             filtered = bookings.filter(booking => {
                 const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
                 return bookingDetails.includes(event.target.value.toLowerCase());
             });
         }
-        
+        console.log('filter rooms: ' + filtered);
         if (setFunction) {
             setFunction(filtered);
         }
@@ -109,11 +115,11 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }
 
     useEffect(() => {
-        let filtered = view === "rooms" ? meetingRooms : bookings;
+        let filtered = view === "rooms" ? rooms : bookings;
 
         if (view === "rooms") {
-            filtered = meetingRooms.filter(room => {
-                const roomDetails = `${room.roomCode} ${room.roomName} ${room.location}`.toLowerCase();
+            filtered = rooms.filter(room => {
+                const roomDetails = `${room.code} ${room.name} ${room.location}`.toLowerCase();
                 return roomDetails.includes(searchQuery.toLowerCase());
             });
         } else {
@@ -168,7 +174,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             <div className='flex sm:flex-row flex-col p-3 justify-between gap-3'>
                 <div className='flex md:flex-row flex-col gap-4 items-center'>
                     <AdminSearch value={searchQuery} onChange={handleSearchChange} />
-                    <AdminFilter onChange={() => {}} filters={['All']} />
+                    <AdminFilter onChange={() => { }} filters={['All']} />
                 </div>
                 {
                     view === "rooms" ?
