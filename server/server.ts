@@ -2,6 +2,8 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
+import { getUsers, updateUser, getUserById } from './controllers/user.controller';
+import { getBooking, getBookingById } from './controllers/booking.controller';
 // import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
@@ -65,6 +67,9 @@ app.use(authMiddleware);
 
 // Protected routes
 app.post('/auth/logout', logoutHandler);
+app.get('/users', getUsers as express.RequestHandler);
+app.get('/user/:id', getUserById as express.RequestHandler);
+app.put('/user/:id', updateUser as express.RequestHandler);
 
 app.get('/rooms', makeHandler(getRooms));
 app.get('/rooms/id', makeHandler(getRoomById));
@@ -72,6 +77,7 @@ app.post('/rooms', makeHandler(createRoom));
 app.put('/rooms/id', makeHandler(updateRoom));
 app.delete('/rooms/id', makeHandler(deleteRoom));
 
+app.get('/bookings', (getBooking as any) as express.RequestHandler);
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');
 });

@@ -8,7 +8,7 @@ interface UserSearchProps {
 
 const UserSearch = ({ value, onChange }: UserSearchProps) => {
   return (
-    <div className="relative w-full max-w-sm md:flex hidden">
+    <div className="relative w-full max-w-sm min-w-sm md:flex hidden">
       <input
         type="text"
         placeholder="Search..."

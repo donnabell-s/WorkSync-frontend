@@ -33,7 +33,7 @@ const Header: React.FC = () => {
       </div>
       <div className='flex flex-row gap-5'>
         <ProfileDropdown/>
-        <NotifDropdown/>
+        {/* <NotifDropdown/> */}
       </div>
     </div>
   );

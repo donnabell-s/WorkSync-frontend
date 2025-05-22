@@ -48,6 +48,9 @@ export const API_PATHS = {
     },
     ROOMS: '/rooms',
     USERS: '/users/me',
+    USERS_LIST: '/users', 
+    BOOKINGS: '/bookings',
+
 };
 
 // Auth API
@@ -109,6 +112,41 @@ export const roomsApi = {
         api.delete(`${API_PATHS.ROOMS}/${id}`, config)
 };
 
+//Bookings API
+export const bookingsApi = {
+    getAll: (config?: AxiosRequestConfig) =>
+        api.get<Booking[]>(API_PATHS.BOOKINGS, config),
+
+    getById: (id: number, config?: AxiosRequestConfig) =>
+        api.get<Booking>(`${API_PATHS.BOOKINGS}/${id}`, config),
+
+    create: (
+        data: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>,
+        config?: AxiosRequestConfig
+    ) => api.post<Booking>(API_PATHS.BOOKINGS, data, config),
+
+    update: (
+        id: number,
+        data: Partial<Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>>,
+        config?: AxiosRequestConfig
+    ) => api.put<Booking>(`${API_PATHS.BOOKINGS}/${id}`, data, config),
+};
+
+// Users API
+export const usersApi = {
+    getAllUsers: (config?: AxiosRequestConfig) =>
+        api.get<User[]>(API_PATHS.USERS_LIST, config),
+
+    getUserById: (id: string, config?: AxiosRequestConfig) =>
+        api.get<User>(`${API_PATHS.USERS_LIST}/${id}`, config),
+
+    updateUser: (id: string, data: Partial<User>, config?: AxiosRequestConfig) =>
+        api.put<User>(`${API_PATHS.USERS_LIST}/${id}`, data, config),
+};
+
+
+
+
 // Generic API functions (optional)
 export const createApiFunctions = <T extends { id: string }>(endpoint: string) => ({
     getAll: (config?: AxiosRequestConfig) => api.get<T[]>(endpoint, config),
@@ -121,3 +159,4 @@ export const createApiFunctions = <T extends { id: string }>(endpoint: string) =
     delete: (id: string, config?: AxiosRequestConfig) =>
         api.delete(`${endpoint}/${id}`, config),
 });
+

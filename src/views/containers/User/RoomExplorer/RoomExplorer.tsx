@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import SideContainer from "../../../components/Layout/UserLayout/SideContainer"
 import RoomList from '../../../components/Feature/RoomList'
 import UserHeading from '../../../components/UI/UserHeading'
@@ -24,10 +24,33 @@ const RoomExplorer = () => {
   const [distance, setDistance] = useState(10);
   const [minSeats, setMinSeats] = useState(5);
   const [facilities, setFacilities] = useState<string[]>([]);
+  const [bookingDraft, setBookingDraft] = useState<{ title: string; date: string } | null>(null);
+
 
   // Applied filters (used to filter rooms)
   const [appliedMinSeats, setAppliedMinSeats] = useState(5);
   const [appliedFacilities, setAppliedFacilities] = useState<string[]>([]);
+
+  useEffect(() => {
+    const data = localStorage.getItem("tempBooking");
+    if (data) {
+      try {
+        const parsed = JSON.parse(data);
+        if (parsed.title && parsed.date) {
+          setBookingDraft(parsed);
+        }
+      } catch {
+        localStorage.removeItem("tempBooking");
+      }
+    }
+  }, []);
+
+  const handleCancelDraft = () => {
+    localStorage.removeItem("tempBooking");
+    setBookingDraft(null);
+  };
+
+
 
   const handleFacilityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -125,7 +148,26 @@ const RoomExplorer = () => {
       <div className="xl:ml-67 p-10 flex flex-col gap-6">
         <div className="flex flex-row justify-between">
           <UserHeading label="Room Explorer" />
-          <UserSearch value={searchQuery} onChange={handleSearchChange} />
+          <div className="flex flex-col md:flex-row justify-end gap-2 w-157">
+            <div className="flex items-center text-sm text-red-600 font-medium gap-2">
+              {bookingDraft && (
+                <div
+                  className="flex items-center gap-2 bg-red-100 border border-red-300 px-3 py-1 rounded overflow-hidden max-w-[225px]"
+                >
+                  <span className="truncate">
+                    Booking Draft: <strong className="font-medium">{bookingDraft.title}</strong>
+                  </span>
+                  <button
+                    onClick={handleCancelDraft}
+                    className="text-red-600 underline hover:text-red-800 transition text-xs whitespace-nowrap overflow-hidden text-ellipsis w-[60px]"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
+            <UserSearch value={searchQuery} onChange={handleSearchChange} />
+          </div>
         </div>
         <div>
           <RoomList role="user" rooms={filteredRooms} />
