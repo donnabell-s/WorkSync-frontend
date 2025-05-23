@@ -65,10 +65,10 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
   //   }
   // };
 
-    // Inside your BookingContext component
+  // Inside your BookingContext component
   const getBookingById = useCallback(async (id: string) => {
     setIsLoading(true);
-    setError(null);
+    // setError(null);
     try {
       const response = await bookingsApi.getById(Number(id));
       setCurrentBooking(response.data);

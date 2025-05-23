@@ -83,10 +83,10 @@ app.put('/rooms/:id', makeHandler(updateRoom));
 app.delete('/rooms/:id', makeHandler(deleteRoom));
 
 app.get('/bookings', makeHandler(getBookings));
-app.get('/bookings/id', makeHandler(getBookingById));
+app.get('/bookings/:id', makeHandler(getBookingById));
 app.post('/bookings', makeHandler(createBooking));
-app.put('/bookings/id', makeHandler(updateBooking));
-app.delete('/bookings/id', makeHandler(deleteBooking));
+app.put('/bookings/:id', makeHandler(updateBooking));
+app.delete('/bookings/:id', makeHandler(deleteBooking));
 
 app.get('/logs/room', makeHandler(getRoomLog))
 
