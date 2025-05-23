@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-interface User
- {
+interface User {
   name: string;
   email: string;
   booking: number;
   status: 'ACTIVE' | 'INACTIVE';
 }
-
 const ViewUser = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'Name' | 'Status'>('Name');
   const [currentPage, setCurrentPage] = useState(1);
-  const { users, getAllUsers } = useAuth();
+  const { users, getAllUsers, getUserById, currentUser } = useAuth();
+  const [editUser, setEditUser] = useState(false);
+  const navigate = useNavigate();
 
   const filteredUsers = users
     .filter(user =>
@@ -38,6 +39,17 @@ const ViewUser = () => {
     currentPage * usersPerPage
   );
 
+  const handleClick = async (id: string) => {
+    localStorage.setItem("selectedRoomId", id);
+    try {
+      console.log(id);
+      setEditUser(true);
+      await getUserById(id);
+    } catch (error) {
+      console.error("Failed to get room by ID:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -49,6 +61,13 @@ const ViewUser = () => {
 
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    if (currentUser && editUser) {
+      navigate('/admin/users/edit');
+      setEditUser(false);
+    }
+  }, [currentUser, navigate, editUser]);
 
   return (
     <div className="flex flex-col px-10 pt-10 min-h-screen bg-gray-100">
@@ -102,17 +121,17 @@ const ViewUser = () => {
                   <td className="px-6 py-4">{user.email}</td>
                   {/* number of user bookings */}
                   {/* <td className="px-6 py-4">{user.booking}</td>  */}
-                  <td className={`px-6 py-4 font-medium ${
-                    user.isActive ? 'text-green-600' : 'text-red-500'
-                  }`}>
+                  <td className={`px-6 py-4 font-medium ${user.isActive ? 'text-green-600' : 'text-red-500'
+                    }`}>
                     {user.isActive ? 'ACTIVE' : 'INACTIVE'}
                   </td>
                   <td className="px-6 py-4">
-                    <button 
-                    className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                  >
-                    EDIT
-                </button>
+                    <button
+                    onClick={() => handleClick(user.id)}
+                      className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                    >
+                      EDIT
+                    </button>
                   </td>
                 </tr>
               ))
@@ -145,13 +164,13 @@ const ViewUser = () => {
             }
             disabled={currentPage * usersPerPage >= filteredUsers.length}
             className="px-2 py-1 border rounded disabled:opacity-50"
-          > 
+          >
             &gt;
           </button>
         </div>
 
         {/* Add User button */}
-        <button 
+        <button
           className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
         >
           Add User

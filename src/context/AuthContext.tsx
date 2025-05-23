@@ -6,10 +6,15 @@ type AuthContextType = {
   user: User | null;
   users: User[];
   token: string | null;
+  error: string | null;
+  currentUser: User | null;
   login: (email: string, password: string) => Promise<User | null>;
   signup: (fname: string, lname: string, email: string, password: string) => Promise<User | null>;
   logout: () => void;
   getAllUsers: () => Promise<User[]>;
+  getUserById: (id: string) => Promise<void>;
+  updateUser: (id: string, user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<User>;
+  deleteUser: (userId: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,8 +25,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
-  
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
   const getAllUsers = async () => {
@@ -54,6 +61,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       throw error;
     }
   };
+
+  const getUserById = async (id: string) => {
+      setIsLoading(true);
+      try {
+        const response = await authApi.getUserById(id);
+        setCurrentUser(response.data);
+      } catch (err) {
+        setError('Admin not found');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
   const deleteUser = async (userId: string) => {
     try {
@@ -118,7 +137,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, users, token, login, signup, logout, getAllUsers }}>
+    <AuthContext.Provider value={{ user, users, currentUser, token, error, login, signup, logout, getAllUsers, getUserById, updateUser, deleteUser }}>
       {children}
     </AuthContext.Provider>
   );

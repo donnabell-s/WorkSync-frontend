@@ -75,9 +75,9 @@ app.use(authMiddleware);
 // Protected routes
 app.post('/auth/logout', makeHandler(logout));
 app.get('/users', makeHandler(getUsers));
-app.get('/user/:id',  makeHandler(getUserById));
-app.put('/user/:id',  makeHandler(updateUser));
-app.delete('/user/:id',  makeHandler(deleteUser));
+app.get('/users/:id',  makeHandler(getUserById));
+app.put('/users/:id',  makeHandler(updateUser));
+app.delete('/users/:id',  makeHandler(deleteUser));
 
 app.get('/rooms', makeHandler(getRooms));
 app.post('/rooms', makeHandler(createRoom));

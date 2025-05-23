@@ -14,19 +14,17 @@ export const getUsers = async (_req: Request, res: Response) => {
   res.json(users);
 };
 
-export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
-  try {
+export const getUserById = async (req: Request, res: Response) => {
+    console.log("GetRoomsByID Controller");
     const db = getDB();
+    const id = req.params.id;
     await db.read();
-
-    const user = db.data?.users.find(u => u.id === req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
+    const user = db.data?.users.find((user) => user.id === id);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
     res.json(user);
-  } catch (error) {
-    next(error);
-  }
-};
+}
 
 export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
   try {

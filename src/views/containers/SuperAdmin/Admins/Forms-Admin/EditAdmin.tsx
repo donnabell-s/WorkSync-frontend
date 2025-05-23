@@ -3,15 +3,6 @@ import { useAdmins } from '../../../../../context/AdminContext';
 import { useNavigate, useParams } from 'react-router-dom';
 import { User } from '../../../../../../server/types';
 
-const permissionsList = [
-  'View Audit Logs',
-  'View & Edit Rooms',
-  'Manage Bookings',
-  'Manage Admins',
-  'Manage Users',
-  'System Settings',
-];
-
 const roles = ['Admin', 'Superadmin', 'User'];
 const statuses = ['Active', 'Inactive'];
 

@@ -64,6 +64,19 @@ export const authApi = {
     getAllUsers: (config?: AxiosRequestConfig) =>
         api.get<User[]>(API_PATHS.USERS_LIST, config),
 
+    getUserById: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<User>(`${API_PATHS.USERS_LIST}/${id}`, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('User not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
     update: async (id: string, data: { user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
             const response = await api.put<User>(`${API_PATHS.USERS_LIST}/${id}`, data, config);
