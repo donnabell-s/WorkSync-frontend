@@ -63,6 +63,7 @@ const SideNavLinkDropdown: React.FC<SideNavLinkDropdownProps> = ({ label, icon }
                 }}>
                 {Object.entries(navLinks[getNavLinksKey(label)]).map(([_, value]) => (
                     <SideNavLink
+                        key={value.path}
                         label={value.label}
                         icon={value.icon}
                         path={value.path} />

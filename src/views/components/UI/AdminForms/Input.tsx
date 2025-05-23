@@ -31,19 +31,27 @@ const Input: React.FC<InputProps> = ({ label, type, name, placeholder, className
   }, []);
 
   return (
-    <div className={`flex flex-col gap-2 ${className}`}>
-      <InputLabel label={label} filled={filled} />
-      <input
-        ref={inputRef}
-        id='input'
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
-        readOnly={readType === 'delete'}
-      />
-    </div>
+    readType === 'delete' ? (
+      <div className={`flex flex-col gap-2 ${className}`}>
+        <InputLabel label={label} filled={filled} />
+        <div className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 bg-zinc-100 text-zinc-700'>
+          {value || 'No value selected'}
+        </div>
+      </div>
+    ) : (
+      <div className={`flex flex-col gap-2 ${className}`}>
+        <InputLabel label={label} filled={filled} />
+        <input
+          ref={inputRef}
+          id='input'
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          value={value}
+          className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
+        />
+      </div>
+    )
   )
 }
 

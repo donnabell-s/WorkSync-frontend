@@ -12,17 +12,6 @@
       "updatedAt": "2025-05-18T07:55:40.143Z"
     },
     {
-      "id": "ldk06K3V_U3O6xOKb-xFb",
-      "email": "yana@email.com",
-      "password": "$2b$10$sDlmHITH9zZyKoj0RD6tNeyq4iGvjua2m92GMVAnwan24X7BrNRhO",
-      "fname": "Yana",
-      "lname": "Garcia",
-      "role": "admin",
-      "isActive": false,
-      "createdAt": "2025-05-18T07:57:47.650Z",
-      "updatedAt": "2025-05-18T07:57:47.650Z"
-    },
-    {
       "id": "w_W2qSw-6bZRuAHL438I8",
       "email": "chaz@email.com",
       "password": "$2b$10$Tj3P7FUDT9c9tlLAncmsaOum/DKRFIo1LEEkGMFd7cn6bcY3qAfIG",
@@ -32,6 +21,28 @@
       "isActive": false,
       "createdAt": "2025-05-18T08:35:25.649Z",
       "updatedAt": "2025-05-18T08:35:25.649Z"
+    },
+    {
+      "id": "PrvQ9uYUsMzOHZvrX300f",
+      "email": "yana@email.com",
+      "password": "$2b$10$T95ZEXgjCcGA1FilmYL4j.OSP0mb7t.S5O0r4f8hsTIi2AGxTNQ3y",
+      "fname": "Yana",
+      "lname": "Garcia",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-05-23T21:00:07.236Z",
+      "updatedAt": "2025-05-23T21:00:07.236Z"
+    },
+    {
+      "id": "h8rqGtfmN1H61pabhDRZu",
+      "email": "julien@email.com",
+      "password": "$2b$10$NFeoYDKvEV92DlR2qXAAweCMHjrs2VDSopPKPzcvC0B2TtxqjjDia",
+      "fname": "Julienn",
+      "lname": "Beniz",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2025-05-23T21:00:43.215Z",
+      "updatedAt": "2025-05-23T21:25:34.516Z"
     }
   ],
   "preferences": [
@@ -81,67 +92,13 @@
       "updatedAt": "2023-06-20T14:30:00Z"
     },
     {
-      "id": "qLAMWN_h35O7qB900xNaX",
-      "name": "Conference Room A",
-      "code": "CRA-102A",
-      "seats": 10,
-      "location": "North Tower",
-      "level": 2,
+      "id": "Q7qdhWW8IyPgVMVHq6Tpg",
+      "name": "Proposal Room A",
+      "code": "PRA - 107C",
+      "seats": "10",
+      "location": "West Tower",
+      "level": "18",
       "size": "Small",
-      "status": "Available",
-      "operatingHours": {
-        "weekdays": {
-          "open": "08:00",
-          "close": "20:00"
-        },
-        "weekends": {
-          "open": "09:00",
-          "close": "16:00"
-        }
-      },
-      "amenities": [
-        "Projector",
-        "Whiteboard",
-        "Video Conferencing"
-      ],
-      "createdAt": "2023-01-15T09:00:00Z",
-      "updatedAt": "2023-06-20T14:30:00Z"
-    },
-    {
-      "id": "F7Nu5F51uMGQKjwnWUprv",
-      "name": "asd",
-      "code": "CRA-102A",
-      "seats": 10,
-      "location": "North Tower",
-      "level": 2,
-      "size": "Small",
-      "status": "Available",
-      "operatingHours": {
-        "weekdays": {
-          "open": "08:00",
-          "close": "20:00"
-        },
-        "weekends": {
-          "open": "09:00",
-          "close": "16:00"
-        }
-      },
-      "amenities": [
-        "Projector",
-        "Whiteboard",
-        "Video Conferencing"
-      ],
-      "createdAt": "2025-05-23T13:36:29.284Z",
-      "updatedAt": "2025-05-23T13:36:29.284Z"
-    },
-    {
-      "id": "Kja6SgEI7Yhi0sp-Y9OFA",
-      "name": "Executive ",
-      "code": "CRA",
-      "seats": "12",
-      "location": "North Tower",
-      "level": "12",
-      "size": "Medium",
       "status": "Occupied",
       "operatingHours": {
         "weekdays": {
@@ -154,11 +111,11 @@
         }
       },
       "amenities": [
-        "Video Conferencing",
-        "Air Conditioning"
+        "Projector",
+        "Video Conferencing"
       ],
-      "createdAt": "2025-05-23T14:00:06.246Z",
-      "updatedAt": "2025-05-23T14:00:06.246Z"
+      "createdAt": "2025-05-23T15:10:14.817Z",
+      "updatedAt": "2025-05-23T18:29:49.813Z"
     }
   ],
   "bookings": [
@@ -283,26 +240,52 @@
       "createdAt": "2025-05-18T08:58:51.815Z"
     },
     {
-      "id": "a62zEXyy1RAISU-nQG7RD",
+      "id": "FfzI7TlSNzP1DX_4tS8_c",
       "auth": true,
       "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-22T16:38:40.435Z"
+      "createdAt": "2025-05-23T15:01:02.599Z"
     },
     {
-      "id": "ycVuTi36DjKO6XPRvqrzC",
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-22T18:12:30.493Z"
-    },
-    {
-      "id": "hzU2d8aY_C_xeLDMfYqNH",
-      "userId": "50q5Mc2vKWQcr20rrpgqE",
-      "createdAt": "2025-05-22T16:38:22.141Z"
-    },
-    {
-      "id": "jG_Qerm3j95J3YszRo34P",
+      "id": "ZRHqvuvaAWzhiMISFjBQe",
       "auth": true,
-      "userId": "50q5Mc2vKWQcr20rrpgqE",
-      "createdAt": "2025-05-23T15:13:24.849Z"
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T16:03:53.778Z"
+    },
+    {
+      "id": "bPZtc1_2-A-68IMwkwAB9",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T19:16:10.291Z"
+    },
+    {
+      "id": "uvnwFjk_tUiYT9sBB322x",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T19:17:08.055Z"
+    },
+    {
+      "id": "_VLN9W6BrkLVe0RdcozQa",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T20:11:00.720Z"
+    },
+    {
+      "id": "kYHCeO-gg6MeALFu_cZJw",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T20:45:25.092Z"
+    },
+    {
+      "id": "RygQLTyybsd2mNPbHvhuT",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T21:01:05.523Z"
+    },
+    {
+      "id": "TWgMrsTcLzhCezP07ops3",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T21:22:17.463Z"
     }
   ]
 }

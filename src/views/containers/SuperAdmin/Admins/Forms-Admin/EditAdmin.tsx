@@ -1,144 +1,206 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAdmins } from '../../../../../context/AdminContext';
+import { useNavigate, useParams } from 'react-router-dom';
+import { User } from '../../../../../../server/types';
 
-type Mode = 'edit' | 'delete';
+const permissionsList = [
+  'View Audit Logs',
+  'View & Edit Rooms',
+  'Manage Bookings',
+  'Manage Admins',
+  'Manage Users',
+  'System Settings',
+];
 
-interface AdminData {
-  id: string;
-  name: string;
-  email: string;
-  role: 'Admin' | 'Superadmin';
-  status: 'Active' | 'Inactive';
-  permissions: {
-    viewAuditLogs: boolean;
-    viewEditRooms: boolean;
-    manageBookings: boolean;
-    manageAdmins: boolean;
-    manageUsers: boolean;
-    systemSettings: boolean;
-  };
-}
+const roles = ['Admin', 'Superadmin', 'User'];
+const statuses = ['Active', 'Inactive'];
 
-const EditAdmin: React.FC = () => {
-  const mode: Mode = 'edit'; // or 'delete'
+const EditAdmin = () => {
+  const navigate = useNavigate();
+  const { currentAdmin, fetchAdmins, updateAdmin, deleteAdmin, getAdminById } = useAdmins();
 
-  const admin: AdminData = {
-    id: 'admin001',
-    name: 'Jane Smith',
-    email: 'jane.smith@example.com',
-    role: 'Admin',
-    status: 'Active',
-    permissions: {
-      viewAuditLogs: true,
-      viewEditRooms: true,
-      manageBookings: true,
-      manageAdmins: false,
-      manageUsers: true,
-      systemSettings: false,
-    },
-  };
-
-  const onSubmit = (id: string, updatedData?: Partial<AdminData>) => {
-    if (mode === 'edit') {
-      console.log('Edited Admin:', id, updatedData);
-    } else {
-      console.log('Deleted Admin:', id);
-    }
-  };
-
-  const onClose = () => {
-    console.log('Modal closed');
-  };
-
-  const [formData, setFormData] = useState<Partial<AdminData>>({
-    name: admin.name,
-    email: admin.email,
-    role: admin.role,
-    status: admin.status,
-    permissions: { ...admin.permissions },
+  // Add a local state for permissions and status
+  const [form, setForm] = useState<Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>>({
+    fname: '',
+    lname: '',
+    email: '',
+    role: roles[0],
+    isActive: true
   });
+  const [status, setStatus] = useState<'Active' | 'Inactive'>('Active');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = () => {
-    if (mode === 'edit') {
-      onSubmit(admin.id, formData);
-    } else {
-      onSubmit(admin.id);
+  useEffect(() => {
+    if (currentAdmin) {
+      setForm(currentAdmin);
+      setStatus(currentAdmin.isActive ? 'Active' : 'Inactive');
     }
-    onClose();
+  }, [currentAdmin]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!currentAdmin) {
+      console.error('No current admin found');
+      return;
+    }
+
+    const updatedAdmin = {
+      ...form,
+      isActive: status === 'Active',
+      password: currentAdmin.password, // Add password back for update
+    };
+
+    console.log('Updated Admin:', updatedAdmin);
+    // console.log('Current Admin:', currentAdmin);
+    updateAdmin(currentAdmin.id, updatedAdmin)
+      .then(() => {
+        console.log('Admin updated successfully');
+        return fetchAdmins(); // Fetch updated admins list
+      })
+      .then(() => navigate('/admin/admins/view'))
+      .catch((error) => {
+        console.error('Error updating admin:', error);
+      });
+  };
+
+  const handleDelete = () => {
+    if (currentAdmin!.id) {
+      deleteAdmin(currentAdmin!.id);
+      navigate('/admin/admins/view');
+    }
+  };
+
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    navigate('/admin/admins/view');
+  };
+
+  useEffect(() => {
+    if (!currentAdmin) {
+      navigate('/admin/admins/view');
+    }
+  }, [currentAdmin, navigate]);
 
   return (
-    <div className="p-30 flex justify-center items-center">
-      <div className="bg-white p-6 rounded shadow-md w-96">
-        <h2 className="text-xl font-bold mb-4">
-          {mode === 'edit' ? 'Edit Admin' : 'Delete Admin'}
-        </h2>
-
-        {mode === 'edit' ? (
-          <div className="space-y-3">
+    <div className="flex flex-col w-full h-full bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto mt-8">
+      <h2 className="text-2xl font-semibold mb-2">EDIT ADMIN INFORMATION</h2>
+      <p className="text-sm text-gray-500 mb-6">Admins / {form.fname} {form.lname} / Edit</p>
+      <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Name</label>
+          <div className="flex gap-2">
             <input
-              type="text"
-              name="name"
-              value={formData.name || ''}
+              className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+              name="fname"
+              placeholder="First Name"
+              value={form.fname}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="Name"
+              required
             />
             <input
-              type="email"
-              name="email"
-              value={formData.email || ''}
+              className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+              name="lname"
+              placeholder="Last Name"
+              value={form.lname}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="Email"
+              required
             />
-            <select
-              name="role"
-              value={formData.role || 'Admin'}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="Admin">Admin</option>
-              <option value="Superadmin">Superadmin</option>
-            </select>
-            <select
-              name="status"
-              value={formData.status || 'Active'}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            >
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
           </div>
-        ) : (
-          <p>Are you sure you want to delete this admin?</p>
-        )}
-
-        <div className="mt-4 flex justify-end gap-2">
-          <button
-            onClick={handleSubmit}
-            className={`px-4 py-2 rounded ${
-              mode === 'edit' ? 'bg-blue-500' : 'bg-red-500'
-            } text-white`}
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Role</label>
+          <select
+            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="role"
+            value={form.role}
+            onChange={handleChange}
           >
-            {mode === 'edit' ? 'Save' : 'Delete'}
-          </button>
-          <button onClick={onClose} className="px-4 py-2 border rounded">
+            {roles.map((role) => (
+              <option key={role} value={role}>{role}</option>
+            ))}
+          </select>
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Email</label>
+          <input
+            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">Status</label>
+          <select
+            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="isActive"
+            value={form.isActive ? 'Active' : 'Inactive'}
+            onChange={handleChange}
+          >
+            {statuses.map((status) => (
+              <option key={status} value={status}>{status}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex gap-4 mt-10 justify-end md:col-span-2">
+          <button
+            type="button"
+            className="px-6 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium"
+            onClick={handleBack}
+          >
             Cancel
           </button>
+          <button
+            type="button"
+            className="px-6 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-medium"
+            onClick={() => setShowDeleteModal(true)}
+          >
+            Delete
+          </button>
+          <button
+            type="submit"
+            onClick={handleSubmit}
+            className="px-6 py-2 rounded bg-blue-700 text-white hover:bg-blue-800 font-medium"
+          >
+            Save
+          </button>
         </div>
-      </div>
+      </form>
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-8 w-full max-w-sm">
+            <h4 className="text-lg font-semibold mb-2">Confirm Delete</h4>
+            <p className="text-gray-600 mb-4">Are you sure you want to delete this admin?</p>
+            <div className="flex items-center mb-4">
+              <input type="checkbox" id="dont-show" className="mr-2" />
+              <label htmlFor="dont-show" className="text-sm text-gray-500">Do not show anymore</label>
+            </div>
+            <div className="flex gap-4 justify-end">
+              <button
+                className="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 font-medium"
+                onClick={handleDelete}
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

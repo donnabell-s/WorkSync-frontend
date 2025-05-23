@@ -2,10 +2,10 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
-import { getUserById, getUsers } from './controllers/user.controller';
 import { getBookings, getBookingById, createBooking, updateBooking, deleteBooking} from './controllers/booking.controller';
 import { getRoomLog } from './controllers/log.controller';
-// import { getPosts, createPost } from './controllers/posts.controller';
+import { getAdmins, getAdminById, addAdmin, updateAdmin, deleteAdmin } from './controllers/admin.controller';
+import { getUserById, getUsers } from './controllers/user.controller';
 import cors from 'cors';
 
 const app = express();
@@ -33,6 +33,7 @@ initializeDB();
 function makeHandler(controller: (req: Request, res: Response, next: NextFunction) => Promise<any>): RequestHandler {
   return async (req, res, next) => {
     try {
+      console.log('Request:', req.method, req.path, req.body);
       await controller(req, res, next);
     } catch (err) {
       console.error('Handler Error:', err);
@@ -82,6 +83,17 @@ app.get('/rooms/:id', makeHandler(getRoomById));
 app.put('/rooms/:id', makeHandler(updateRoom));
 app.delete('/rooms/:id', makeHandler(deleteRoom));
 
+app.get('/admins', makeHandler(getAdmins));
+app.post('/admins', makeHandler(addAdmin));
+app.get('/admins/:id', makeHandler(getAdminById));
+app.put('/admins/:id', makeHandler(updateAdmin));
+app.delete('/admins/:id', makeHandler(deleteAdmin));
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 app.get('/bookings', makeHandler(getBookings));
 app.get('/bookings/id', makeHandler(getBookingById));
 app.post('/bookings', makeHandler(createBooking));

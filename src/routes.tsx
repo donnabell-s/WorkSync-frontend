@@ -6,7 +6,7 @@ import ProtectedRoute from './views/components/ProtectedRoute';
 import { RoomProvider } from "./context/RoomContext";
 import { BookingProvider } from "./context/BookingContext";
 import { LogsProvider } from "./context/LogContext";
-
+import { AdminProvider } from "./context/AdminContext";
 
 export const AppRoutes = () => {
   return (
@@ -15,6 +15,7 @@ export const AppRoutes = () => {
         <RoomProvider>
          <BookingProvider> 
           <LogsProvider>
+          <AdminProvider>
             <Routes>
               <Route path="/" element={<Navigate to={PATHS.LOGIN.path} />} />
 
@@ -82,6 +83,7 @@ export const AppRoutes = () => {
               <Route path={PATHS.RESET_PASS.path} element={<Views.ResetPassword />} />
               <Route path={PATHS.NOT_FOUND.path} element={<Views.NotFound />} />
             </Routes>
+          </AdminProvider>
             </LogsProvider>
           </BookingProvider>/
         </RoomProvider>

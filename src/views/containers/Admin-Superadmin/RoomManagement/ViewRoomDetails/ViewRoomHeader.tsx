@@ -1,7 +1,8 @@
-import React, { use, useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import {useNavigate} from 'react-router-dom';
+import { useRooms } from '../../../../../context/RoomContext';
 
 interface ViewRoomHeaderProps {
     activeTab: string;
@@ -10,18 +11,31 @@ interface ViewRoomHeaderProps {
 
 const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabClick }) => {
     const navigate = useNavigate();
+    const { currentRoom } = useRooms();
 
     return (
         <div className='max-h-max flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
             <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
                 <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
-                    <img src="" alt="" />
+                    <img
+                        src={
+                            currentRoom!.size === 'Small'
+                                ? '/meetingroom/small.jpg'
+                                : currentRoom!.size === 'Medium'
+                                    ? '/meetingroom/medium.jpg'
+                                    : currentRoom!.size === 'Large'
+                                        ? '/meetingroom/large.jpg'
+                                        : '/meetingroom/default.jpg'
+                        }
+                        alt={currentRoom!.name}
+                        className="w-full h-full object-cover rounded-md"
+                    />
                 </div>
                 <div className='max-h-max rounded-md lg:w-3/6 w-full flex gap-8'>
                     <div className='flex flex-col text-sm gap-1'>
-                        <div className='font-bold'>Executive Boardroom</div>
-                        <div className='font-bold'>CR-102A</div>
-                        <div className='font-bold text-green-500'>Available</div>
+                        <div className='font-bold'>{currentRoom!.name}</div>
+                        <div className='font-bold'>{currentRoom!.code}</div>
+                        <div className={`font-bold ${currentRoom!.status === 'Available' ? 'text-green-500' : (currentRoom!.status === 'Occupied' ? 'text-[#F59E0B]' : 'text-gray-500')}`}>{currentRoom!.status}</div>
                         <div></div>
                     </div>
                     <div className='flex flex-col text-sm gap-1'>
@@ -31,10 +45,14 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                         <div className='font-medium'>Facilities</div>
                     </div>
                     <div className='flex flex-col text-sm gap-1'>
-                        <div>North Tower, Level 12</div>
-                        <div>Medium</div>
-                        <div>12</div>
-                        <div>Projector, Video Conferencing, Whiteboard</div>
+                        <div>{currentRoom!.location}, Level {currentRoom!.level}</div>
+                        <div>{currentRoom!.size}</div>
+                        <div>{currentRoom!.seats}</div>
+                        <div>
+                            {currentRoom!.amenities && currentRoom!.amenities.length > 0
+                                ? currentRoom!.amenities.join(', ')
+                                : 'No amenities'}
+                        </div>
                     </div>
                 </div>
                 <div className='max-h-max rounded-md lg:w-1/6 w-full flex lg:flex-col flex-row gap-2 items-end'>

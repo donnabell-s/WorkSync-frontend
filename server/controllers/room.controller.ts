@@ -5,8 +5,7 @@ import { Room } from '../types';
 
 export const getRooms = async (_req: Request, res: Response) => {
     const db = getDB();
-    await db.read();
-    console.log('rooms: ' + db.data?.rooms[1]);
+    await db.read();    
     if (!db.data?.rooms) {
         return res.status(404).json({ message: 'No rooms found' });
     }
@@ -87,8 +86,8 @@ export const updateRoom = async (req: Request, res: Response) => {
     const db = getDB();
     await db.read();
     const roomId = req.params.id;
-    const room = db.data?.rooms.find((room) => room.id === roomId);
-    if (!room) {
+    const roomIndex = db.data?.rooms.findIndex((room) => room.id === roomId);
+    if (roomIndex === undefined || roomIndex === -1) {
         return res.status(404).json({ message: 'Room not found' });
     }
     const {
@@ -101,32 +100,37 @@ export const updateRoom = async (req: Request, res: Response) => {
         status,
         operatingHours,
         amenities
-    } = req.body;
+    } = req.body.room;
 
-    room.name = name;
-    room.code = code;
-    room.seats = seats;
-    room.location = location;
-    room.level = level;
-    room.size = size;
-    room.status = status;
-    room.operatingHours = operatingHours;
-    room.amenities = amenities;
-    room.updatedAt = new Date();
+    const updatedRoom = {
+        ...db.data.rooms[roomIndex],
+        name,
+        code,
+        seats,
+        location,
+        level,
+        size,
+        status,
+        operatingHours,
+        amenities,
+        updatedAt: new Date(),
+    };
 
-    db.data?.rooms.push(room);
+    db.data.rooms[roomIndex] = updatedRoom;
     await db.write();
-    res.status(201).json({ message: 'Room updated successfully', room });
+    res.status(200).json({ message: 'Room updated successfully', room: updatedRoom });
 };
 
 export const deleteRoom = async (req: Request, res: Response) => {
     const db = getDB();
     await db.read();
     const roomId = req.params.id;
+
     const roomIndex = db.data?.rooms.findIndex((room) => room.id === roomId);
     if (roomIndex === undefined || roomIndex === -1) {
         return res.status(404).json({ message: 'Room not found' });
     }
+    
     db.data?.rooms.splice(roomIndex, 1);
     await db.write();
     res.status(200).json({ message: 'Room deleted successfully' });

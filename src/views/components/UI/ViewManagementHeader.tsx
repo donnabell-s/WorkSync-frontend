@@ -118,7 +118,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
         if (setFunction) {
             setFunction(rooms);
         }
-    }, []);
+    }, [rooms, setFunction]);
 
     return (
         <div>

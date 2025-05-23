@@ -12,14 +12,14 @@ interface MultiSelectInputProps {
     readType?: 'delete' | null;
 }
 
-const MultiSelectInput: React.FC<MultiSelectInputProps> = ({ 
-    label, 
-    placeholder, 
-    className, 
-    name, 
-    options = [], 
-    value = [], 
-    onChange ,
+const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
+    label,
+    placeholder,
+    className,
+    name,
+    options = [],
+    value = [],
+    onChange,
     readType
 }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -46,7 +46,7 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
         const newSelectedOptions = selectedOptions.includes(option)
             ? selectedOptions.filter(item => item !== option)
             : [...selectedOptions, option];
-        
+
         setSelectedOptions(newSelectedOptions);
         onChange?.(newSelectedOptions);  // Notify parent of changes
     };
@@ -56,28 +56,33 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
         : placeholder || 'Select options';
 
     return (
-        <div className={`relative w-full ${className}`} ref={dropdownRef}>
+        <div className={`relative w-full flex flex-col gap-2 ${className}`} ref={dropdownRef}>
             <InputLabel label={label} filled={selectedOptions.length > 0} />
             <button
                 type="button"
-                className="w-full flex-grow text-sm border-zinc-300 border rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer text-left flex items-center justify-between"
+                className={`w-full flex-grow text-sm border-zinc-300 border rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer text-left flex items-center justify-between
+                    ${readType === 'delete' ? 'bg-zinc-100 text-zinc-700' : 'bg-white text-black'}`}
                 onClick={() => setIsOpen(!isOpen)}
             >
                 <span className={`${selectedOptions.length === 0 ? 'text-zinc-500' : 'text-black'}`}>
                     {displayText}
                 </span>
-                <svg
-                    className={`w-4 h-4 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
+                {
+                    readType !== 'delete' ? (
+                        <svg
+                            className={`w-4 h-4 ml-2 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                    ) : null
+                }
             </button>
 
-            {isOpen && (
+            {!readType && isOpen && (
                 <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 border border-zinc-200 max-h-60 overflow-auto">
                     {options.map((option, index) => (
                         <label
@@ -89,7 +94,6 @@ const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
                                 checked={selectedOptions.includes(option)}
                                 onChange={() => toggleOption(option)}
                                 className="rounded border-zinc-300 text-zinc-600 focus:ring-zinc-500 mr-2"
-                                readOnly={readType === 'delete'}
                             />
                             <span>{option}</span>
                         </label>
