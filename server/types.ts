@@ -78,7 +78,7 @@ export interface Log {
     userId: string;
     eventType: string; // e.g., "Room Created", "Room Updated", "Room Deleted"
     currentStatus: string; // e.g., "available", "booked", "under maintenance"
-    timestamp: string; // ISO 8601 format
+    timestamp: Date; // ISO 8601 format
 }
 
 export interface Session {
@@ -88,11 +88,13 @@ export interface Session {
 };
 
 export type Data = {
-    users: User[];
-    preferences: Preference[];
-    rooms: Room[];
-    bookings: Booking[];
-    bookingLogs: Log[];
+  users: User[];
+  preferences: Preference[];
+  rooms: Room[];
+  bookings: Booking[];
+  sessions: Session[];
+  logs: {
     roomLogs: Log[];
-    sessions: Session[];
+    bookingLogs: Log[];
+  };
 };

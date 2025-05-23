@@ -1,6 +1,7 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-import { User, Room, Booking, Preference } from '../../server/types';
+import { User, Room, Booking, Preference, Log } from '../../server/types';
 import { get } from 'http';
+import { config } from 'process';
 
 // Create axios instance with auth handling
 const createApiClient = (): AxiosInstance => {
@@ -50,6 +51,10 @@ export const API_PATHS = {
     USERS: '/users/me',
     USERS_LIST: '/users', 
     BOOKINGS: '/bookings',
+    LOGS: {
+        ROOM: '/logs/room',
+        BOOKING: '/logs/booking'
+    }
 
 };
 
@@ -99,11 +104,8 @@ export const roomsApi = {
         }
     },
 
-    getById: (id: string, config?: AxiosRequestConfig) => {
-    console.log('Fetching room with id:', id);
-    return api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config);
-    },
-
+    getById: (id: string, config?: AxiosRequestConfig) =>
+        api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config),
 
     create: async (data: { room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
@@ -164,12 +166,27 @@ export const usersApi = {
 
     getUserById: (id: string, config?: AxiosRequestConfig) =>
         api.get<User>(`${API_PATHS.USERS_LIST}/${id}`, config),
-
-    updateUser: (id: string, data: Partial<User>, config?: AxiosRequestConfig) =>
-        api.put<User>(`${API_PATHS.USERS_LIST}/${id}`, data, config),
 };
 
-
+//Room Logs API
+export const LogsApi = {
+    getAllRoomLogs: async (config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<Log[]>(API_PATHS.LOGS.ROOM, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Room Logs not found:', error);
+                return { data: [], status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+    create: (        
+        data: Omit<Log, 'id' | 'timestamp'>,
+        config?: AxiosRequestConfig) =>
+        api.post<Room>(API_PATHS.LOGS.ROOM, data, config),
+}
 
 
 // Generic API functions (optional)

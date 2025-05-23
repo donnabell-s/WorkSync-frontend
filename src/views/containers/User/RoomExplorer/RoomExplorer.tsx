@@ -20,7 +20,7 @@ const facilityOptions: FacilityOption[] = [
 ];
 
 const RoomExplorer: React.FC = () => {
-  const { rooms } = useRooms();                // grab live rooms
+  const { rooms } = useRooms();           
   const [searchQuery, setSearchQuery] = useState("");
   const [distance, setDistance]     = useState(10);
   const [minSeats, setMinSeats]     = useState(5);

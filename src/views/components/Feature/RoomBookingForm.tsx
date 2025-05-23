@@ -86,16 +86,14 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
 
   useEffect(() => {
     const roomId = localStorage.getItem("selectedRoomId");
-    console.log(roomId)
     if (roomId) {
-      getRoomById(String(2));
+      getRoomById(roomId);
     }
   }, []);
 
   useEffect(() => {
-  console.log("Current room:", currentRoom);
-}, [currentRoom]);
-
+    console.log("Current room:", currentRoom);
+  }, [currentRoom]);
 
   // useEffect(() => {
   //   if (rooms && !title && rooms.length > 0) {
