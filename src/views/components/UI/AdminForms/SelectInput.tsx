@@ -9,9 +9,12 @@ interface SelectInputProps {
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
   value?: string;
   options?: string[];
+  name: string;
+  onChange?: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  readType?: 'delete' | null;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className, type, onClick, options }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className, name, type, onClick, options, onChange, readType }) => {
   const [filled, setFilled] = useState(false);
 
   const inputRef = useRef<HTMLSelectElement>(null);
@@ -19,10 +22,14 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className
   useEffect(() => {
     const input = inputRef.current;
     if (input) {
-      const handleInput = () => setFilled(input.value !== '');
-      input.addEventListener('input', handleInput);
-      return () => input.removeEventListener('input', handleInput);
-    }
+          const handleInput = (event: Event) => {
+            const target = event.target as HTMLSelectElement;
+            setFilled(target.value !== '');
+            onChange && onChange(event as unknown as React.ChangeEvent<HTMLSelectElement>);
+          };
+          input.addEventListener('input', handleInput);
+          return () => input.removeEventListener('input', handleInput);
+        }
   }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -41,19 +48,32 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className
             <span className='text-zinc-500'>{placeholder}</span>
           </button>
         ) : (
-          <select ref={inputRef} id='input'
-            className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer'>
-            <option value="" disabled selected hidden>{placeholder || 'Select an option'}</option>
-            {
-              options && options.map((option, index) => (
-                <option key={index} value={option}>{option}</option>
-              ))
-            }
-          </select>
+            readType === 'delete' ? (
+            <div className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 bg-zinc-100 text-zinc-700'>
+              {options?.find(option => option === (inputRef.current?.value || '')) || placeholder || 'No value selected'}
+            </div>
+            ) : (
+            <select
+              ref={inputRef}
+              id='input'
+              name={name}
+              className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer'
+            >
+              <option value="" disabled selected hidden>
+              {placeholder || 'Select an option'}
+              </option>
+              {options &&
+              options.map((option, index) => (
+                <option key={index} value={option}>
+                {option}
+                </option>
+              ))}
+            </select>
+            )
         )
       }
     </div>
-  )
+  );
 }
 
 export default SelectInput
