@@ -78,9 +78,16 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
   };
 
   const handleDayClick = (date: Date) => {
+    const now = new Date();
+    // Remove time part for comparison
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const clickedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    if (clickedDate < today) return; // Don't allow selecting past days
     setSelectedDate(date);
     setIsModalOpen(true);
   };
+
 
   const days = getDaysInMonth(currentYear, currentMonth);
   const weeks = chunkDays(days, 7);

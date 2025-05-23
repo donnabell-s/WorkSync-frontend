@@ -1,7 +1,7 @@
 export interface Booking {
     id: number;
     userId: number; // ID of the user who made the booking
-    roomId: number; // ID of the booked room
+    roomId: string; // ID of the booked room
     title: string; // Title of the booking
     description: string; // Description of the booking
     startDateTime: Date; // Start date and time of the booking
@@ -66,7 +66,6 @@ export interface User {
     lname: string;
     email: string;
     password: string;
-    // phone: string;
     role: string;
     isActive: boolean;
     createdAt: Date; // Timestamp when the user was created

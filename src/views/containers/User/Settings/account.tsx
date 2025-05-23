@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../../../context/AuthContext';
 import { usersApi } from '../../../../api/client';
-import { User } from '../../../../types';
+import { User } from '../../../../../server/types';
 
 const Account: React.FC = () => {
   const { user: authUser } = useAuth();
@@ -10,8 +10,8 @@ const Account: React.FC = () => {
     fname: authUser?.fname || '',
     lname: authUser?.lname || '',
     email: authUser?.email || '',
-    phone: authUser?.phone || '',
   });
+
 
   const [addressInfo, setAddressInfo] = useState({
     country: '',
@@ -32,12 +32,8 @@ const Account: React.FC = () => {
           fname: freshUser.fname,
           lname: freshUser.lname,
           email: freshUser.email,
-          phone: freshUser.phone || '',
         });
-        setAddressInfo({
-          country: '',
-          city: '',
-        });
+        setAddressInfo({ country: '', city: '' });
         setProfilePhoto('/user-avatar.svg');
       } catch (err) {
         console.error('Failed to fetch fresh user data:', err);
@@ -45,6 +41,7 @@ const Account: React.FC = () => {
     }
     fetchUser();
   }, [authUser]);
+
 
   const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -58,17 +55,15 @@ const Account: React.FC = () => {
     if (!authUser?.id) return;
 
     try {
-      // Assuming your usersApi has an updateUser method that accepts (id, updatedData)
-      await usersApi.updateUser(String(authUser.id), {
+      const updatedData = {
         fname: personalInfo.fname,
         lname: personalInfo.lname,
         email: personalInfo.email,
-      });
+      };
 
-      // Optionally refetch fresh data or just disable editing after save
+      await usersApi.updateUser(String(authUser.id), updatedData);
+
       setIsEditingPersonal(false);
-      // You may want to also update authUser context or refetch user data here
-
     } catch (error) {
       console.error('Failed to update user:', error);
       alert('Failed to save changes. Please try again.');
@@ -78,8 +73,6 @@ const Account: React.FC = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Sidebar */}
-
       <div className="p-6 max-w-4xl mx-auto bg-white rounded-md shadow-md mt-6 ml-auto xl:ml-[270px] w-full">
         <h1 className="text-2xl font-bold border-b pb-4 mb-4">Account</h1>
 
@@ -106,6 +99,7 @@ const Account: React.FC = () => {
           <button className="border px-4 py-2 rounded-md text-sm">Change Password</button>
         </div>
 
+        {/* Personal Info */}
         <div className="mb-8">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-lg font-semibold">Personal Information</h2>
@@ -121,19 +115,16 @@ const Account: React.FC = () => {
             >
               {isEditingPersonal ? 'Save Changes' : 'Edit'}
             </button>
-
           </div>
           <div className="grid grid-cols-2 gap-4">
-            {['fname', 'lname', 'email', 'phone'].map((field, i) => (
+            {['fname', 'lname', 'email'].map((field, i) => (
               <div key={i}>
                 <label className="block text-sm text-gray-600 capitalize">
                   {field === 'fname'
                     ? 'First Name'
                     : field === 'lname'
                     ? 'Last Name'
-                    : field === 'email'
-                    ? 'Email Address'
-                    : 'Phone'}
+                    : 'Email Address'}
                 </label>
                 {isEditingPersonal ? (
                   <input
