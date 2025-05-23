@@ -11,7 +11,7 @@ interface AdminContextType {
   fetchAdmins: () => Promise<void>;
   getAdminById: (id: string) => Promise<void>;
   addAdmin: (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateAdmin: (id: string, admin: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  updateAdmin: (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deleteAdmin: (id: string) => Promise<void>;
 }
 
@@ -66,6 +66,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
     setIsLoading(true);
     try {
       const response = await adminsApi.update(id, { admin });
+      console.log('Update response:', response.data);
       if (response.data) {
         setAdmins(prev => prev.map(a => (a.id === id ? response.data : a)));
         setCurrentAdmin(response.data);

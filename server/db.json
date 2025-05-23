@@ -37,12 +37,12 @@
       "id": "h8rqGtfmN1H61pabhDRZu",
       "email": "julien@email.com",
       "password": "$2b$10$NFeoYDKvEV92DlR2qXAAweCMHjrs2VDSopPKPzcvC0B2TtxqjjDia",
-      "fname": "Julien",
+      "fname": "Julienn",
       "lname": "Beniz",
       "role": "admin",
-      "isActive": false,
+      "isActive": true,
       "createdAt": "2025-05-23T21:00:43.215Z",
-      "updatedAt": "2025-05-23T21:01:15.943Z"
+      "updatedAt": "2025-05-23T21:25:34.516Z"
     }
   ],
   "preferences": [
@@ -215,6 +215,12 @@
       "auth": true,
       "userId": "w_W2qSw-6bZRuAHL438I8",
       "createdAt": "2025-05-23T21:01:05.523Z"
+    },
+    {
+      "id": "TWgMrsTcLzhCezP07ops3",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T21:22:17.463Z"
     }
   ]
 }

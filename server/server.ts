@@ -30,6 +30,7 @@ initializeDB();
 function makeHandler(controller: (req: Request, res: Response, next: NextFunction) => Promise<any>): RequestHandler {
   return async (req, res, next) => {
     try {
+      console.log('Request:', req.method, req.path, req.body);
       await controller(req, res, next);
     } catch (err) {
       console.error('Handler Error:', err);

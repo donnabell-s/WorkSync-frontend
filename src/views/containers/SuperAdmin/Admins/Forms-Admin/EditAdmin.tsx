@@ -55,7 +55,8 @@ const EditAdmin = () => {
       password: currentAdmin.password, // Add password back for update
     };
 
-    // console.log('Updated Admin:', updatedAdmin);
+    console.log('Updated Admin:', updatedAdmin);
+    // console.log('Current Admin:', currentAdmin);
     updateAdmin(currentAdmin.id, updatedAdmin)
       .then(() => {
         console.log('Admin updated successfully');
@@ -76,7 +77,7 @@ const EditAdmin = () => {
 
   const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    navigate('/admin/admins/view'); // Navigate back to view rooms
+    navigate('/admin/admins/view');
   };
 
   useEffect(() => {
@@ -139,7 +140,7 @@ const EditAdmin = () => {
           <label className="font-medium">Status</label>
           <select
             className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="status"
+            name="isActive"
             value={form.isActive ? 'Active' : 'Inactive'}
             onChange={handleChange}
           >
@@ -166,6 +167,7 @@ const EditAdmin = () => {
           </button>
           <button
             type="submit"
+            onClick={handleSubmit}
             className="px-6 py-2 rounded bg-blue-700 text-white hover:bg-blue-800 font-medium"
           >
             Save
