@@ -48,6 +48,7 @@ export const API_PATHS = {
     },
     ROOMS: '/rooms',
     USERS: '/users/me',
+    ADMINS: '/admins',
 };
 
 // Auth API
@@ -142,6 +143,73 @@ export const roomsApi = {
         } catch (error: any) {
             if (error.response && error.response.status === 404) {
                 console.error('Room not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    }
+};
+
+export const adminsApi = {
+    getAll: async (config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<User[]>(API_PATHS.ADMINS, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Admins not found:', error);
+                return { data: [], status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
+    getById: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<User>(`${API_PATHS.ADMINS}/${id}`, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Admins not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
+    create: async (data: { room: Omit<User, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.post<User>(API_PATHS.ADMINS, data, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                console.error('Bad request:', error);
+                return { data: null, status: 400, statusText: 'Bad Request', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
+    update: async (id: string, data: { room: Omit<User, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.put<User>(`${API_PATHS.ADMINS}/${id}`, data, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                console.error('Bad request:', error);
+                return { data: null, status: 400, statusText: 'Bad Request', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
+    delete: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.delete(`${API_PATHS.ADMINS}/${id}`, config)
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Admins not found:', error);
                 return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
             }
             throw error;

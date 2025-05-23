@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
+import { getAdmins, getAdminById, addAdmin, updateAdmin, deleteAdmin } from './controllers/admin.controller';
 import cors from 'cors';
 
 const app = express();
@@ -71,6 +72,12 @@ app.post('/rooms', makeHandler(createRoom));
 app.get('/rooms/:id', makeHandler(getRoomById));
 app.put('/rooms/:id', makeHandler(updateRoom));
 app.delete('/rooms/:id', makeHandler(deleteRoom));
+
+app.get('/admins', makeHandler(getAdmins));
+app.post('/admins', makeHandler(addAdmin));
+app.get('/admins/:id', makeHandler(getAdminById));
+app.put('/admins/:id', makeHandler(updateAdmin));
+app.delete('/admins/:id', makeHandler(deleteAdmin));
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
