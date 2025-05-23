@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { Booking } from './UserBookingListInterface';
 import { useNavigate } from 'react-router';
 import { useBookings } from '../../../context/BookingContext';
 import { useRooms } from '../../../context/RoomContext';
+import { Room } from '../../../types';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
@@ -33,7 +33,6 @@ const formatDate = (dateString: string | Date) => {
   });
 };
 
-
 const formatTime = (dateString: string | Date) => {
   const d = new Date(dateString);
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -44,14 +43,12 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigate = useNavigate();
   const { bookings, fetchBookings } = useBookings();
-  // Here, also get rooms map and getRoomById from context
   const { rooms, getRoomById } = useRooms();
 
   useEffect(() => {
     fetchBookings();
   }, [fetchBookings]);
 
-  // Filter bookings
   let filtered = [...bookings];
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
@@ -74,14 +71,15 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   const visibleBookings = filtered.slice(startIndex, endIndex);
 
-  // Trigger loading rooms for visible bookings — no await, just call getRoomById for missing rooms
+  // Trigger loading rooms for visible bookings
   useEffect(() => {
     visibleBookings.forEach(b => {
-      if (!(rooms as Record<string, any>)[b.roomId]) {
+      const hasRoom = rooms.find(r => r.id === b.roomId);
+      if (!hasRoom) {
         getRoomById(b.roomId);
       }
     });
-  }, [visibleBookings, rooms]);
+  }, [visibleBookings, rooms, getRoomById]);
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsPerPage(Number(e.target.value));
@@ -108,13 +106,12 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
           </thead>
           <tbody>
             {visibleBookings.map((booking) => {
-              const room = (rooms as Record<string, any>)[booking.roomId];
+              const room = rooms.find(r => r.id === booking.roomId);
               return (
                 <tr
                   key={booking.id}
                   className={`text-sm ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
                   onClick={() => {
-                    
                     if (booking.status === "confirmed") {
                       localStorage.setItem("selectedBookingId", String(booking.id));
                       navigate(`/user/edit-booking`);

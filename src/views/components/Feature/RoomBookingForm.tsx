@@ -148,31 +148,34 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   useEffect(() => {
     if (edit) {
       const bookingId = localStorage.getItem("selectedBookingId");
+      console.log(bookingId)
       if (bookingId) getBookingById(bookingId);
     }
   }, [getBookingById]);
 
-  useEffect(() => {
-    if (edit && currentBooking) {
-      setTitle(currentBooking.title);
-      const start = new Date(currentBooking.startDateTime);
-      const end = new Date(currentBooking.endDateTime);
-      setStartDate(start.toISOString().split("T")[0]);
-      setStartTime(start.toTimeString().slice(0, 5));
-      setEndDate(end.toISOString().split("T")[0]);
-      setEndTime(end.toTimeString().slice(0, 5));
 
-      const rec = currentBooking.recurrence;
-      if (rec?.isRecurring) {
-        setIsRecurring(true);
-        setRecurrenceType(rec.pattern || "");
-        setInterval(rec.interval ?? 1);
-        if (rec.pattern === "weekly" && rec.daysOfWeek) {
-          setSelectedDays(rec.daysOfWeek);
-        }
+useEffect(() => {
+  if (edit && currentBooking) {
+    setTitle(currentBooking.title);
+    const start = new Date(currentBooking.startDateTime);
+    const end = new Date(currentBooking.endDateTime);
+    setStartDate(start.toISOString().split("T")[0]);
+    setStartTime(start.toTimeString().slice(0, 5));
+    setEndDate(end.toISOString().split("T")[0]);
+    setEndTime(end.toTimeString().slice(0, 5));
+
+    const rec = currentBooking.recurrence;
+    if (rec?.isRecurring) {
+      setIsRecurring(true);
+      setRecurrenceType(rec.pattern || "");
+      setInterval(rec.interval ?? 1);
+      if (rec.pattern === "weekly" && rec.daysOfWeek) {
+        setSelectedDays(rec.daysOfWeek);
       }
     }
-  }, [edit, currentBooking]);
+  }
+}, [edit, currentBooking]);
+
 
   useEffect(() => {
     if (!isRecurring || !startDate || !recurrenceType || interval < 1) return;
