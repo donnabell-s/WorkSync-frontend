@@ -25,6 +25,7 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const fetchRooms = async () => {
     setIsLoading(true);
     try {
+      console.log("Tesxt")
       const response = await roomsApi.getAll();
       console.log('Fetched rooms:', response.data);
       setRooms(response.data);

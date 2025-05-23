@@ -14,7 +14,7 @@ export const getRooms = async (_req: Request, res: Response) => {
 };
 
 export const getRoomById = async (req: Request, res: Response) => {
-    console.log("tesdt")
+    console.log("GetRoomsByID Controller");
     const db = getDB();
     const roomId = req.params.id;
     await db.read();
@@ -38,7 +38,7 @@ export const createRoom = async (req: Request, res: Response) => {
         status,
         operatingHours,
         amenities
-    } = req.body;
+    } = req.body.room;
 
     await db.read();
     const room = {

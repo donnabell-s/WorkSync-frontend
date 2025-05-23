@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid';
 import { getDB } from '../services/db.service';
 import { Data, User } from '../types';
 
-
 const getUsers = async (_req: Request, res: Response) => {
     const db = getDB();
     await db.read();

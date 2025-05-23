@@ -88,7 +88,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           </div>
           <div className="flex flex-grow items-end mt-4">
             <button
-            onClick={() => handleClick(room.code)} // Assuming room has an `id` field
+            onClick={() => handleClick(room.id)} // Assuming room has an `id` field
             className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
               role === "admin" ? "p-3" : "p-6"
             }`}

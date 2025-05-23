@@ -4,6 +4,7 @@ import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
 import { getUserById, getUsers } from './controllers/user.controller';
 import { getBookings, getBookingById, createBooking, updateBooking, deleteBooking} from './controllers/booking.controller';
+import { getRoomLog } from './controllers/log.controller';
 // import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
@@ -84,6 +85,7 @@ app.post('/bookings', makeHandler(createBooking));
 app.put('/bookings/id', makeHandler(updateBooking));
 app.delete('/bookings/id', makeHandler(deleteBooking));
 
+app.get('/logs/room', makeHandler(getRoomLog))
 
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');
