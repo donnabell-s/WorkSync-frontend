@@ -4,6 +4,29 @@ import { nanoid } from 'nanoid';
 import { getDB } from '../services/db.service';
 import { Data, User } from '../types';
 
+
+const getUsers = async (_req: Request, res: Response) => {
+    const db = getDB();
+    await db.read();
+    console.log('user: ' + db.data?.users[1]);
+    if (!db.data?.users) {
+        return res.status(404).json({ message: 'No user found' });
+    }
+    res.json(db.data.users);
+};
+
+export const getUserById = async (req: Request, res: Response) => {
+    console.log("getUserById Controller")
+    const db = getDB();
+    const id = req.params.id;
+    await db.read();
+    const user = db.data?.users.find((user) => user.id === id);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+}
+
 const signup = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const db = getDB();
@@ -121,4 +144,4 @@ const logout = async (req: Request, res: Response, next: NextFunction): Promise<
   }
 };
 
-export { signup, login, logout };
+export { signup, login, logout, getUsers };

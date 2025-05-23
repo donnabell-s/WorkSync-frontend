@@ -99,8 +99,11 @@ export const roomsApi = {
         }
     },
 
-    getById: (id: string, config?: AxiosRequestConfig) =>
-        api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config),
+    getById: (id: string, config?: AxiosRequestConfig) => {
+    console.log('Fetching room with id:', id);
+    return api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config);
+    },
+
 
     create: async (data: { room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
@@ -124,8 +127,18 @@ export const roomsApi = {
 
 //Bookings API
 export const bookingsApi = {
-    getAll: (config?: AxiosRequestConfig) =>
-        api.get<Booking[]>(API_PATHS.BOOKINGS, config),
+    getAll: async (config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<Booking[]>(API_PATHS.BOOKINGS, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Bookings not found:', error);
+                return { data: [], status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
 
     getById: (id: number, config?: AxiosRequestConfig) =>
         api.get<Booking>(`${API_PATHS.BOOKINGS}/${id}`, config),
@@ -140,6 +153,8 @@ export const bookingsApi = {
         data: Partial<Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>>,
         config?: AxiosRequestConfig
     ) => api.put<Booking>(`${API_PATHS.BOOKINGS}/${id}`, data, config),
+    delete: (id: string, config?: AxiosRequestConfig) =>
+    api.delete(`${API_PATHS.BOOKINGS}/${id}`, config)
 };
 
 // Users API

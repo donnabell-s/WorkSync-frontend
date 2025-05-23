@@ -14,6 +14,7 @@ export const getRooms = async (_req: Request, res: Response) => {
 };
 
 export const getRoomById = async (req: Request, res: Response) => {
+    console.log("tesdt")
     const db = getDB();
     const roomId = req.params.id;
     await db.read();

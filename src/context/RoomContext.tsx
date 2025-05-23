@@ -42,6 +42,7 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
       const response = await roomsApi.getById(id);
       console.log('Fetched room by ID:', response.data);
       setCurrentRoom(response.data);
+      console.log("room id",response.data.id)
     } catch (err) {
       setError('Room not found');
     } finally {
