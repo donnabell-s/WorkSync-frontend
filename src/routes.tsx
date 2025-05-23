@@ -1,6 +1,8 @@
 import { BrowserRouter, Route, Routes } from "react-router";
 import * as Views from "./views/containers";
 import { PATHS } from "./constant";
+import EditDeleteUser from './views/components/UI/edit-delete-user';
+import EditDeleteAdmin from './views/components/UI/edit-delete-admin';
 
 export const AppRoutes = () => {
   return (
@@ -31,6 +33,9 @@ export const AppRoutes = () => {
 
           <Route path={PATHS.ADMIN_MGNT.VIEW.path} element={<Views.ViewAdmins />} />
           <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<Views.EditAdmin />} />
+
+          <Route path="/admin/users/edit-delete" element={<EditDeleteUser />} />
+          <Route path="/admin/admins/edit-delete" element={<EditDeleteAdmin />} />
         </Route>
         <Route path={PATHS.USER_MAIN.path} element={<Views.UserMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}

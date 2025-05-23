@@ -153,4 +153,5 @@ const EditAdmin = () => {
   );
 };
 
-export default EditAdmin;
+const EditDeleteAdmin = EditAdmin;
+export default EditDeleteAdmin;
