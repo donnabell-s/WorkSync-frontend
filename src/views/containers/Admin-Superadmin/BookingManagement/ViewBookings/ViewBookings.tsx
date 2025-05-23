@@ -14,7 +14,7 @@ const ViewBookings = () => {
         <AdminHeading label="BOOKINGS" />
       </div>
       <div className='h-full flex flex-col mt-5 bg-white rounded-lg shadow-md divide-y-1 divide-[#D2D4D8]'>
-        <ViewManagementHeader view="bookings"  setFunction={setFilteredBookings} />
+        <ViewManagementHeader view="bookings" setFunction={setFilteredBookings} />
         <div className='h-full bg-[#F3F4F6] p-3 overflow-y-scroll rounded-md'>
           {
             filteredBookings.length > 0 ?
