@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import SideNav from '../../../../components/Layout/AdminSuperAdminLayout/SideNav';
 
@@ -42,7 +43,7 @@ const ViewAdmins: React.FC = () => {
   );
 
   return (
-    <div className="flex flex-col px-5 pt-5 min-h-screen bg-gray-100">
+    <div className="flex flex-col px-10 pt-10 min-h-screen bg-gray-100">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">ADMIN MANAGEMENT</h2>
 
         {/* Search & Sort */}
@@ -55,9 +56,9 @@ const ViewAdmins: React.FC = () => {
             onChange={(e) => setSearch(e.target.value)}
           />
           <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-700">Sort by:</span>
+            <div className="text-sm text-gray-700 whitespace-nowrap">Sort by:</div>
             <select
-              className="border border-gray-300 rounded px-2 py-1"
+              className="border border-gray-300 rounded px-40 py-2.5 w-full"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'Name' | 'Role' | 'Status')}
             >
@@ -70,14 +71,14 @@ const ViewAdmins: React.FC = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="min-w-full bg-white rounded-md shadow text-sm">
+          <table className="min-w-full bg-white rounded-md shadow text-base">
             <thead>
               <tr className="bg-gray-100 text-left text-gray-700">
-                <th className="px-4 py-2">Name</th>
-                <th className="px-4 py-2">Email</th>
-                <th className="px-4 py-2">Role</th>
-                <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Action</th>
+                <th className="px-6 py-4">Name</th>
+                <th className="px-6 py-4">Email</th>
+                <th className="px-6 py-4">Role</th>
+                <th className="px-6 py-4">Status</th>
+                <th className="px-6 py-4">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -90,18 +91,21 @@ const ViewAdmins: React.FC = () => {
               ) : (
                 paginatedAdmins.map((admin, index) => (
                   <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-2">{admin.name}</td>
-                    <td className="px-4 py-2">{admin.email}</td>
-                    <td className="px-4 py-2">{admin.role}</td>
-                    <td className={`px-4 py-2 font-medium ${
+                    <td className="px-6 py-4">{admin.name}</td>
+                    <td className="px-6 py-4">{admin.email}</td>
+                    <td className="px-6 py-4">{admin.role}</td>
+                    <td className={`px-6 py-4 font-medium ${
                       admin.status === 'ACTIVE' ? 'text-green-600' : 'text-red-500'
                     }`}>
                       {admin.status}
                     </td>
-                    <td className="px-4 py-2">
-                      <button className="border px-3 py-1 rounded-md hover:bg-gray-200">
-                        Edit ✏️
-                      </button>
+                    <td className="px-6 py-4">
+              {/*Add Admin button */}
+              <button 
+              className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              EDIT
+          </button>
                     </td>
                   </tr>
                 ))
@@ -110,11 +114,14 @@ const ViewAdmins: React.FC = () => {
           </table>
         </div>
 
-        {/* Pagination */}
-        <div className="flex justify-between items-center mt-4 text-sm text-gray-700">
-          <span>
+        <div className="flex items-center mt-4">
+        {/* Left: Showing text */}
+         <div className="text-sm text-gray-700">
             Showing {(currentPage - 1) * adminsPerPage + 1}–{Math.min(currentPage * adminsPerPage, filteredAdmins.length)} of {filteredAdmins.length} admins
-          </span>
+        </div>
+
+        {/* Center: Pagination buttons */}
+          <div className="flex-1 flex justify-center">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
@@ -122,25 +129,24 @@ const ViewAdmins: React.FC = () => {
               className="px-2 py-1 border rounded disabled:opacity-50"
             >
               &lt;
-            </button>
-            <span>{currentPage}</span>
-            <button
-              onClick={() =>
-                setCurrentPage(prev =>
-                  prev * adminsPerPage < filteredAdmins.length ? prev + 1 : prev
-                )
-              }
-              className="px-2 py-1 border rounded"
+              </button>
+                <span>{currentPage}</span>
+                  <button
+                    onClick={() =>
+                    setCurrentPage(prev =>
+                    prev * adminsPerPage < filteredAdmins.length ? prev + 1 : prev
+                  )}
+                    className="px-2 py-1 border rounded"
+                  > 
+                    &gt;
+                  </button>
+                </div>
+              </div>
+              {/*Add Admin button */}
+              <button 
+              className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             >
-              &gt;
-            </button>
-          </div>
-        </div>
-
-        {/* Add Admin Button */}
-        <div className="flex justify-end mt-6">
-          <button className="bg-purple-700 text-white px-4 py-2 rounded-md hover:bg-purple-800">
-            Add Admin
+              Add Admin
           </button>
         </div>
     </div>

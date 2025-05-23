@@ -1,68 +1,70 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../../../components/Layout/AdminSuperAdminLayout/Header';
-import SideNav from '../../../../../components/Layout/AdminSuperAdminLayout/SideNav';
 import AdminHeading from '../../../../../components/UI/AdminHeading';
-import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
-import { meetingRooms } from "../../../../../components/Feature";
+import AdminButton from '../../../../../components/UI/AdminButton';
+import AdminBackLink from '../../../../../components/UI/AdminBackLink';
+import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
+import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
+import Input from '../../../../../components/UI/AdminForms/Input';
 
 
 const DeleteRoom: React.FC = () => {
-    const [nav, setNav] = useState(false);
+    const sizes = ['Small', 'Medium', 'Large'];
+    const statuses = ['Available', 'Occupied', 'Under Maintenance'];
+    const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
     const navigate = useNavigate();
-    const toggleNav = () => setNav(!nav);
 
-    const room = meetingRooms.find((r: typeof meetingRooms[number]) => r.roomCode === 'CR-102A');
+    const [formData, setFormData] = useState({
+        roomName: '',
+        roomNumber: '',
+        location: '',
+        floor: '',
+        size: 'Small',
+        seats: '',
+        status: 'Available',
+        facilities: [] as string[],
+    });
 
-    const formData = {
-        roomName: room?.roomName || '',
-        roomNumber: room?.roomCode || '',
-        location: room?.location.split(',')[0] || '',
-        floor: room?.location.split(',')[1]?.trim().replace('Level ', '') || '',
-        size: room?.size || '',
-        seats: room?.numberOfSeats.toString() || '',
-        status: room?.status || 'Available',
-        facilities: room?.additionalFacilities || [],
-        image: null as File | null,
-        imagePreview: `/meetingroom/${room?.imageFile}` || '',
-    };
-
-    const handleDelete = () => {
-        console.log('Room Deleted:', formData);
-        navigate('/admin/room-management');
-    };
-
-    const noop = () => {};
+    const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        // navigate('/admin/bookings/view');
+        console.log('Form Data:', formData);
+    }
 
     return (
-        <div className="flex min-h-screen bg-gray-100">
-            <div className="flex-1">
-                <div className="p-6">
-                    <div className="text-blue-600 cursor-pointer mb-4" onClick={() => navigate('/admin/rooms/room-detail')}>
-                        {'<'} Back to Room Details
+        <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
+            <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
+
+            <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
+                <AdminHeading label="DELETE ROOM" />
+
+                <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
+                    <div className='flex flex-col gap-4'>
+                        <Input label='Room Name' name='roomName' type='text' className='md:col-span-2' readType='delete' />
+                        <Input label='Room Number' name='roomNumber' type='text' className='md:col-span-2' readType='delete' />
+                        <Input label='Location' name='location' type='text' className='md:col-span-2' readType='delete' />
+                        <Input label='Floor/Level' name='floor' type='text' className='md:col-span-2' readType='delete' />
+                        <SelectInput label='Size' name='size' value={formData.size} options={sizes} readType='delete' />
+                        <Input label='Seats' name='seats' type='number' className='md:col-span-2' readType='delete' />
                     </div>
-                    <AdminHeading label="DELETE ROOM" />
-                    <RoomFormLayout
-                        formData={formData}
-                        onInputChange={noop}
-                        onFacilitiesChange={noop}
-                        onImageChange={noop}
-                        readOnly
-                    >
-                        <button
-                            className="w-32 bg-red-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-red-700"
-                            onClick={handleDelete}
-                        >
-                            DELETE
-                        </button>
-                        <button
-                            className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
-                            onClick={() => navigate('/admin/room-management')}
-                        >
-                            CANCEL
-                        </button>
-                    </RoomFormLayout>
-                </div>
+
+                    <div className='flex flex-col gap-4'>
+                        <SelectInput label='Status' name='status' value={formData.status} options={statuses} readType='delete' />
+
+                        <MultiSelectInput
+                            label="Facilities"
+                            name="facilities"
+                            options={facilities}
+                            value={formData.facilities}
+                             readType='delete'
+                        />
+                    </div>
+
+                    <div className='flex gap-4'>
+                        <AdminButton label='Save' variant='primary' onClick={handleBack} />
+                        <AdminButton label='Cancel' variant='secondary' onClick={handleBack} />
+                    </div>
+                </form>
             </div>
         </div>
     );

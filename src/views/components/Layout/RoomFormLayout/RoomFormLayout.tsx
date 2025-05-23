@@ -1,4 +1,7 @@
 import React from 'react';
+import AdminBackLink from '../../UI/AdminBackLink';
+
+type RoomFormMode = 'add' | 'edit' | 'delete';
 
 interface RoomFormProps {
     formData: {
@@ -9,204 +12,239 @@ interface RoomFormProps {
         size: string;
         seats: string;
         status: string;
-        facilities: string[];
+        facilities: string [];
         image: File | null;
         imagePreview: string;
     };
+    mode: RoomFormMode;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-    onFacilitiesChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
     onImageChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    readOnly?: boolean; // For DeleteRoom, make fields read-only
-    children: React.ReactNode; // For buttons (Save, Delete, Cancel)
+    onSubmit: () => void; 
+    onCancel: () => void;
+    onDelete?: () => void;
+    onSaveChanges?: () => void;
+    readOnly?: boolean;
+    children: React.ReactNode;
 }
 
 const RoomFormLayout: React.FC<RoomFormProps> = ({
+    mode,
     formData,
     onInputChange,
-    onFacilitiesChange,
     onImageChange,
+    onSubmit,
+    onCancel,
     readOnly = false,
-    children,
 }) => {
     return (
-        <div className="bg-white p-6 rounded-lg shadow-md mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Left Side: Room Name, Room Number, Location, Floor/Level, Size, Seats */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">ROOM NAME *</label>
-                    <input
-                        type="text"
-                        name="roomName"
-                        value={formData.roomName}
-                        onChange={onInputChange}
-                        readOnly={readOnly}
-                        className={`mt-1 p-2 w-full border rounded-md ${
-                            readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                        placeholder={readOnly ? '' : 'Enter Room Name'}
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">STATUS *</label>
-                    {readOnly ? (
-                        <input
-                            type="text"
-                            value={formData.status}
-                            readOnly
-                            className="mt-1 p-2 w-full border rounded-md bg-gray-100"
-                        />
-                    ) : (
-                        <select
-                            name="status"
-                            value={formData.status}
-                            onChange={onInputChange}
-                            className="mt-1 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="Available">Available</option>
-                            <option value="Occupied">Occupied</option>
-                            <option value="Under Maintenance">Under Maintenance</option>
-                        </select>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">ROOM NUMBER *</label>
-                    <input
-                        type="text"
-                        name="roomNumber"
-                        value={formData.roomNumber}
-                        onChange={onInputChange}
-                        readOnly={readOnly}
-                        className={`mt-1 p-2 w-full border rounded-md ${
-                            readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                        placeholder={readOnly ? '' : 'Enter Room Number'}
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">FACILITIES *</label>
-                    {readOnly ? (
-                        <input
-                            type="text"
-                            value={formData.facilities.join(', ')}
-                            readOnly
-                            className="mt-1 p-2 w-full border rounded-md bg-gray-100"
-                        />
-                    ) : (
-                        <select
-                            multiple
-                            name="facilities"
-                            value={formData.facilities}
-                            onChange={onFacilitiesChange}
-                            className="mt-1 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="Projector">Projector</option>
-                            <option value="Video Conferencing">Video Conferencing</option>
-                            <option value="Whiteboard">Whiteboard</option>
-                            <option value="Air Conditioner">Air Conditioner</option>
-                        </select>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">LOCATION *</label>
-                    <input
-                        type="text"
-                        name="location"
-                        value={formData.location}
-                        onChange={onInputChange}
-                        readOnly={readOnly}
-                        className={`mt-1 p-2 w-full border rounded-md ${
-                            readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                        placeholder={readOnly ? '' : 'Enter Location'}
-                    />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">ROOM IMAGE *</label>
-                    {readOnly ? (
-                        formData.imagePreview && (
-                            <div className="mt-2">
-                                <img
-                                    src={formData.imagePreview}
-                                    alt="Room Preview"
-                                    className="w-40 h-40 object-cover rounded-md"
-                                />
-                            </div>
-                        )
-                    ) : (
-                        <>
-                            <input
-                                type="file"
-                                name="image"
-                                onChange={onImageChange}
-                                className="mt-1 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-500"
-                            />
-                            {formData.imagePreview && (
-                                <div className="mt-2">
-                                    <img
-                                        src={formData.imagePreview}
-                                        alt="Room Preview"
-                                        className="w-40 h-40 object-cover rounded-md"
-                                    />
-                                </div>
-                            )}
-                        </>
-                    )}
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">FLOOR/LEVEL *</label>
-                    <input
-                        type="text"
-                        name="floor"
-                        value={formData.floor}
-                        onChange={onInputChange}
-                        readOnly={readOnly}
-                        className={`mt-1 p-2 w-full border rounded-md ${
-                            readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                        placeholder={readOnly ? '' : 'Enter Floor/Level'}
-                    />
-                </div>
-                <div></div> {/* Empty div for grid alignment */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">SIZE *</label>
-                    {readOnly ? (
-                        <input
-                            type="text"
-                            value={formData.size}
-                            readOnly
-                            className="mt-1 p-2 w-full border rounded-md bg-gray-100"
-                        />
-                    ) : (
-                        <select
-                            name="size"
-                            value={formData.size}
-                            onChange={onInputChange}
-                            className="mt-1 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option value="">Select Room Size</option>
-                            <option value="Small">Small</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Large">Large</option>
-                        </select>
-                    )}
-                </div>
-                <div></div> {/* Empty div for grid alignment */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">SEATS *</label>
-                    <input
-                        type="number"
-                        name="seats"
-                        value={formData.seats}
-                        onChange={onInputChange}
-                        readOnly={readOnly}
-                        className={`mt-1 p-2 w-full border rounded-md ${
-                            readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
-                        }`}
-                        placeholder={readOnly ? '' : 'Enter Number of Seats'}
-                    />
-                </div>
+        <div className="grid grid-cols-2 gap-6">
+            {/* Room Name and Status */}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Room Name *</label>
+                <input
+                    type="text"
+                    name="roomName"
+                    value={formData.roomName}
+                    onChange={onInputChange}
+                    readOnly={readOnly}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Enter Room Name'}
+                />
             </div>
-            <div className="mt-6 flex gap-4">{children}</div>
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Status *</label>
+                <select
+                    name="status"
+                    value={formData.status}
+                    onChange={onInputChange}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                >
+                    <option value="Available">Select Room Status</option>
+                    <option value="Available">Available</option>
+                    <option value="Occupied">Occupied</option>
+                    <option value="Under Maintenance">Under Maintenance</option>
+                </select>
+            </div>
+
+            {/* Room Number and Facilities */}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Room Number *</label>
+                <input
+                    type="text"
+                    name="roomNumber"
+                    value={formData.roomNumber}
+                    onChange={onInputChange}
+                    readOnly={readOnly}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Enter Room Number'}
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Facilities *</label>
+                <select
+                    name="facilities"
+                    value={formData.facilities}
+                    onChange={onInputChange}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                >
+                    <option value="">Select Room Facilities Included</option>
+                    <option value="Projector">Projector</option>
+                    <option value="Video Conferencing">Video Conferencing</option>
+                    <option value="Whiteboard">Whiteboard</option>
+                    <option value="Air Conditioner">Air Conditioner</option>
+                </select>
+            </div>
+
+            {/* Location and Room Image */}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Location *</label>
+                <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={onInputChange}
+                    readOnly={readOnly}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Enter Location'}
+                />
+            </div>
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Room Image *</label>
+                <input
+                    type="file"
+                    name="image"
+                    onChange={onImageChange}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Choose File'}
+                />
+                {formData.imagePreview && (
+                    <div className="mt-2">
+                        {/* <img
+                            src={formData.imagePreview}
+                            alt="Room Preview"
+                            className="w-40 h-40 object-cover rounded-md"
+                        /> */}
+                    </div>
+                )}
+            </div>
+
+            {/* Floor/Level */}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Floor/Level *</label>
+                <input
+                    type="text"
+                    name="floor"
+                    value={formData.floor}
+                    onChange={onInputChange}
+                    readOnly={readOnly}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Enter Floor/Level'}
+                />
+            </div>
+            <div></div> {/* Empty div to maintain grid alignment */}
+
+            {/*Size*/}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Size *</label>
+                <select
+                    name="size"
+                    value={formData.size}
+                    onChange={onInputChange}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                >
+                    <option value="">Select Room Size</option>
+                    <option value="Small">Small</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Large">Large</option>
+                </select>
+            </div>
+            <div></div> {/* Empty div to maintain grid alignment */}
+
+            {/*Seats*/}
+            <div>
+                <label className="block text-sm font-bold text-gray-700">Seats *</label>
+                <input
+                    type="number"
+                    name="seats"
+                    value={formData.seats}
+                    onChange={onInputChange}
+                    readOnly={readOnly}
+                    disabled={readOnly}
+                    className={`mt-1 p-2 w-[650px] border rounded-md ${
+                        readOnly ? 'bg-gray-100' : 'focus:ring-2 focus:ring-blue-500'
+                    }`}
+                    placeholder={readOnly ? '' : 'Enter Number of Seats'}
+                />
+            </div>
+            <div></div> {/* Empty div to maintain grid alignment */}
+
+            {/* Buttons */}
+            <div className="col-span-2 flex space-x-4 mt-6">
+                {mode === 'add' && (<>
+                    <button
+                        onClick={onSubmit}
+                        className="w-32 bg-blue-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-blue-700"
+                    >
+                        SAVE
+                    </button>
+                    <button
+                        onClick={onCancel}
+                        className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                    >
+                        CANCEL
+                    </button>
+                </>
+                )}
+
+                {mode === 'edit' && (<>
+                    <button
+                        onClick={onSubmit}
+                        className="w-32 bg-blue-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-blue-700"
+                    >
+                        SAVE CHANGES
+                    </button>
+                    <button
+                        onClick={onCancel}
+                        className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                    >
+                        CANCEL
+                    </button>
+                </>
+                )}
+
+                {mode === 'delete' && (
+                <>
+                    <button
+                        onClick={onSubmit}
+                        className="w-32 bg-red-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-red-700"
+                    >
+                        DELETE
+                    </button>
+                    <button
+                        onClick={onCancel}
+                        className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                    >
+                        CANCEL
+                    </button>
+                </>
+                )}
+            </div>
         </div>
     );
 };
