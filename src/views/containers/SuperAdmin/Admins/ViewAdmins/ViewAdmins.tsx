@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmins } from '../../../../../context/AdminContext';
-import { EditAdmin } from '../Forms-Admin/EditAdmin';
 
 const ViewAdmins: React.FC = () => {
   const { admins, currentAdmin, getAdminById } = useAdmins();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'Name' | 'Role' | 'Status'>('Name');
   const [currentPage, setCurrentPage] = useState(1);
+  const [editAdmin, setEditAdmin] = useState(false);
   const navigate = useNavigate();
 
   const filteredAdmins = admins
@@ -37,6 +37,7 @@ const ViewAdmins: React.FC = () => {
   const handleClick = async (roomId: string) => {
     localStorage.setItem("selectedRoomId", roomId);
     try {
+      setEditAdmin(true);
       await getAdminById(roomId);
     } catch (error) {
       console.error("Failed to get room by ID:", error);
@@ -44,10 +45,11 @@ const ViewAdmins: React.FC = () => {
   };
 
   useEffect(() => {
-    if (currentAdmin) {
+    if (currentAdmin && editAdmin) {
       navigate('/admin/admins/edit');
+      setEditAdmin(false);
     }
-  }, [currentAdmin, navigate]);
+  }, [currentAdmin, navigate, editAdmin]);
 
   return (
     <div className="flex flex-col px-10 pt-10 min-h-screen bg-gray-100">

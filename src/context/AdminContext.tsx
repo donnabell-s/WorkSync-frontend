@@ -51,7 +51,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const addAdmin = async (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.create({ room: admin });
+      const response = await adminsApi.create({ admin });
       if (response.data) {
         setAdmins(prev => [...prev, response.data]);
       }
@@ -62,10 +62,10 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
     }
   };
 
-  const updateAdmin = async (id: string, admin: Omit<User, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const updateAdmin = async (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.update(id, { room: admin });
+      const response = await adminsApi.update(id, { admin });
       if (response.data) {
         setAdmins(prev => prev.map(a => (a.id === id ? response.data : a)));
         setCurrentAdmin(response.data);

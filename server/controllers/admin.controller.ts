@@ -80,7 +80,7 @@ export const updateAdmin = async (req: Request, res: Response) => {
             return res.status(404).json({ message: 'Admin not found' });
         }
 
-        const { fname, lname, email, password, isActive } = req.body;
+        const { fname, lname, email, isActive } = req.body;
 
         // Prevent updating email to one that already exists
         if (email && db.data.users.some((user: any, idx: number) => user.email === email && idx !== adminIndex)) {
@@ -92,7 +92,6 @@ export const updateAdmin = async (req: Request, res: Response) => {
             fname: fname ?? db.data.users[adminIndex].fname,
             lname: lname ?? db.data.users[adminIndex].lname,
             email: email ?? db.data.users[adminIndex].email,
-            password: password ?? db.data.users[adminIndex].password,
             isActive: typeof isActive === 'boolean' ? isActive : db.data.users[adminIndex].isActive,
             updatedAt: new Date(),
         };

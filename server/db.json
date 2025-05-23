@@ -12,17 +12,6 @@
       "updatedAt": "2025-05-18T07:55:40.143Z"
     },
     {
-      "id": "ldk06K3V_U3O6xOKb-xFb",
-      "email": "yana@email.com",
-      "password": "$2b$10$sDlmHITH9zZyKoj0RD6tNeyq4iGvjua2m92GMVAnwan24X7BrNRhO",
-      "fname": "Yana",
-      "lname": "Garcia",
-      "role": "admin",
-      "isActive": false,
-      "createdAt": "2025-05-18T07:57:47.650Z",
-      "updatedAt": "2025-05-18T07:57:47.650Z"
-    },
-    {
       "id": "w_W2qSw-6bZRuAHL438I8",
       "email": "chaz@email.com",
       "password": "$2b$10$Tj3P7FUDT9c9tlLAncmsaOum/DKRFIo1LEEkGMFd7cn6bcY3qAfIG",
@@ -32,6 +21,28 @@
       "isActive": false,
       "createdAt": "2025-05-18T08:35:25.649Z",
       "updatedAt": "2025-05-18T08:35:25.649Z"
+    },
+    {
+      "id": "PrvQ9uYUsMzOHZvrX300f",
+      "email": "yana@email.com",
+      "password": "$2b$10$T95ZEXgjCcGA1FilmYL4j.OSP0mb7t.S5O0r4f8hsTIi2AGxTNQ3y",
+      "fname": "Yana",
+      "lname": "Garcia",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-05-23T21:00:07.236Z",
+      "updatedAt": "2025-05-23T21:00:07.236Z"
+    },
+    {
+      "id": "h8rqGtfmN1H61pabhDRZu",
+      "email": "julien@email.com",
+      "password": "$2b$10$NFeoYDKvEV92DlR2qXAAweCMHjrs2VDSopPKPzcvC0B2TtxqjjDia",
+      "fname": "Julien",
+      "lname": "Beniz",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-05-23T21:00:43.215Z",
+      "updatedAt": "2025-05-23T21:01:15.943Z"
     }
   ],
   "preferences": [
@@ -188,10 +199,22 @@
       "createdAt": "2025-05-23T19:17:08.055Z"
     },
     {
-      "id": "T8Q0dg3WA02_CgIaERx8z",
+      "id": "_VLN9W6BrkLVe0RdcozQa",
       "auth": true,
       "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T19:19:36.415Z"
+      "createdAt": "2025-05-23T20:11:00.720Z"
+    },
+    {
+      "id": "kYHCeO-gg6MeALFu_cZJw",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T20:45:25.092Z"
+    },
+    {
+      "id": "RygQLTyybsd2mNPbHvhuT",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T21:01:05.523Z"
     }
   ]
 }

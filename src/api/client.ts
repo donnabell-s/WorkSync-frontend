@@ -177,7 +177,7 @@ export const adminsApi = {
         }
     },
 
-    create: async (data: { room: Omit<User, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+    create: async (data: { admin: Omit<User, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
             const response = await api.post<User>(API_PATHS.ADMINS, data, config);
             return response;
@@ -190,7 +190,7 @@ export const adminsApi = {
         }
     },
 
-    update: async (id: string, data: { room: Omit<User, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+    update: async (id: string, data: { admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
             const response = await api.put<User>(`${API_PATHS.ADMINS}/${id}`, data, config);
             return response;
