@@ -29,13 +29,10 @@ export const AppRoutes = () => {
           <Route path={PATHS.LOGS.BOOKINGS.path} element={<Views.BookingLogs />} />
 
           <Route path={PATHS.USER_MGNT.VIEW.path} element={<Views.ViewUsers />} />
-          <Route path={PATHS.USER_MGNT.EDIT.path} element={<Views.EditUser />} />
+          <Route path={PATHS.USER_MGNT.EDIT.path} element={<EditDeleteUser />} />
 
           <Route path={PATHS.ADMIN_MGNT.VIEW.path} element={<Views.ViewAdmins />} />
-          <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<Views.EditAdmin />} />
-
-          <Route path="/admin/users/edit-delete" element={<EditDeleteUser />} />
-          <Route path="/admin/admins/edit-delete" element={<EditDeleteAdmin />} />
+          <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<EditDeleteAdmin />} />
         </Route>
         <Route path={PATHS.USER_MAIN.path} element={<Views.UserMain />}>
           {/* ADD PPRIVATE ROUTES HERE (Routes that can only access after login like Dashboard, Account Setting, etc.) */}
