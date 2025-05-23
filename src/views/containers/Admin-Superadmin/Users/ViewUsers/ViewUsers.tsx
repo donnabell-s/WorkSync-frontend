@@ -110,7 +110,6 @@ const ViewUser = () => {
       </div>
 
       <div className="flex items-center justify-between mt-4">
-        {/* Showing text */}
         <div className="text-sm text-gray-700">
           Showing {(currentPage - 1) * usersPerPage + 1}–{Math.min(currentPage * usersPerPage, filteredUsers.length)} of {filteredUsers.length} users
         </div>

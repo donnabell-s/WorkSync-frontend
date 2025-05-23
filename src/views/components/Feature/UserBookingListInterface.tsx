@@ -8,13 +8,13 @@ export interface Booking {
   location: string;
   date: string;
   time: string;
-  organizer?: string; // Optional field for organizer
-  dateBooked?: string; // Optional field for date booked
+  organizer?: string; 
+  dateBooked?: string; 
   status: 'Upcoming' | 'Completed' | 'Cancelled' | 'Approved' | 'Pending' | 'Declined';
   recurrence: 'recurring' | 'non-recurring';
-  roomCode?: string; // Optional field for room code
-  roomName?: string; // Optional field for room name
-  note?: string; // Optional field for notes
+  roomCode?: string; 
+  roomName?: string; 
+  note?: string; 
 }
 
 export const sampleBookingList: Booking[] = [
