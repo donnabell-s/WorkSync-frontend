@@ -99,8 +99,18 @@ export const roomsApi = {
     getById: (id: string, config?: AxiosRequestConfig) =>
         api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config),
 
-    create: (data: { room: Omit<Room, 'id'> }, config?: AxiosRequestConfig) =>
-        api.post<Room>(API_PATHS.ROOMS, data, config),
+    create: async (data: { room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.post<Room>(API_PATHS.ROOMS, data, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                console.error('Bad request:', error);
+                return { data: null, status: 400, statusText: 'Bad Request', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
 
     update: (id: string, data: { room: Partial<Room> }, config?: AxiosRequestConfig) =>
         api.put<Room>(`${API_PATHS.ROOMS}/${id}`, data, config),

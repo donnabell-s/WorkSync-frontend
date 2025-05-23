@@ -54,7 +54,7 @@
   ],
   "rooms": [
     {
-      "id": "1",
+      "id": "o74oTjOz37WvatGZdj1fc",
       "name": "Conference Room A",
       "code": "CRA-102A",
       "seats": 10,
@@ -81,7 +81,7 @@
       "updatedAt": "2023-06-20T14:30:00Z"
     },
     {
-      "id": "2",
+      "id": "qLAMWN_h35O7qB900xNaX",
       "name": "Conference Room A",
       "code": "CRA-102A",
       "seats": 10,
@@ -106,6 +106,59 @@
       ],
       "createdAt": "2023-01-15T09:00:00Z",
       "updatedAt": "2023-06-20T14:30:00Z"
+    },
+    {
+      "id": "F7Nu5F51uMGQKjwnWUprv",
+      "name": "asd",
+      "code": "CRA-102A",
+      "seats": 10,
+      "location": "North Tower",
+      "level": 2,
+      "size": "Small",
+      "status": "Available",
+      "operatingHours": {
+        "weekdays": {
+          "open": "08:00",
+          "close": "20:00"
+        },
+        "weekends": {
+          "open": "09:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Projector",
+        "Whiteboard",
+        "Video Conferencing"
+      ],
+      "createdAt": "2025-05-23T13:36:29.284Z",
+      "updatedAt": "2025-05-23T13:36:29.284Z"
+    },
+    {
+      "id": "Kja6SgEI7Yhi0sp-Y9OFA",
+      "name": "Executive ",
+      "code": "CRA",
+      "seats": "12",
+      "location": "North Tower",
+      "level": "12",
+      "size": "Medium",
+      "status": "Occupied",
+      "operatingHours": {
+        "weekdays": {
+          "open": "09:00",
+          "close": "17:00"
+        },
+        "weekends": {
+          "open": "10:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Video Conferencing",
+        "Air Conditioning"
+      ],
+      "createdAt": "2025-05-23T14:00:06.246Z",
+      "updatedAt": "2025-05-23T14:00:06.246Z"
     }
   ],
   "bookings": [
@@ -160,24 +213,15 @@
   },
   "sessions": [
     {
-      "id": "ySye0yY-QBuwE5Zb3w-bO",
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-18T08:56:00.126Z"
-    },
-    {
       "id": "nop0z-fEDd3OyNCcptaff",
       "userId": "ldk06K3V_U3O6xOKb-xFb",
       "createdAt": "2025-05-18T08:58:51.815Z"
     },
     {
-      "id": "Ypc_Ta0BDormEahMqcizS",
+      "id": "a62zEXyy1RAISU-nQG7RD",
+      "auth": true,
       "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-22T16:38:40.435Z"
-    },
-    {
-      "id": "RjdjN7k5sEjJ8gf4b6JQe",
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-22T18:37:32.327Z"
+      "createdAt": "2025-05-23T14:18:48.121Z"
     }
   ]
 }

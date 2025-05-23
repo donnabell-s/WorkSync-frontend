@@ -9,7 +9,7 @@ interface RoomContextType {
   error: string | null;
   fetchRooms: () => Promise<void>;
   getRoomById: (id: string) => Promise<void>;
-  addRoom: (room: Omit<Room, 'id'>) => Promise<void>;
+  addRoom: (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => Promise<void>;
   updateRoom: (id: string, room: Partial<Room>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
 }
@@ -40,6 +40,7 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
     setIsLoading(true);
     try {
       const response = await roomsApi.getById(id);
+      console.log('Fetched room by ID:', response.data);
       setCurrentRoom(response.data);
     } catch (err) {
       setError('Room not found');
@@ -48,11 +49,14 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
   };
 
-  const addRoom = async (room: Omit<Room, 'id'>) => {
+  const addRoom = async (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => {
     setIsLoading(true);
     try {
       const response = await roomsApi.create({ room });
-      setRooms(prev => [...prev, response.data]);
+      console.log('Added room:', response.data);
+      if (response.data) {
+        setRooms(prev => [...prev, response.data]);
+      }
     } catch (err) {
       setError('Failed to add room');
     } finally {

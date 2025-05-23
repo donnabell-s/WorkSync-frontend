@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router";
 import { LuCalendar1 } from "react-icons/lu";
 import { Room } from "../../../../server/types";
+import { useRooms } from "../../../context/RoomContext";
 
 interface RoomListProps {
   role: "admin" | "user";
@@ -35,16 +36,33 @@ const getImageSrc = (size: string) => {
 
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const navigate = useNavigate();
+  const { currentRoom, getRoomById } = useRooms();
 
   const path = role === "admin" ? "/admin/rooms/room-detail" : "/user/book-room";
   const label = role === "admin" ? "View Room Details" : "Book Room";
 
-  
-  const handleClick = (roomId: string) => {
+  const handleClick = async (roomId: string) => {
     localStorage.setItem("selectedRoomId", roomId);
-    navigate(path);
+    if (role === "admin" && label === "View Room Details") {
+      try {
+        await getRoomById(roomId);
+        console.log("Current Room:", currentRoom);
+        if (currentRoom) {
+          navigate(path);
+        } else {
+          console.error("Room not found");
+        }
+      } catch (error) {
+        console.error("Failed to get room by ID:", error);
+      }
+    }
   };
-  
+
+  useEffect(() => {
+    if (role === "admin" && label === "View Room Details" && currentRoom) {
+      navigate(path);
+    }
+  }, [currentRoom, role, label, path]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
@@ -88,13 +106,12 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           </div>
           <div className="flex flex-grow items-end mt-4">
             <button
-            onClick={() => handleClick(room.code)} // Assuming room has an `id` field
-            className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${
-              role === "admin" ? "p-3" : "p-6"
-            }`}
+              onClick={() => handleClick(room.id)}
+              className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${role === "admin" ? "p-3" : "p-6"
+                }`}
             >
-                {role === "admin" && <LuCalendar1 className="text-base" />}
-                {label}
+              {role === "admin" && <LuCalendar1 className="text-base" />}
+              {label}
             </button>
           </div>
         </div>

@@ -33,7 +33,7 @@ const DeleteRoom: React.FC = () => {
 
     return (
         <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
-            <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
+            <AdminBackLink label='Back to View Rooms' backPath='/admin/rooms/view' />
 
             <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
                 <AdminHeading label="DELETE ROOM" />

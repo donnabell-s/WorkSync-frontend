@@ -2,21 +2,22 @@ import express, { Request, Response, NextFunction, RequestHandler } from 'expres
 import { initializeDB, getDB } from './services/db.service';
 import { signup, login, logout } from './controllers/auth.controller';
 import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './controllers/room.controller';
-// import { getPosts, createPost } from './controllers/posts.controller';
 import cors from 'cors';
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:5173', // Your Vite frontend origin
-  credentials: true // If using cookies/sessions
+  origin: 'http://localhost:5173',
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 declare global {
   namespace Express {
     interface Request {
-      user: string; // make user required to match expected type
-      userId?: string; // add userId if you use it elsewhere
+      user: string;
+      userId?: string;
     }
   }
 }
@@ -24,25 +25,25 @@ declare global {
 // Initialize database
 initializeDB();
 
-// Wrapper function for login
+// Wrapper function for async controllers
 function makeHandler(controller: (req: Request, res: Response, next: NextFunction) => Promise<any>): RequestHandler {
-  return (req, res, next) => {
-    console.log('req body: ' + req.body);
-    controller(req, res, next).catch(next);
+  return async (req, res, next) => {
+    try {
+      await controller(req, res, next);
+    } catch (err) {
+      console.error('Handler Error:', err);
+      next(err);
+    }
   };
 }
 
-const loginHandler = makeHandler(login);
-const signupHandler = makeHandler(signup);
-const logoutHandler = makeHandler(logout);
-
-// Auth routes
-app.post('/auth/signup', signupHandler);
-app.post('/auth/login', loginHandler);
+// Auth routes (unprotected)
+app.post('/auth/signup', makeHandler(signup));
+app.post('/auth/login', makeHandler(login));
+app.post('/auth/logout', makeHandler(logout));
 
 // Auth middleware
 const authMiddleware: RequestHandler = async (req, res, next) => {
-  console.log(req.body);
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     res.status(401).send('Unauthorized');
@@ -57,20 +58,25 @@ const authMiddleware: RequestHandler = async (req, res, next) => {
     return;
   }
 
-  (req as any).userId = session.userId;
+  req.userId = session.userId;
   next();
 };
 
+// Apply auth middleware to all following routes
 app.use(authMiddleware);
 
 // Protected routes
-app.post('/auth/logout', logoutHandler);
-
 app.get('/rooms', makeHandler(getRooms));
-app.get('/rooms/id', makeHandler(getRoomById));
 app.post('/rooms', makeHandler(createRoom));
-app.put('/rooms/id', makeHandler(updateRoom));
-app.delete('/rooms/id', makeHandler(deleteRoom));
+app.get('/rooms/:id', makeHandler(getRoomById));
+app.put('/rooms/:id', makeHandler(updateRoom));
+app.delete('/rooms/:id', makeHandler(deleteRoom));
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');
