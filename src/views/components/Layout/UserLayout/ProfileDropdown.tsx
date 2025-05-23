@@ -10,6 +10,7 @@ const ProfileDropdown: React.FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const {user} = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -41,7 +42,7 @@ const ProfileDropdown: React.FC = () => {
                 shadow-[0_0_9px_rgba(0,0,0,0.1)]`}>
                 <div className="pb-2 flex flex-row text-[#1F2937] gap-2 items-center font-semibold text-md">
                     <img src={Avatar} className="h-9 w-9" ></img>
-                    <p>Alliyana Rose Garcia</p>
+                    <p>{user?.fname} {user?.lname}</p>
                 </div>
                 <div className="border-t border-gray-200 my-2"></div>
                 <div className="flex flex-col gap-3 mt-3 mx-1">

@@ -43,7 +43,7 @@ const RoomExplorer: React.FC = () => {
         localStorage.removeItem("tempBooking");
       }
     }
-  }, []);
+  }, [setBookingDraft]);
 
   const handleCancelDraft = () => {
     localStorage.removeItem("tempBooking");

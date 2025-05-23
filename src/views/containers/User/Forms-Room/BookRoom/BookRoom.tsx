@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 import RoomDetailsForm from '../../../../components/Feature/RoomDetailsForm';
 import MeetingDetailsForm from '../../../../components/Feature/MeetingDetailsForm';
 import RoomBookingForm from '../../../../components/Feature/RoomBookingForm';
+import { useAuth } from '../../../../../context/AuthContext';
 
 const BookRoom = () => {
   const [roomCode, setRoomCode] = useState<string | null>(null);
+  const {user} = useAuth();
 
   useEffect(() => {
-    const storedRoomCode = localStorage.getItem("selectedRoomId");
-    setRoomCode(storedRoomCode);
-  }, []);
+    if(user){
+      const storedRoomCode = localStorage.getItem("selectedRoomId");
+      setRoomCode(storedRoomCode);
+    }
+  }, [user]);
 
   return (
     <div className='h-full bg-white flex flex-col px-4 sm:px-8 md:px-13 lg:px-25 xl:px-33 py-6 sm:py-8 md:py-10 gap-9'>

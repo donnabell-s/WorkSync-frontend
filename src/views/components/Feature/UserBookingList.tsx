@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
-import { Booking, sampleBookingList } from './UserBookingListInterface';
+import { Booking } from './UserBookingListInterface';
 import { useNavigate } from 'react-router';
+import { useBookings } from '../../../context/BookingContext';
+import { useRooms } from '../../../context/RoomContext';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
@@ -9,9 +11,10 @@ interface Props {
   searchQuery: string;
 }
 
-const getStatusColor = (status: Booking['status']) => {
+const getStatusColor = (status: string) => {
   switch (status.toLowerCase()) {
     case 'upcoming': return 'text-[#10B981]';
+    case 'confirmed': return 'text-[#10B981]';
     case 'completed': return 'text-[#F59E0B]';
     case 'cancelled': return 'text-[#EF4444]';
     default: return 'text-gray-800';
@@ -21,33 +24,46 @@ const getStatusColor = (status: Booking['status']) => {
 const getTdClasses = () => 'py-4 px-4 border-b-[1px] border-b-[#D2D4D8]';
 const getThClasses = () => 'py-5 px-4 border-b-[1px] border-b-[#D2D4D8] text-base';
 
+const formatDate = (dateString: string | Date) => {
+  const d = new Date(dateString);
+  return d.toLocaleDateString('en-US', {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric'
+  });
+};
+
+
+const formatTime = (dateString: string | Date) => {
+  const d = new Date(dateString);
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+};
+
 const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const navigate = useNavigate();
+  const { bookings, fetchBookings } = useBookings();
+  // Here, also get rooms map and getRoomById from context
+  const { rooms, getRoomById } = useRooms();
 
-  // Filter by search query (search by id, name, room, location)
-  let filtered = [...sampleBookingList];
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
+
+  // Filter bookings
+  let filtered = [...bookings];
   if (searchQuery) {
-    const lowerCaseSearchQuery = searchQuery.toLowerCase();
-    filtered = filtered.filter(booking => 
-      booking.id.toLowerCase().includes(lowerCaseSearchQuery) ||
-      booking.name.toLowerCase().includes(lowerCaseSearchQuery) ||
-      booking.room.toLowerCase().includes(lowerCaseSearchQuery) ||
-      booking.location.toLowerCase().includes(lowerCaseSearchQuery)
-    );
+    const q = searchQuery.toLowerCase();
+    filtered = filtered.filter(b => b.title.toLowerCase().includes(q));
   }
-
-  // Filter by status
   if (statusFilter !== 'See All') {
     filtered = filtered.filter(b => b.status === statusFilter);
   }
-
-  // Sort by date
   if (dateOrder !== 'all') {
     filtered.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
+      const dateA = new Date(a.startDateTime);
+      const dateB = new Date(b.startDateTime);
       return dateOrder === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
     });
   }
@@ -57,6 +73,15 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
   const visibleBookings = filtered.slice(startIndex, endIndex);
+
+  // Trigger loading rooms for visible bookings — no await, just call getRoomById for missing rooms
+  useEffect(() => {
+    visibleBookings.forEach(b => {
+      if (!(rooms as Record<string, any>)[b.roomId]) {
+        getRoomById(b.roomId);
+      }
+    });
+  }, [visibleBookings, rooms]);
 
   const handleItemsPerPageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setItemsPerPage(Number(e.target.value));
@@ -73,7 +98,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
           <thead>
             <tr className="text-left text-sm">
               <th className={getThClasses()}>ID</th>
-              <th className={getThClasses()}>Name</th>
+              <th className={getThClasses()}>Meeting Name</th>
               <th className={getThClasses()}>Room</th>
               <th className={getThClasses()}>Location</th>
               <th className={getThClasses()}>Date</th>
@@ -82,29 +107,32 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
             </tr>
           </thead>
           <tbody>
-            {visibleBookings.map((booking) => (
-              // <tr key={booking.id} className="text-sm hover:bg-gray-50">
-              <tr
-                key={booking.id}
-                className={`text-sm ${booking.status === "Upcoming" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
-                onClick={() => {
-                  if (booking.status === "Upcoming") {
-                    navigate(`/user/edit-booking`);
-                  }
-                }}
-              >
-
-                <td className={getTdClasses()}>{booking.id}</td>
-                <td className={getTdClasses()}>{booking.name}</td>
-                <td className={getTdClasses()}>{booking.room}</td>
-                <td className={getTdClasses()}>{booking.location}</td>
-                <td className={getTdClasses()}>{booking.date}</td>
-                <td className={getTdClasses()}>{booking.time}</td>
-                <td className={`py-3 px-4 border-b border-b-[#D2D4D8] font-semibold uppercase ${getStatusColor(booking.status)}`}>
-                  {booking.status}
-                </td>
-              </tr>
-            ))}
+            {visibleBookings.map((booking) => {
+              const room = (rooms as Record<string, any>)[booking.roomId];
+              return (
+                <tr
+                  key={booking.id}
+                  className={`text-sm ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                  onClick={() => {
+                    
+                    if (booking.status === "confirmed") {
+                      localStorage.setItem("selectedBookingId", String(booking.id));
+                      navigate(`/user/edit-booking`);
+                    }
+                  }}
+                >
+                  <td className={getTdClasses()}>{booking.id}</td>
+                  <td className={getTdClasses()}>{booking.title}</td>
+                  <td className={getTdClasses()}>{room ? room.name : 'Loading...'}</td>
+                  <td className={getTdClasses()}>{room ? room.location : 'Loading...'}</td>
+                  <td className={getTdClasses()}>{formatDate(booking.startDateTime)}</td>
+                  <td className={getTdClasses()}>{formatTime(booking.startDateTime)} - {formatTime(booking.endDateTime)}</td>
+                  <td className={`py-3 px-4 border-b border-b-[#D2D4D8] font-semibold uppercase ${getStatusColor(booking.status)}`}>
+                    {booking.status}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
           <tfoot>
             <tr>

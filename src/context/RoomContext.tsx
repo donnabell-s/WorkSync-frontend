@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Room } from '../../server/types';
 import { roomsApi } from '../api/client';
+import { useAuth } from './AuthContext';
+import { useCallback } from "react";
 
 interface RoomContextType {
   rooms: Room[];
@@ -21,35 +23,66 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const [currentRoom, setCurrentRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const {user} = useAuth();
 
-  const fetchRooms = async () => {
+  // const fetchRooms = async () => {
+  //   setIsLoading(true);
+  //   try {
+  //     console.log("Tesxt")
+  //     const response = await roomsApi.getAll();
+  //     console.log('Fetched rooms:', response.data);
+  //     setRooms(response.data);
+  //     console.log('Fetched rooms:', rooms);
+  //   } catch (err) {
+  //     setError('Failed to fetch rooms');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // const getRoomById = async (id: string) => {
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await roomsApi.getById(id);
+  //     console.log('Fetched room by ID:', response.data);
+  //     setCurrentRoom(response.data);
+  //     console.log("room id",response.data.id)
+  //   } catch (err) {
+  //     setError('Room not found');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+// Inside your context or component
+  const fetchRooms = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log("Tesxt")
+      console.log("Tesxt");
       const response = await roomsApi.getAll();
       console.log('Fetched rooms:', response.data);
       setRooms(response.data);
-      console.log('Fetched rooms:', rooms);
+      console.log('Fetched rooms:', response.data); // Don't log `rooms` directly after setState
     } catch (err) {
       setError('Failed to fetch rooms');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const getRoomById = async (id: string) => {
+  const getRoomById = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
       const response = await roomsApi.getById(id);
       console.log('Fetched room by ID:', response.data);
       setCurrentRoom(response.data);
-      console.log("room id",response.data.id)
+      console.log("room id", response.data.id);
     } catch (err) {
       setError('Room not found');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const addRoom = async (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => {
     setIsLoading(true);
@@ -93,8 +126,9 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   };
 
   useEffect(() => {
+    if(user)
     fetchRooms();
-  }, []);
+  }, [user]);
 
   return (
     <RoomContext.Provider value={{

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Booking } from '../../server/types';
 import { bookingsApi } from '../api/client';
+import { useCallback } from "react";
 
 interface BookingContextType {
   bookings: Booking[];
@@ -22,7 +23,22 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchBookings = async () => {
+  // const fetchBookings = async () => {
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+  //     const response = await bookingsApi.getAll();
+  //     console.log('Fetched bookings:', response.data);
+  //     setBookings(response.data);
+  //   } catch {
+  //     setError('Failed to fetch bookings');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // Inside your context component
+  const fetchBookings = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -34,20 +50,34 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const getBookingById = async (id: string) => {
+  // const getBookingById = async (id: string) => {
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+  //     const response = await bookingsApi.getById(Number(id));
+  //     setCurrentBooking(response.data);
+  //   } catch {
+  //     setError('Booking not found');
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+    // Inside your BookingContext component
+  const getBookingById = useCallback(async (id: string) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await bookingsApi.getById(Number(id));
       setCurrentBooking(response.data);
     } catch {
-      setError('Booking not found');
+      setError("Booking not found");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   const addBooking = async (booking: Omit<Booking,  'createdAt' | 'id'  | 'updatedAt'>) => {
     setIsLoading(true);

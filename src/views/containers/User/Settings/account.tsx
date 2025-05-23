@@ -61,7 +61,7 @@ const Account: React.FC = () => {
         email: personalInfo.email,
       };
 
-      await usersApi.updateUser(String(authUser.id), updatedData);
+      // await usersApi.updateUser(String(authUser.id), updatedData);
 
       setIsEditingPersonal(false);
     } catch (error) {

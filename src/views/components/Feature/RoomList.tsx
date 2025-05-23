@@ -43,6 +43,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
 
   const handleClick = async (roomId: string) => {
     localStorage.setItem("selectedRoomId", roomId);
+
     if (role === "admin" && label === "View Room Details") {
       try {
         await getRoomById(roomId);
@@ -55,8 +56,11 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
       } catch (error) {
         console.error("Failed to get room by ID:", error);
       }
+    } else if (role === "user" && label === "Book Room") {
+      navigate(path);
     }
   };
+
 
   useEffect(() => {
     if (role === "admin" && label === "View Room Details" && currentRoom) {

@@ -187,6 +187,71 @@
       "status": "confirmed",
       "createdAt": "2023-09-20T08:00:00",
       "updatedAt": "2023-09-20T08:00:00"
+    },
+    {
+      "id": 2,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "Sample",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T00:00:00.000Z",
+      "endDateTime": "2025-06-06T04:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T17:21:59.832Z",
+      "updatedAt": "2025-05-23T17:21:59.832Z"
+    },
+    {
+      "id": 3,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "book dawe be",
+      "description": "Project sync",
+      "startDateTime": "2025-06-07T01:00:00.000Z",
+      "endDateTime": "2025-06-07T07:00:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T17:53:22.578Z",
+      "updatedAt": "2025-05-23T17:53:22.578Z"
+    },
+    {
+      "id": 4,
+      "userId": null,
+      "roomId": "F7Nu5F51uMGQKjwnWUprv",
+      "title": "final check",
+      "description": "Project sync",
+      "startDateTime": "2025-05-27T01:00:00.000Z",
+      "endDateTime": "2025-05-27T06:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:22:18.599Z",
+      "updatedAt": "2025-05-23T20:22:18.599Z"
+    },
+    {
+      "id": 5,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "try",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T01:30:00.000Z",
+      "endDateTime": "2025-05-30T05:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:32:41.786Z",
+      "updatedAt": "2025-05-23T20:32:41.786Z"
+    },
+    {
+      "id": 6,
+      "userId": null,
+      "roomId": "o74oTjOz37WvatGZdj1fc",
+      "title": "Booking",
+      "description": "Project sync",
+      "startDateTime": "2025-05-24T00:30:00.000Z",
+      "endDateTime": "2025-05-24T05:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:57:29.695Z",
+      "updatedAt": "2025-05-23T20:57:29.695Z"
     }
   ],
   "logs": {
@@ -229,19 +294,15 @@
       "createdAt": "2025-05-22T18:12:30.493Z"
     },
     {
-      "id": "DY89Bkchc_PE1BFIURsCd",
+      "id": "hzU2d8aY_C_xeLDMfYqNH",
       "userId": "50q5Mc2vKWQcr20rrpgqE",
-      "createdAt": "2025-05-22T18:58:55.798Z"
+      "createdAt": "2025-05-22T16:38:22.141Z"
     },
     {
-      "id": "CpuWVlKNSQ-v6CtQZlZEs",
-      "userId": "ldk06K3V_U3O6xOKb-xFb",
-      "createdAt": "2025-05-23T13:04:07.631Z"
-    },
-    {
-      "id": "yfyRklFSpB4HdzJaW-Qng",
-      "userId": "ldk06K3V_U3O6xOKb-xFb",
-      "createdAt": "2025-05-23T14:03:54.688Z"
+      "id": "jG_Qerm3j95J3YszRo34P",
+      "auth": true,
+      "userId": "50q5Mc2vKWQcr20rrpgqE",
+      "createdAt": "2025-05-23T15:13:24.849Z"
     }
   ]
 }

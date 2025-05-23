@@ -7,8 +7,8 @@ const EditBookedRoom = () => {
   const [roomCode, setRoomCode] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedRoomCode = localStorage.getItem("selectedRoomId");
-    setRoomCode(storedRoomCode);
+    const storedBookingCode = localStorage.getItem("selectedBookingId");
+    setRoomCode(storedBookingCode);
   }, []);
 
   return (

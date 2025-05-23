@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { getDB } from '../services/db.service';
 import { nanoid } from 'nanoid';
+import { Booking } from '../types';
 
 export const getBookings = async (_req: Request, res: Response) => {
     const db = getDB();
@@ -16,9 +17,14 @@ export const createBooking = async (req: Request, res: Response) => {
   const db = getDB();
   await db.read();
 
+  if (!req.userId) {
+    return res.status(401).json({ message: 'Unauthorized: missing user ID' });
+  }
+
   const {
-    title,
+    userId: bodyUserId,
     roomId,
+    title,
     description,
     startDateTime,
     endDateTime,
@@ -31,41 +37,42 @@ export const createBooking = async (req: Request, res: Response) => {
     status
   } = req.body;
 
-  if (!req.userId) {
-    return res.status(401).json({ message: 'Unauthorized: missing user ID' });
-  }
+  // Prefer authenticated userId, fallback to body userId if any (convert to number)
+  const userId = req.userId ? Number(req.userId) : Number(bodyUserId);
 
-  // Generate a numeric id for the booking
+  // Generate next numeric booking id
   const nextId =
     db.data!.bookings.length > 0
       ? Math.max(...db.data!.bookings.map((b: any) => Number(b.id))) + 1
       : 1;
 
-  const booking = {
+  const booking: Booking = {
     id: nextId,
-    userId: Number(req.userId),
+    userId,
     roomId,
     title,
     description,
-    startDateTime,
-    endDateTime,
+    startDateTime: new Date(startDateTime),
+    endDateTime: new Date(endDateTime),
     recurrence: {
       isRecurring,
       pattern,
       interval,
       daysOfWeek,
-      dates,
-      endDate
+      dates: dates?.map((d: string) => new Date(d)),
+      endDate: endDate ? new Date(endDate) : undefined,
     },
     status,
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 
   db.data!.bookings.push(booking);
   await db.write();
+
   res.status(201).json({ message: 'Booking created successfully', booking });
 };
+
 
 export const getBookingById = async (req: Request, res: Response) => {
     const db = getDB();

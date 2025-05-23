@@ -1,23 +1,33 @@
-import { useEffect, useState } from "react";
-import { meetingRooms } from "./RoomListInterface";
+import { useEffect } from "react";
+import { useRooms } from "../../../context/RoomContext";
 
 interface RoomDetailsFormProps {
   roomCode: string | null;
 }
 
+const getImageSrc = (size: string) => {
+  switch (size.toLowerCase()) {
+    case "small":
+      return "/meetingroom/small.jpg";
+    case "medium":
+      return "/meetingroom/medium.jpg";
+    case "large":
+      return "/meetingroom/large.jpg";
+    default:
+      return "/meetingroom/default.jpg";
+  }
+}
+
 const RoomDetailsForm: React.FC<RoomDetailsFormProps> = ({ roomCode }) => {
-  const [selectedRoom, setSelectedRoom] = useState<typeof meetingRooms[0] | null>(null);
+  const { getRoomById, currentRoom } = useRooms();
 
   useEffect(() => {
     if (roomCode) {
-      const room = meetingRooms.find((r) => r.roomCode === roomCode);
-      setSelectedRoom(room || null);
-    } else {
-      setSelectedRoom(null);
+      getRoomById(roomCode);
     }
-  }, [roomCode]);
+  }, [roomCode, getRoomById]);
 
-  if (!selectedRoom) return null;
+  if (!currentRoom) return null;
 
   return (
     <div className="flex flex-col gap-5 w-1/2 text-[#1F2937]">
@@ -26,22 +36,24 @@ const RoomDetailsForm: React.FC<RoomDetailsFormProps> = ({ roomCode }) => {
       </div>
       <div className="flex flex-col gap-2 px-2">
         <img
-          src={`/meetingroom/${selectedRoom.imageFile}`}
-          alt={selectedRoom.roomName}
+          src={`${getImageSrc(currentRoom.size)}`}
+          alt={currentRoom.name}
           className="w-auto max-w-full h-40 object-cover rounded-md"
         />
         <div className="flex flex-col gap-2">
           <div className="flex flex-col sm:flex-row sm:items-start gap-1">
             <p className="w-full sm:w-50 min-w-0 font-semibold truncate">Size:</p>
-            <p className="flex-1 min-w-0 truncate">{selectedRoom.size}</p>
+            <p className="flex-1 min-w-0 truncate">{currentRoom.size}</p>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-start gap-1">
             <p className="w-full sm:w-50 min-w-0 font-semibold truncate">No. of Seats:</p>
-            <p className="flex-1 min-w-0 truncate">{selectedRoom.numberOfSeats}</p>
+            <p className="flex-1 min-w-0 truncate">{currentRoom.seats}</p>
           </div>
           <div className="flex flex-col sm:flex-row sm:items-start gap-1">
             <p className="w-full sm:w-50 min-w-0 font-semibold truncate">Additional Facilities:</p>
-            <p className="flex-1 min-w-0 truncate">{selectedRoom.additionalFacilities.join(", ")}</p>
+            <p className="flex-1 min-w-0 truncate">
+              {currentRoom.amenities?.join(", ") || "N/A"}
+            </p>
           </div>
         </div>
       </div>

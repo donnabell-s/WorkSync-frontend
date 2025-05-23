@@ -7,6 +7,34 @@ import { useBookings } from "../../../context/BookingContext";
 import { useAuth } from "../../../context/AuthContext";
 import { Room } from "../../../../server/types";
 
+function generateRecurringDates(
+  pattern: string,
+  interval: number,
+  startDate: Date,
+  endDate: Date,
+  daysOfWeek?: number[]
+): Date[] {
+  const dates: Date[] = [];
+  const current = new Date(startDate);
+
+  while (current <= endDate) {
+    if (pattern === "daily") {
+      dates.push(new Date(current));
+      current.setDate(current.getDate() + interval);
+    } else if (pattern === "weekly") {
+      if (daysOfWeek?.includes(current.getDay())) {
+        dates.push(new Date(current));
+      }
+      current.setDate(current.getDate() + 1);
+    } else if (pattern === "monthly") {
+      dates.push(new Date(current));
+      current.setMonth(current.getMonth() + interval);
+    }
+  }
+
+  return dates;
+}
+
 export interface NewBookingDto {
   userId: number;
   roomId: string;
@@ -19,6 +47,8 @@ export interface NewBookingDto {
     pattern?: string;
     interval?: number;
     endDate?: Date;
+    daysOfWeek?: number[];
+    dates?: Date[];
   };
   status: string;
 }
@@ -29,9 +59,8 @@ interface RoomBookingFormProps {
 
 const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   const navigate = useNavigate();
-  const { getRoomById } = useRooms();
-  const [currentRoom, setCurrentRoom] = useState<Room | null>(null);
-  const { addBooking } = useBookings();
+  const { getRoomById, currentRoom } = useRooms();
+  const { getBookingById, currentBooking, addBooking, updateBooking } = useBookings();
   const { user } = useAuth();
 
   const [title, setTitle] = useState("");
@@ -42,6 +71,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurrenceType, setRecurrenceType] = useState("");
   const [interval, setInterval] = useState(1);
+  const [selectedDays, setSelectedDays] = useState<number[]>([]);
 
   const todayDate = new Date().toISOString().split("T")[0];
 
@@ -50,6 +80,12 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
     const minutes = i % 2 === 0 ? "00" : "30";
     return `${hour.toString().padStart(2, "0")}:${minutes}`;
   });
+
+  const toggleDay = (day: number) => {
+    setSelectedDays((prev) =>
+      prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
+    );
+  };
 
   const TimeSelect = ({
     value,
@@ -85,21 +121,58 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   };
 
   useEffect(() => {
-    const roomId = localStorage.getItem("selectedRoomId");
-    if (roomId) {
-      getRoomById(roomId);
+  const tempBookingRaw = localStorage.getItem("tempBooking");
+  if (tempBookingRaw) {
+    try {
+      const temp = JSON.parse(tempBookingRaw);
+      if (temp?.title && temp?.date) {
+        setTitle(temp.title);
+        const isoDate = new Date(temp.date).toISOString().split("T")[0];
+        setStartDate(isoDate);
+        setEndDate(isoDate);
+      }
+      // Optionally clear it after use
+      localStorage.removeItem("tempBooking");
+    } catch (err) {
+      console.error("Failed to parse tempBooking:", err);
     }
-  }, []);
+  }
+}, [setTitle]);
+
 
   useEffect(() => {
-    console.log("Current room:", currentRoom);
-  }, [currentRoom]);
+    const roomId = localStorage.getItem("selectedRoomId");
+    if (roomId) getRoomById(roomId);
+  }, [getRoomById]);
 
-  // useEffect(() => {
-  //   if (rooms && !title && rooms.length > 0) {
-  //     setTitle(`Book ${rooms[0].name}`);
-  //   }
-  // }, [rooms, title]);
+  useEffect(() => {
+    if (edit) {
+      const bookingId = localStorage.getItem("selectedBookingId");
+      if (bookingId) getBookingById(bookingId);
+    }
+  }, [getBookingById]);
+
+  useEffect(() => {
+    if (edit && currentBooking) {
+      setTitle(currentBooking.title);
+      const start = new Date(currentBooking.startDateTime);
+      const end = new Date(currentBooking.endDateTime);
+      setStartDate(start.toISOString().split("T")[0]);
+      setStartTime(start.toTimeString().slice(0, 5));
+      setEndDate(end.toISOString().split("T")[0]);
+      setEndTime(end.toTimeString().slice(0, 5));
+
+      const rec = currentBooking.recurrence;
+      if (rec?.isRecurring) {
+        setIsRecurring(true);
+        setRecurrenceType(rec.pattern || "");
+        setInterval(rec.interval ?? 1);
+        if (rec.pattern === "weekly" && rec.daysOfWeek) {
+          setSelectedDays(rec.daysOfWeek);
+        }
+      }
+    }
+  }, [edit, currentBooking]);
 
   useEffect(() => {
     if (!isRecurring || !startDate || !recurrenceType || interval < 1) return;
@@ -122,23 +195,6 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
     setEndDate(nextDate.toISOString().split("T")[0]);
   }, [isRecurring, startDate, recurrenceType, interval]);
 
-  useEffect(() => {
-    const draftData = localStorage.getItem("tempBooking");
-    if (draftData) {
-      try {
-        const draft = JSON.parse(draftData);
-        if (draft.title) setTitle(draft.title);
-        if (draft.date) {
-          const localDate = new Date(draft.date).toLocaleDateString("en-CA");
-          setStartDate(localDate);
-          setEndDate(localDate);
-        }
-      } catch {
-        localStorage.removeItem("tempBooking");
-      }
-    }
-  }, []);
-
   const calculateMinEndTime = (startTime: string) => {
     const index = timeOptions.indexOf(startTime);
     return index >= 0 && index + 1 < timeOptions.length
@@ -146,7 +202,8 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
       : "08:30";
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!startTime || !endTime) return alert("Please select both start and end times");
 
     const startDateTime = new Date(`${startDate}T${startTime}`);
@@ -167,24 +224,43 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
 
     if (!currentRoom || !user) return alert("Missing room or user info");
 
+    const parsedStart = new Date(startDateTime);
+    const parsedEnd = new Date(endDate);
+
+    const recurrenceDates = isRecurring
+      ? generateRecurringDates(
+          recurrenceType,
+          interval ?? 1,
+          parsedStart,
+          parsedEnd,
+          selectedDays
+        )
+      : [];
+
     const payload: NewBookingDto = {
       userId: parseInt(user.id, 10),
       roomId: currentRoom.id,
       title,
-      description: "",
+      description: "Project sync",
       startDateTime,
       endDateTime,
+      status: "confirmed",
       recurrence: {
         isRecurring,
-        pattern: recurrenceType,
+        pattern: isRecurring ? recurrenceType : undefined,
         interval: isRecurring ? interval : undefined,
-        endDate: isRecurring ? new Date(endDate) : undefined,
+        endDate: isRecurring ? parsedEnd : undefined,
+        daysOfWeek: isRecurring && recurrenceType === "weekly" ? selectedDays : undefined,
+        dates: recurrenceDates,
       },
-      status: "confirmed",
     };
 
     try {
-      await addBooking(payload);
+      if (edit && currentBooking) {
+        await updateBooking(String(currentBooking.id), payload);
+      } else {
+        await addBooking(payload);
+      }
       navigate("/user/my-bookings");
     } catch (err) {
       alert("Failed to save booking. Please try again.");
@@ -214,7 +290,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
             !currentRoom ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          Save
+          {edit ? "Update" : "Save"}
         </button>
       </div>
 
@@ -255,7 +331,14 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
           onClick={() =>
             setIsRecurring((prev) => {
               const next = !prev;
-              if (!next && startDate !== endDate) setEndDate(startDate);
+              if (!next) {
+                setRecurrenceType("");
+                setInterval(1);
+                setEndDate(startDate);
+              } else {
+                if (!recurrenceType) setRecurrenceType("daily");
+                if (!interval) setInterval(1);
+              }
               return next;
             })
           }
@@ -294,6 +377,24 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
               className="bg-[#F3F4F6] rounded px-4 py-2 w-full sm:w-auto"
             />
             <p className="text-sm whitespace-nowrap">{recurrenceType || "interval"}</p>
+            {recurrenceType === "weekly" && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((label, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => toggleDay(idx)}
+                    className={`px-3 py-1 rounded-md border ${
+                      selectedDays.includes(idx)
+                        ? "bg-blue-600 text-white border-blue-600"
+                        : "bg-white text-black border-gray-300"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -302,3 +403,4 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
 };
 
 export default RoomBookingForm;
+

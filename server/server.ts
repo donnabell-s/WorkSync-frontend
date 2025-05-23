@@ -72,7 +72,7 @@ app.use(authMiddleware);
 
 
 // Protected routes
-app.post('/auth/logout', logoutHandler);
+app.post('/auth/logout', makeHandler(logout));
 app.get('/users', makeHandler(getUsers));
 app.get('/user/id',  makeHandler(getUserById));
 
