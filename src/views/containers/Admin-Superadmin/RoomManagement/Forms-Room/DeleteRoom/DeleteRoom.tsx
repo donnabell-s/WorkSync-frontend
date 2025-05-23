@@ -1,19 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../../../components/Layout/AdminSuperAdminLayout/Header';
-import SideNav from '../../../../../components/Layout/AdminSuperAdminLayout/SideNav';
-import AdminHeading from '../../../../../components/UI/AdminHeading';
 import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
 import { meetingRooms } from "../../../../../components/Feature";
 import AdminButton from '../../../../../components/UI/AdminButton';
 
-
 const DeleteRoom: React.FC = () => {
-    const [nav, setNav] = useState(false);
     const navigate = useNavigate();
-    const toggleNav = () => setNav(!nav);
 
-    const room = meetingRooms.find((r: typeof meetingRooms[number]) => r.roomCode === 'CR-102A');
+    const room = meetingRooms.find(r => r.roomCode === 'CR-102A');
 
     const formData = {
         roomName: room?.roomName || '',
@@ -24,16 +18,20 @@ const DeleteRoom: React.FC = () => {
         seats: room?.numberOfSeats.toString() || '',
         status: room?.status || 'Available',
         facilities: room?.additionalFacilities || [],
-        image: null as File | null,
-        imagePreview: `/meetingroom/${room?.imageFile}` || '',
+        image: null,
+        imagePreview: room?.imageFile ? `/meetingroom/${room.imageFile}` : 'https://via.placeholder.com/150',
     };
 
-    const handleDelete = () => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    };
+
+    const handleSubmit = () => {
         console.log('Room Deleted:', formData);
         navigate('/admin/room-management');
     };
-
-    const noop = () => {};
 
     return (
         <div className="flex min-h-screen bg-gray-100">
@@ -44,19 +42,21 @@ const DeleteRoom: React.FC = () => {
                     </div>
                     <div className="bg-white p-10 rounded-lg shadow-md mt-4">
                         <h2 className="text-4xl font-bold mb-6">DELETE ROOM</h2>
-                        <div className="w-[100px] ml-auto"></div>
                         <RoomFormLayout
                             mode="delete"
                             formData={formData}
-                            onInputChange={noop}
-                            onImageChange={noop}
-                            onSubmit={handleDelete}
+                            onInputChange={handleInputChange}
+                            onImageChange={handleImageChange}
+                            onSubmit={handleSubmit}
                             onCancel={() => navigate('/admin/room-management')}
                             readOnly={true}
                         >
-                            <div onClick={handleDelete}>
-                                <AdminButton label= " DELETE " />
-                            </div>
+                            <button
+                                onClick={handleSubmit}
+                                className="w-32 bg-red-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-red-700"
+                            >
+                                DELETE
+                            </button>
                             <button
                                 className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
                                 onClick={() => navigate('/admin/room-management')}

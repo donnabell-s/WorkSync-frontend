@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
 import { meetingRooms } from "../../../../../components/Feature";
-import AdminButton from '../../../../../components/UI/AdminButton';
 
 const EditRoom: React.FC = () => {
     const navigate = useNavigate();
 
-    // For this example, we'll use the room with roomCode "CR-102A" as shown in the screenshot
     const room = meetingRooms.find(r => r.roomCode === 'CR-102A');
 
     const [formData, setFormData] = useState({
@@ -20,17 +18,22 @@ const EditRoom: React.FC = () => {
         status: room?.status || 'Available',
         facilities: room?.additionalFacilities || [],
         image: null as File | null,
-        imagePreview: `/meetingroom/${room?.imageFile}` || 'https://via.placeholder.com/150', // Sample image
+        imagePreview: room?.imageFile ? `/meetingroom/${room.imageFile}` : 'https://via.placeholder.com/150',
     });
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
-    };
-
-    const handleFacilitiesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedFacilities = Array.from(e.target.selectedOptions, option => option.value);
-        setFormData({ ...formData, facilities: selectedFacilities });
+        if (name === 'facilities') {
+            if (e.target instanceof HTMLSelectElement) {
+                const selectedFacilities = Array.from(
+                    e.target.selectedOptions,
+                    option => option.value
+                );
+                setFormData({ ...formData, [name]: selectedFacilities });
+            }
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,7 +50,7 @@ const EditRoom: React.FC = () => {
         console.log('Updated Form Data:', formData);
         navigate('/admin/room-management');
     };
-    
+
     return (
         <div className="flex min-h-screen bg-gray-100">
             <div className="flex-1">
@@ -57,20 +60,23 @@ const EditRoom: React.FC = () => {
                     </div>
                     <div className="bg-white p-10 rounded-lg shadow-md mt-4">
                         <h2 className="text-4xl font-bold mb-6">EDIT ROOM</h2>
-                        {/* <div className="w-[100px] ml-auto"></div> */}
                         <RoomFormLayout
-                        mode="edit"
+                            mode="edit"
                             formData={formData}
                             onInputChange={handleInputChange}
                             onImageChange={handleImageChange}
                             onSubmit={handleSubmit}
                             onCancel={() => navigate('/admin/room-management')}
+                            readOnly={false}
                         >
-                            <div onClick={handleSubmit}>
-                                <AdminButton label="SAVE" />
-                            </div>
                             <button
-                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                                onClick={handleSubmit}
+                                className="w-32 bg-blue-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-blue-700 !min-w-[128px] !h-12"
+                            >
+                                SAVE CHANGES
+                            </button>
+                            <button
+                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500 !min-w-[128px] !h-12"
                                 onClick={() => navigate('/admin/room-management')}
                             >
                                 CANCEL

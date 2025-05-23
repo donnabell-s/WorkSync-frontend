@@ -1,16 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../../../../../components/Layout/AdminSuperAdminLayout/Header';
-import SideNav from '../../../../../components/Layout/AdminSuperAdminLayout/SideNav';
-import AdminHeading from '../../../../../components/UI/AdminHeading';
-import AdminButton from '../../../../../components/UI/AdminButton';
 import RoomFormLayout from '../../../../../components/Layout/RoomFormLayout/RoomFormLayout';
 
 const AddRoom: React.FC = () => {
-    const [nav, setNav] = useState(false);
     const navigate = useNavigate();
-
-    const toggleNav = () => setNav(!nav);
 
     const [formData, setFormData] = useState({
         roomName: '',
@@ -27,7 +20,16 @@ const AddRoom: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        if (name === 'facilities') {
+            const target = e.target as HTMLSelectElement;
+            const selectedFacilities = Array.from(
+                target.selectedOptions,
+                option => option.value
+            );
+            setFormData({ ...formData, [name]: selectedFacilities });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,8 +42,8 @@ const AddRoom: React.FC = () => {
         }
     };
 
-    const handleSave = () => {
-        console.log('Form Data:', formData);
+    const handleSubmit = () => {
+        console.log('New Room Data:', formData);
         navigate('/admin/room-management');
     };
 
@@ -54,20 +56,23 @@ const AddRoom: React.FC = () => {
                     </div>
                     <div className="bg-white p-10 rounded-lg shadow-md mt-4">
                         <h2 className="text-4xl font-bold mb-6">ADD ROOM</h2>
-                        <div className="w-[100px] ml-auto"></div>
                         <RoomFormLayout
+                            mode="add"
                             formData={formData}
                             onInputChange={handleInputChange}
                             onImageChange={handleImageChange}
-                            mode="add"
-                            onSubmit={handleSave}
+                            onSubmit={handleSubmit}
                             onCancel={() => navigate('/admin/room-management')}
+                            readOnly={false}
                         >
-                            <div onClick={handleSave}>
-                                <AdminButton label="SAVE" />
-                            </div>
                             <button
-                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500"
+                                onClick={handleSubmit}
+                                className="w-32 bg-blue-600 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-blue-700 !min-w-[128px] !h-12"
+                            >
+                                SAVE
+                            </button>
+                            <button
+                                className="w-32 bg-gray-400 p-3 text-white text-sm font-semibold rounded-md cursor-pointer hover:bg-gray-500 !min-w-[128px] !h-12"
                                 onClick={() => navigate('/admin/room-management')}
                             >
                                 CANCEL
