@@ -5,7 +5,6 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './views/components/ProtectedRoute';
 import { RoomProvider } from "./context/RoomContext";
 
-
 export const AppRoutes = () => {
   return (
     <BrowserRouter>

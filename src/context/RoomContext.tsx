@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Room } from '../../server/types';
 import { roomsApi } from '../api/client';
+import { useAuth } from './AuthContext';
 
 interface RoomContextType {
   rooms: Room[];
@@ -10,7 +11,7 @@ interface RoomContextType {
   fetchRooms: () => Promise<void>;
   getRoomById: (id: string) => Promise<void>;
   addRoom: (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateRoom: (id: string, room: Partial<Room>) => Promise<void>;
+  updateRoom: (id: string, room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
 }
 
@@ -21,6 +22,7 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const [currentRoom, setCurrentRoom] = useState<Room | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
   const fetchRooms = async () => {
     setIsLoading(true);
@@ -28,7 +30,6 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
       const response = await roomsApi.getAll();
       console.log('Fetched rooms:', response.data);
       setRooms(response.data);
-      console.log('Fetched rooms:', rooms);
     } catch (err) {
       setError('Failed to fetch rooms');
     } finally {
@@ -64,12 +65,15 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
   };
 
-  const updateRoom = async (id: string, room: Partial<Room>) => {
+  const updateRoom = async (id: string, room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => {
     setIsLoading(true);
     try {
       const response = await roomsApi.update(id, { room });
-      setRooms(prev => prev.map(r => r.id === id ? response.data : r));
-      setCurrentRoom(response.data);
+      if (response.data) {
+        console.log('Updated room:', response.data);
+        setRooms(prev => prev.map(r => (r.id === id ? response.data : r)));
+        setCurrentRoom(response.data);
+      }
     } catch (err) {
       setError('Failed to update room');
     } finally {
@@ -91,8 +95,10 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   };
 
   useEffect(() => {
-    fetchRooms();
-  }, []);
+    if (user) {
+      fetchRooms();
+    }
+  }, [user]);
 
   return (
     <RoomContext.Provider value={{

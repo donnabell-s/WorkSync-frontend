@@ -9,31 +9,6 @@ interface RoomListProps {
   rooms: Room[];
 }
 
-const getStatusClass = (status: string) => {
-  switch (status.toLowerCase()) {
-    case "available":
-      return "text-[#10B981]";
-    case "occupied":
-      return "text-[#F59E0B]";
-    default:
-      return "text-gray-500";
-  }
-};
-
-const getImageSrc = (size: string) => {
-  switch (size.toLowerCase()) {
-    case "small":
-      return "/meetingroom/small.jpg";
-    case "medium":
-      return "/meetingroom/medium.jpg";
-    case "large":
-      return "/meetingroom/large.jpg";
-    default:
-      return "/meetingroom/default.jpg";
-  }
-}
-
-
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const navigate = useNavigate();
   const { currentRoom, getRoomById } = useRooms();
@@ -41,17 +16,37 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const path = role === "admin" ? "/admin/rooms/room-detail" : "/user/book-room";
   const label = role === "admin" ? "View Room Details" : "Book Room";
 
+  const getStatusClass = (status: string) => {
+    switch (status.toLowerCase()) {
+      case "available":
+        return "text-[#10B981]";
+      case "occupied":
+        return "text-[#F59E0B]";
+      default:
+        return "text-gray-500";
+    }
+  };
+
+  const getImageSrc = (size: string) => {
+    if (size) {
+      switch (size.toLowerCase()) {
+        case "small":
+          return "/meetingroom/small.jpg";
+        case "medium":
+          return "/meetingroom/medium.jpg";
+        case "large":
+          return "/meetingroom/large.jpg";
+        default:
+          return "/meetingroom/default.jpg";
+      }
+    }
+  }
+
   const handleClick = async (roomId: string) => {
     localStorage.setItem("selectedRoomId", roomId);
     if (role === "admin" && label === "View Room Details") {
       try {
         await getRoomById(roomId);
-        console.log("Current Room:", currentRoom);
-        if (currentRoom) {
-          navigate(path);
-        } else {
-          console.error("Room not found");
-        }
       } catch (error) {
         console.error("Failed to get room by ID:", error);
       }
@@ -59,10 +54,10 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   };
 
   useEffect(() => {
-    if (role === "admin" && label === "View Room Details" && currentRoom) {
+    if (role === "admin" && currentRoom) {
       navigate(path);
     }
-  }, [currentRoom, role, label, path]);
+  }, [currentRoom, role, navigate, path]);
 
   return (
     <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">

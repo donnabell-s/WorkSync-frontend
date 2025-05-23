@@ -81,67 +81,13 @@
       "updatedAt": "2023-06-20T14:30:00Z"
     },
     {
-      "id": "qLAMWN_h35O7qB900xNaX",
-      "name": "Conference Room A",
-      "code": "CRA-102A",
-      "seats": 10,
-      "location": "North Tower",
-      "level": 2,
+      "id": "Q7qdhWW8IyPgVMVHq6Tpg",
+      "name": "Proposal Room A",
+      "code": "PRA - 107C",
+      "seats": "10",
+      "location": "West Tower",
+      "level": "18",
       "size": "Small",
-      "status": "Available",
-      "operatingHours": {
-        "weekdays": {
-          "open": "08:00",
-          "close": "20:00"
-        },
-        "weekends": {
-          "open": "09:00",
-          "close": "16:00"
-        }
-      },
-      "amenities": [
-        "Projector",
-        "Whiteboard",
-        "Video Conferencing"
-      ],
-      "createdAt": "2023-01-15T09:00:00Z",
-      "updatedAt": "2023-06-20T14:30:00Z"
-    },
-    {
-      "id": "F7Nu5F51uMGQKjwnWUprv",
-      "name": "asd",
-      "code": "CRA-102A",
-      "seats": 10,
-      "location": "North Tower",
-      "level": 2,
-      "size": "Small",
-      "status": "Available",
-      "operatingHours": {
-        "weekdays": {
-          "open": "08:00",
-          "close": "20:00"
-        },
-        "weekends": {
-          "open": "09:00",
-          "close": "16:00"
-        }
-      },
-      "amenities": [
-        "Projector",
-        "Whiteboard",
-        "Video Conferencing"
-      ],
-      "createdAt": "2025-05-23T13:36:29.284Z",
-      "updatedAt": "2025-05-23T13:36:29.284Z"
-    },
-    {
-      "id": "Kja6SgEI7Yhi0sp-Y9OFA",
-      "name": "Executive ",
-      "code": "CRA",
-      "seats": "12",
-      "location": "North Tower",
-      "level": "12",
-      "size": "Medium",
       "status": "Occupied",
       "operatingHours": {
         "weekdays": {
@@ -154,11 +100,11 @@
         }
       },
       "amenities": [
-        "Video Conferencing",
-        "Air Conditioning"
+        "Projector",
+        "Video Conferencing"
       ],
-      "createdAt": "2025-05-23T14:00:06.246Z",
-      "updatedAt": "2025-05-23T14:00:06.246Z"
+      "createdAt": "2025-05-23T15:10:14.817Z",
+      "updatedAt": "2025-05-23T18:29:49.813Z"
     }
   ],
   "bookings": [
@@ -218,10 +164,22 @@
       "createdAt": "2025-05-18T08:58:51.815Z"
     },
     {
-      "id": "a62zEXyy1RAISU-nQG7RD",
+      "id": "FfzI7TlSNzP1DX_4tS8_c",
       "auth": true,
       "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T14:18:48.121Z"
+      "createdAt": "2025-05-23T15:01:02.599Z"
+    },
+    {
+      "id": "ZRHqvuvaAWzhiMISFjBQe",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T16:03:53.778Z"
+    },
+    {
+      "id": "dEBWZrhrAP3LQyjRVgl2S",
+      "auth": true,
+      "userId": "w_W2qSw-6bZRuAHL438I8",
+      "createdAt": "2025-05-23T16:18:08.296Z"
     }
   ]
 }

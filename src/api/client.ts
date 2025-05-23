@@ -96,8 +96,18 @@ export const roomsApi = {
         }
     },
 
-    getById: (id: string, config?: AxiosRequestConfig) =>
-        api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config),
+    getById: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.get<Room>(`${API_PATHS.ROOMS}/${id}`, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Room not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
 
     create: async (data: { room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
         try {
@@ -112,11 +122,31 @@ export const roomsApi = {
         }
     },
 
-    update: (id: string, data: { room: Partial<Room> }, config?: AxiosRequestConfig) =>
-        api.put<Room>(`${API_PATHS.ROOMS}/${id}`, data, config),
+    update: async (id: string, data: { room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.put<Room>(`${API_PATHS.ROOMS}/${id}`, data, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                console.error('Bad request:', error);
+                return { data: null, status: 400, statusText: 'Bad Request', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
 
-    delete: (id: string, config?: AxiosRequestConfig) =>
-        api.delete(`${API_PATHS.ROOMS}/${id}`, config)
+    delete: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.delete(`${API_PATHS.ROOMS}/${id}`, config)
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Room not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    }
 };
 
 // Generic API functions (optional)

@@ -14,7 +14,7 @@ interface SelectInputProps {
   readType?: 'delete' | null;
 }
 
-const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className, name, type, onClick, options, onChange, readType }) => {
+const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className, name, type, onClick, options, onChange, readType, value }) => {
   const [filled, setFilled] = useState(false);
 
   const inputRef = useRef<HTMLSelectElement>(null);
@@ -50,13 +50,14 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className
         ) : (
             readType === 'delete' ? (
             <div className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 bg-zinc-100 text-zinc-700'>
-              {options?.find(option => option === (inputRef.current?.value || '')) || placeholder || 'No value selected'}
+              {value || 'No value selected'}
             </div>
             ) : (
             <select
               ref={inputRef}
               id='input'
               name={name}
+              value={value ?? ''}
               className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer'
             >
               <option value="" disabled selected hidden>

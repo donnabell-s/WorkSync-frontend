@@ -6,10 +6,11 @@ import { useRooms } from '../../../../../context/RoomContext'
 import { Room } from '../../../../../../server/types'
 
 const ViewRooms = () => {
-  const { rooms } = useRooms()
+  const { rooms, currentRoom } = useRooms()
   const [filteredRooms, setFilteredRooms] = useState<Room[]>(rooms)
 
   useEffect(() => {
+    console.log('view rooms rendered');
     setFilteredRooms(rooms);
   }, [rooms]);
 
