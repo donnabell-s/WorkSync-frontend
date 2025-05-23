@@ -61,6 +61,35 @@ export const API_PATHS = {
 
 // Auth API
 export const authApi = {
+    getAllUsers: (config?: AxiosRequestConfig) =>
+        api.get<User[]>(API_PATHS.USERS_LIST, config),
+
+    update: async (id: string, data: { user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'> }, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.put<User>(`${API_PATHS.USERS_LIST}/${id}`, data, config);
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 400) {
+                console.error('Bad request:', error);
+                return { data: null, status: 400, statusText: 'Bad Request', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
+    delete: async (id: string, config?: AxiosRequestConfig) => {
+        try {
+            const response = await api.delete(`${API_PATHS.USERS_LIST}/${id}`, config)
+            return response;
+        } catch (error: any) {
+            if (error.response && error.response.status === 404) {
+                console.error('Users not found:', error);
+                return { data: null, status: 404, statusText: 'Not Found', headers: {}, config: {}, request: {} };
+            }
+            throw error;
+        }
+    },
+
     login: (credentials: { email: string; password: string }) =>
         api.post<{
             token: string;

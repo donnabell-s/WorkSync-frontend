@@ -5,13 +5,14 @@ import { getDB } from '../services/db.service';
 import { Data, User } from '../types';
 
 const getUsers = async (_req: Request, res: Response) => {
-    const db = getDB();
-    await db.read();
-    console.log('user: ' + db.data?.users[1]);
-    if (!db.data?.users) {
-        return res.status(404).json({ message: 'No user found' });
-    }
-    res.json(db.data.users);
+  const db = getDB();
+  await db.read();
+  if (!db.data?.users) {
+    return res.status(404).json({ message: 'No user found' });
+  }
+  // Filter only users with role 'user'
+  const users = db.data.users.filter(user => user.role === 'user');
+  res.json(users);
 };
 
 export const getUserById = async (req: Request, res: Response) => {

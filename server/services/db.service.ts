@@ -9,12 +9,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const adapter = new JSONFile<Data>(path.join(__dirname, '../db.json'));
-const db = new Low(adapter, { users: [], rooms: [], bookings: [], preferences: [], bookingLogs: [], roomLogs: [], sessions: [] });
+const db = new Low(adapter, { users: [], rooms: [], bookings: [], preferences: [], logs: {bookingLogs: [], roomLogs: []}, sessions: [] });
 
 export const initializeDB = async () => {
   await db.read();
   if (!db.data) {
-    db.data = { users: [], rooms: [], bookings: [], preferences: [], bookingLogs: [], roomLogs: [], sessions: [] };
+    db.data = { users: [], rooms: [], bookings: [], preferences: [], logs: {bookingLogs: [], roomLogs: []}, sessions: [] };
     await db.write();
   }
   return db;

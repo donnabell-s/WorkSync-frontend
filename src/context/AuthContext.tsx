@@ -4,10 +4,12 @@ import { User } from '../../server/types';
 
 type AuthContextType = {
   user: User | null;
+  users: User[];
   token: string | null;
   login: (email: string, password: string) => Promise<User | null>;
   signup: (fname: string, lname: string, email: string, password: string) => Promise<User | null>;
   logout: () => void;
+  getAllUsers: () => Promise<User[]>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,8 +20,55 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
+  const [users, setUsers] = useState<User[]>([]);
   
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+
+  const getAllUsers = async () => {
+    try {
+      const { data } = await authApi.getAllUsers();
+
+      setUsers(data);
+
+      return data;
+    } catch (error) {
+      console.error('Fetching users failed:', error);
+      throw error;
+    }
+  };
+
+  const updateUser = async (id: string, user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      const { data } = await authApi.update(id, { user });
+
+      if (!data) {
+        throw new Error('Update user failed: No data returned');
+      }
+
+      setUsers(prev =>
+        prev.map(u => (u.id === data.id ? data : u))
+      );
+      return data;
+    } catch (error) {
+      console.error('Update user failed:', error);
+      throw error;
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      await authApi.delete(userId);
+      // Remove from users list
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      // If the deleted user is the current user, log out
+      if (user && user.id === userId) {
+        await logout();
+      }
+    } catch (error) {
+      console.error('Delete user failed:', error);
+      throw error;
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -69,7 +118,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, users, token, login, signup, logout, getAllUsers }}>
       {children}
     </AuthContext.Provider>
   );

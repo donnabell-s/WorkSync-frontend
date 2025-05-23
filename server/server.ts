@@ -5,7 +5,7 @@ import { getRooms, getRoomById, createRoom, updateRoom, deleteRoom } from './con
 import { getBookings, getBookingById, createBooking, updateBooking, deleteBooking} from './controllers/booking.controller';
 import { getRoomLog } from './controllers/log.controller';
 import { getAdmins, getAdminById, addAdmin, updateAdmin, deleteAdmin } from './controllers/admin.controller';
-import { getUserById, getUsers } from './controllers/user.controller';
+import { getUserById, getUsers, updateUser, deleteUser } from './controllers/user.controller';
 import cors from 'cors';
 
 const app = express();
@@ -75,7 +75,9 @@ app.use(authMiddleware);
 // Protected routes
 app.post('/auth/logout', makeHandler(logout));
 app.get('/users', makeHandler(getUsers));
-app.get('/user/id',  makeHandler(getUserById));
+app.get('/user/:id',  makeHandler(getUserById));
+app.put('/user/:id',  makeHandler(updateUser));
+app.delete('/user/:id',  makeHandler(deleteUser));
 
 app.get('/rooms', makeHandler(getRooms));
 app.post('/rooms', makeHandler(createRoom));
@@ -89,11 +91,6 @@ app.get('/admins/:id', makeHandler(getAdminById));
 app.put('/admins/:id', makeHandler(updateAdmin));
 app.delete('/admins/:id', makeHandler(deleteAdmin));
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
 app.get('/bookings', makeHandler(getBookings));
 app.get('/bookings/id', makeHandler(getBookingById));
 app.post('/bookings', makeHandler(createBooking));
@@ -101,6 +98,12 @@ app.put('/bookings/id', makeHandler(updateBooking));
 app.delete('/bookings/id', makeHandler(deleteBooking));
 
 app.get('/logs/room', makeHandler(getRoomLog))
+
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
 
 app.listen(3001, () => {
   console.log('Server running on http://localhost:3001');
