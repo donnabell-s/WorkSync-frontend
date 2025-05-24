@@ -145,13 +145,21 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
     if (roomId) getRoomById(roomId);
   }, [getRoomById]);
 
-  useEffect(() => {
-    if (edit) {
-      const bookingId = localStorage.getItem("selectedBookingId");
-      console.log(bookingId)
-      if (bookingId) getBookingById(bookingId);
+useEffect(() => {
+  if (edit) {
+    const bookingIdStr = localStorage.getItem("selectedBookingId");
+    if (bookingIdStr) {
+      const bookingId = Number(bookingIdStr);
+      if (!isNaN(bookingId)) {
+        console.log(bookingId)
+        getBookingById(bookingId);
+      } else {
+        console.warn("Invalid bookingId:", bookingIdStr);
+      }
     }
-  }, [getBookingById]);
+  }
+}, [edit, getBookingById]);
+
 
 
 useEffect(() => {
