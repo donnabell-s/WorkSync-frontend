@@ -9,7 +9,7 @@ interface BookingContextType {
   isLoading: boolean;
   error: string | null;
   fetchBookings: () => Promise<void>;
-  getBookingById: (id: string) => Promise<void>;
+  getBookingById: (id: number) => Promise<void>;
   addBooking: (booking: Omit<Booking, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   updateBooking: (id: string, booking: Partial<Booking>) => Promise<void>;
   deleteBooking: (id: string) => Promise<void>;
@@ -23,21 +23,6 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // const fetchBookings = async () => {
-  //   setIsLoading(true);
-  //   setError(null);
-  //   try {
-  //     const response = await bookingsApi.getAll();
-  //     console.log('Fetched bookings:', response.data);
-  //     setBookings(response.data);
-  //   } catch {
-  //     setError('Failed to fetch bookings');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
-
-  // Inside your context component
   const fetchBookings = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -52,21 +37,8 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
     }
   }, []);
 
-  // const getBookingById = async (id: string) => {
-  //   setIsLoading(true);
-  //   setError(null);
-  //   try {
-  //     const response = await bookingsApi.getById(Number(id));
-  //     setCurrentBooking(response.data);
-  //   } catch {
-  //     setError('Booking not found');
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
-  // Inside your BookingContext component
-  const getBookingById = useCallback(async (id: string) => {
+  const getBookingById = useCallback(async (id: number) => {
     setIsLoading(true);
     // setError(null);
     try {

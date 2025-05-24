@@ -78,7 +78,7 @@ export const getBookingById = async (req: Request, res: Response) => {
     const db = getDB();
     const bookingId = req.params.id;
     await db.read();
-    const booking = db.data?.bookings.find((booking) => String(booking.id) === bookingId);
+    const booking = db.data?.bookings.find((booking) => booking.id === Number(bookingId));
     if (!booking) {
         return res.status(404).json({ message: 'Booking not found' });
     }
