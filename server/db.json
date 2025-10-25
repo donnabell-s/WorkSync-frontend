@@ -1,17 +1,6 @@
 {
   "users": [
     {
-      "id": "50q5Mc2vKWQcr20rrpgqE",
-      "email": "donna@email.com",
-      "password": "$2b$10$Z7IYtvR1t/fBej0rCwdyM.3MQXeZE8H23sK3x1kTkCzfsG2w2nZ52",
-      "fname": "Donna",
-      "lname": "Sembrano",
-      "role": "user",
-      "isActive": false,
-      "createdAt": "2025-05-18T07:55:40.143Z",
-      "updatedAt": "2025-05-18T07:55:40.143Z"
-    },
-    {
       "id": "w_W2qSw-6bZRuAHL438I8",
       "email": "chaz@email.com",
       "password": "$2b$10$Tj3P7FUDT9c9tlLAncmsaOum/DKRFIo1LEEkGMFd7cn6bcY3qAfIG",
@@ -43,6 +32,28 @@
       "isActive": true,
       "createdAt": "2025-05-23T21:00:43.215Z",
       "updatedAt": "2025-05-23T21:25:34.516Z"
+    },
+    {
+      "id": "k2yhrLZQG3mpfCLbf-b_Q",
+      "email": "karen@email.com",
+      "password": "$2b$10$q95lMcLeGkqmmbNgIxqBIeXjU/ubNZERVndS1agRYEDQ57NrY10CG",
+      "fname": "Karen",
+      "lname": "Carigo",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-24T01:30:35.892Z",
+      "updatedAt": "2025-05-24T01:30:35.892Z"
+    },
+    {
+      "id": "6tR0swJu6mhpEwcfr6Ae-",
+      "email": "sampleadmin@email.com",
+      "password": "$2b$10$D4aRdpfKULxWExNgjfdm/.woLm9jGvLNcLhv06vspLf3ucmz4uG02",
+      "fname": "sample",
+      "lname": "admin",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-09-20T01:39:38.382Z",
+      "updatedAt": "2025-09-20T01:39:38.382Z"
     }
   ],
   "preferences": [
@@ -209,6 +220,19 @@
       "status": "confirmed",
       "createdAt": "2025-05-23T20:57:29.695Z",
       "updatedAt": "2025-05-23T20:57:29.695Z"
+    },
+    {
+      "id": 7,
+      "userId": null,
+      "roomId": "Q7qdhWW8IyPgVMVHq6Tpg",
+      "title": "sample demo",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T00:30:00.000Z",
+      "endDateTime": "2025-06-27T03:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-24T01:14:12.442Z",
+      "updatedAt": "2025-05-24T01:14:12.442Z"
     }
   ],
   "logs": {
