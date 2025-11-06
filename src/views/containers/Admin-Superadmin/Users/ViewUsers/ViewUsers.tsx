@@ -72,7 +72,7 @@ const ViewUser = () => {
             <input
               type="text"
               placeholder="Search by name or email..."
-              className="w-80 pr-9 pl-3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="w-80 pr-9 pl-3 p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -81,7 +81,7 @@ const ViewUser = () => {
           <div className="flex items-center gap-2">
             <div className="text-sm text-gray-700 whitespace-nowrap">Sort by:</div>
             <select
-              className="border border-gray-300 rounded px-3 py-2 bg-white"
+              className="bg-white border border-gray-300 rounded-md px-3 py-2"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'Name' | 'Status')}
             >

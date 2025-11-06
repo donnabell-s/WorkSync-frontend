@@ -80,14 +80,14 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
   return (
     <div className="px-7 pt-6 pb-8">
       <div className="flex items-center justify-between mb-4 gap-4">
-        <h2 className="text-2xl font-bold">{mode === 'bookings' ? 'BOOKING LOGS' : 'ROOM LOGS'}</h2>
+  <h2 className="text-2xl font-bold text-gray-800">{mode === 'bookings' ? 'BOOKING LOGS' : 'ROOM LOGS'}</h2>
         <div className="relative">
           <input
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search actions..."
-            className="w-80 pr-9 pl-3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="w-80 pr-9 pl-3 p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
           <FaSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
         </div>
@@ -95,7 +95,7 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
       <DataTable
         columns={ROOM_LOGS_COLUMNS}
         rows={filteredLogs}
-        className="whitespace-pre-line"
+        className="text-base whitespace-pre-line"
         itemsPerPage={pageSize}
         page={currentPage}
         onPageChange={setCurrentPage}
