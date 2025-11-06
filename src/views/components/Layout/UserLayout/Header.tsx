@@ -1,6 +1,6 @@
 import React from 'react';
 import HeaderLink from './HeaderLink';
-import NotifDropdown from './NotifDropdown';
+// import NotifDropdown from './NotifDropdown';
 import ProfileDropdown from './ProfileDropdown';
 import Logo from "../../../../assets/user-brand-logo.svg"
 import {useLocation} from "react-router"
@@ -10,11 +10,11 @@ const Header: React.FC = () => {
     const location = useLocation();
 
     return (
-    <div className="sticky top-0 z-50 flex justify-between p-5 pl-13 pr-10 shadow-zinc-100 shadow-lg bg-[#FFFFFF] shadow-md shadow-zinc-200">
+  <div className="sticky top-0 z-50 flex justify-between items-center h-18 pl-13 pr-10 bg-[#FFFFFF] shadow-md shadow-zinc-300">
       <div className="flex justify-center items-center">
-        <img src={Logo} alt="Logo" className="h-16" />
+        <img src={Logo} alt="Logo" className="h-12" />
       </div>
-      <div className="flex pt-3 pb-3 gap-4">
+  <div className="flex h-full items-stretch gap-7">
         <HeaderLink
           label="Home"
           selected={location.pathname === '/user/home'}

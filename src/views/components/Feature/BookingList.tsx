@@ -24,7 +24,7 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="h-full flex flex-col space-y-4">
       {bookings.map((booking) => {
         const [day, month, year] = booking.date ? booking.date.split('-') : ['24', '05', '2025'];
 

@@ -8,12 +8,13 @@ interface AdminButtonProps {
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | ((room: string) => void) | (() => void);
 }
 
-const AdminButton: React.FC<AdminButtonProps> = ({ label, icon, variant, onClick }) => {
+const AdminButton: React.FC<AdminButtonProps> = ({ label, icon, variant, onClick, className }) => {
     return (
         <button
             onClick={onClick}
-            className={`max-h-15 p-3 flex items-center text-white text-sm font-semibold rounded-md cursor-pointer transform transform-all duration-200
-                ${variant === 'primary' ? 'bg-[#2563EB] hover:bg-[#1E40AF] w-25 justify-center' : (variant === 'secondary' ? 'bg-[#64748B] hover:bg-[#4C515B] w-25 justify-center' : 'bg-[#2563EB] hover:bg-[#1E40AF] max-w-max')}
+            className={`max-h-15 p-2.5 flex items-center text-white text-sm font-semibold rounded-md cursor-pointer transform transform-all duration-200
+                ${variant === 'primary' ? 'bg-[#2563EB] hover:bg-[#1E40AF] w-40 justify-center' : (variant === 'secondary' ? 'bg-[#64748B] hover:bg-[#4C515B] w-44 justify-center' : 'bg-[#2563EB] hover:bg-[#1E40AF] max-w-max')}
+                ${className ? ` ${className}` : ''}
             `}
         >
             {icon && <span className='mr-2'>{icon}</span>}

@@ -17,12 +17,14 @@ const EditBookedRoom = () => {
 
   return (
     <div className='h-full bg-white flex flex-col px-4 sm:px-8 md:px-13 lg:px-25 xl:px-33 py-6 sm:py-8 md:py-10 gap-9'>
-      <div>
-        <RoomBookingForm edit={true} />
-      </div>
-      <div  className="h-full flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-13">
-        <MeetingDetailsForm roomCode={bookingId} />
-        <RoomDetailsForm roomCode={bookingId} />
+      <div className='flex-1 min-h-0 max-w-screen-xl w-full mx-auto flex flex-col gap-9'>
+        <div>
+          <RoomBookingForm edit={true} />
+        </div>
+        <div  className="h-full flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-13">
+          <MeetingDetailsForm roomCode={bookingId} />
+          <RoomDetailsForm roomCode={bookingId} />
+        </div>
       </div>
     </div>
   );

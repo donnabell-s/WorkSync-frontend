@@ -3,7 +3,6 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import { useNavigate } from 'react-router';
 import { useBookings } from '../../../context/BookingContext';
 import { useRooms } from '../../../context/RoomContext';
-import { Room } from '../../../types';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
@@ -21,7 +20,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getTdClasses = () => 'py-4 px-4 border-b-[1px] border-b-[#D2D4D8]';
+const getTdClasses = () => 'py-4 px-4';
 const getThClasses = () => 'py-5 px-4 border-b-[1px] border-b-[#D2D4D8] text-base';
 
 const formatDate = (dateString: string | Date) => {
@@ -110,7 +109,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
               return (
                 <tr
                   key={booking.id}
-                  className={`text-sm ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                  className={`text-sm odd:bg-white even:bg-gray-100 ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
                   onClick={() => {
                     if (booking.status === "confirmed") {
                       localStorage.setItem("selectedBookingId", String(booking.id));
@@ -124,7 +123,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
                   <td className={getTdClasses()}>{room ? room.location : 'Loading...'}</td>
                   <td className={getTdClasses()}>{formatDate(booking.startDateTime)}</td>
                   <td className={getTdClasses()}>{formatTime(booking.startDateTime)} - {formatTime(booking.endDateTime)}</td>
-                  <td className={`py-3 px-4 border-b border-b-[#D2D4D8] font-semibold uppercase ${getStatusColor(booking.status)}`}>
+                  <td className={`py-3 px-4 font-semibold uppercase ${getStatusColor(booking.status)}`}>
                     {booking.status}
                   </td>
                 </tr>
@@ -133,7 +132,7 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={7} className="py-5 px-4 border-t">
+              <td colSpan={7} className="py-5 px-4 border-t-[1px] border-t-[#D2D4D8]">
                 <div className="flex items-center justify-end text-sm gap-8">
                   <div className="flex items-center space-x-2">
                     <label htmlFor="itemsPerPage">Items per page:</label>

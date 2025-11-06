@@ -87,6 +87,17 @@
       "isActive": true,
       "createdAt": "2025-11-06T00:00:00.000Z",
       "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mDgFAK1JOkwBAndlnTCDW",
+      "email": "donna@email.com",
+      "password": "$2b$10$.mM.WU6EcJL26j/iWCxjauW1OItNobepb8vDuQLDEtbwtXM9DPSVm",
+      "fname": "Donna",
+      "lname": "Sembrano",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-11-06T14:01:31.220Z",
+      "updatedAt": "2025-11-06T14:01:31.220Z"
     }
   ],
   "preferences": [
@@ -292,10 +303,10 @@
   },
   "sessions": [
     {
-      "id": "qI8PXyQ9OP8vMl-6mFPmJ",
+      "id": "zSeGA0p1CyCgpS4NAIVWL",
       "auth": true,
       "userId": "mock-superadmin-1",
-      "createdAt": "2025-11-06T02:14:46.218Z"
+      "createdAt": "2025-11-06T14:51:04.950Z"
     }
   ]
 }

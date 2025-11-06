@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import AdminSearch from './AdminSearch'
-import AdminFilter from './AdminFilter'
 import AdminButton from './AdminButton'
 import { IoAddOutline } from 'react-icons/io5'
 // import { rooms } from "./../Feature/RoomListInterface"
 import { useRooms } from '../../../context/RoomContext'
-import { sampleBookingList as bookings } from '../Feature/UserBookingListInterface'
+import { sampleBookingList as bookings, Booking } from '../Feature/UserBookingListInterface'
 import { useNavigate } from 'react-router'
 
 interface ViewManagementHeaderProps {
@@ -41,68 +40,47 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }
 
     const handleFilter = (tab: string) => {
-        let filtered = view === "rooms" ? rooms : bookings;
-
         if (view === "rooms") {
-            if (tab === "All") {
-                filtered = rooms;
-            } else {
-                for (const roomTab of roomTabs) {
-                    if (tab === roomTab) {
-                        filtered = rooms.filter(room => room.status === roomTab);
-                        break;
-                    }
-                }
+            let filteredRooms = rooms;
+            if (tab !== "All" && roomTabs.includes(tab)) {
+                filteredRooms = rooms.filter(room => room.status === tab);
             }
+            setFunction?.(filteredRooms);
         } else {
-            for (const bookingTab of bookingTabs) {
-                if (tab === "All") {
-                    filtered = bookings;
-                    break;
+            let filteredBookings: Booking[] = bookings;
+            if (tab !== "All") {
+                if (bookingTabs.includes(tab)) {
+                    filteredBookings = bookings.filter(b => b.status.toLowerCase() === tab.toLowerCase());
                 }
-                else if (tab === bookingTab) {
-                    filtered = bookings.filter(booking => booking.status.toLowerCase() === bookingTab.toLowerCase());
-                    break;
-                }
-            }
-
-            for (const bookingTab of bookingTabs2) {
-                if (tab === "All") {
-                    filtered = filtered;
-                }
-                else if (tab === bookingTab) {
-                    filtered = filtered.filter(booking => booking.recurrence.toLowerCase() === bookingTab.toLowerCase());
-                    break;
+                if (bookingTabs2.includes(tab)) {
+                    filteredBookings = filteredBookings.filter(b => b.recurrence.toLowerCase() === tab.toLowerCase());
                 }
             }
-        }
-
-        if (setFunction) {
-            setFunction(filtered);
+            setFunction?.(filteredBookings);
         }
     }
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value);
-        let filtered = view === "rooms" ? rooms : bookings;
+        const value = event.target.value;
+        setSearchQuery(value);
         if (view === "rooms") {
-            if (event.target.value === "") {
-                filtered = rooms;
-            } else {
-                filtered = rooms.filter(room => {
+            let filteredRooms = rooms;
+            if (value !== "") {
+                filteredRooms = rooms.filter(room => {
                     const roomDetails = `${room.code} ${room.name} ${room.location}`.toLowerCase();
-                    return roomDetails.includes(event.target.value.toLowerCase());
+                    return roomDetails.includes(value.toLowerCase());
                 });
             }
+            setFunction?.(filteredRooms);
         } else {
-            filtered = bookings.filter(booking => {
-                const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
-                return bookingDetails.includes(event.target.value.toLowerCase());
-            });
-        }
-        console.log('filter rooms: ' + filtered);
-        if (setFunction) {
-            setFunction(filtered);
+            let filteredBookings = bookings;
+            if (value !== "") {
+                filteredBookings = bookings.filter(booking => {
+                    const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
+                    return bookingDetails.includes(value.toLowerCase());
+                });
+            }
+            setFunction?.(filteredBookings);
         }
     }
 
@@ -121,7 +99,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }, [rooms, setFunction]);
 
     return (
-        <div>
+        <div className='divide-y-1 divide-[#D2D4D8]'>
             <div className={`p-3 ${view === 'bookings' ? 'flex gap-5' : ''}`}>
                 <div className='bg-[#F3F4F6] p-1 rounded-md flex flex-wrap gap-2 max-w-max'>
                     {
@@ -158,14 +136,24 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
                 }
             </div>
             <div className='flex sm:flex-row flex-col p-3 justify-between gap-3'>
-                <div className='flex md:flex-row flex-col gap-4 items-center'>
+                <div className='flex md:flex-row flex-col gap-4 items-center flex-1 w-full'>
                     <AdminSearch value={searchQuery} onChange={handleSearchChange} />
                 </div>
-                {
-                    view === "rooms" ?
-                        <AdminButton label="Add Room" icon={<IoAddOutline className='size-5 font-bold' />} onClick={handleAddRoom} /> :
-                        <AdminButton label="Create Booking" icon={<IoAddOutline className='size-5 font-bold' onClick={handleAddBooking} />} />
-                }
+                                {
+                                        view === "rooms" ?
+                                                <AdminButton
+                                                    label="Add Room"
+                                                    icon={<IoAddOutline className='size-5 font-bold' />}
+                                                    variant='primary'
+                                                    onClick={handleAddRoom}
+                                                /> :
+                                                <AdminButton
+                                                    label="Create Booking"
+                                                    icon={<IoAddOutline className='size-5 font-bold' />}
+                                                    variant='primary'
+                                                    onClick={handleAddBooking}
+                                                />
+                                }
             </div>
         </div>
     )
