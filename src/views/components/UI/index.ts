@@ -7,3 +7,5 @@ export * from "./SecondaryButton";
 export * from "./BookingTableRow";
 export { default as UserHeading } from "./UserHeading";
 export { default as UserSearch } from "./UserSearch";
+export { default as DataTable } from "./DataTable";
+export type { DataTableColumn } from "./DataTable";

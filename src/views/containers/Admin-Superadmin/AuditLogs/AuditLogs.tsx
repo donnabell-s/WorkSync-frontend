@@ -1,21 +1,35 @@
-import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
-import React, { useState, useMemo, useEffect } from 'react';
-import { FaSearch } from 'react-icons/fa';
+import React, { useState, useMemo } from 'react';
 import { useLogs } from '../../../../context/LogContext';
 import { useRooms } from '../../../../context/RoomContext';
 import { format } from 'date-fns';
+import { DataTable, DataTableColumn } from '../../../components/UI';
+import { FaSearch } from 'react-icons/fa';
 
 interface AuditLogsProps {
   mode: 'rooms' | 'bookings';
 }
 
-const ROOM_LOGS_COLUMNS = [
-  'Action',
-  'Room Name & Number',
-  'Location',
-  'Capacity',
-  'Status',
-  'Date',
+type RoomLogRow = {
+  action: string;
+  room: string;
+  location: string;
+  capacity: string | number;
+  status: string;
+  date: string;
+  statusColor: string;
+};
+
+const ROOM_LOGS_COLUMNS: DataTableColumn<RoomLogRow>[] = [
+  { key: 'action', header: 'Action' },
+  { key: 'room', header: 'Room Name & Number' },
+  { key: 'location', header: 'Location' },
+  { key: 'capacity', header: 'Capacity', align: 'right' },
+  {
+    key: 'status',
+    header: 'Status',
+    render: (row) => <span className={`font-semibold ${row.statusColor}`}>{row.status}</span>,
+  },
+  { key: 'date', header: 'Date' },
 ];
 
 const getStatusColor = (status: string) => {
@@ -37,69 +51,55 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
   const { rooms } = useRooms();
 
   const [search, setSearch] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 8;
 
-  const filteredLogs = useMemo(() => {
+  const filteredLogs = useMemo<RoomLogRow[]>(() => {
+    // Currently only room logs are available via context; we format them consistently.
     return logs
-      .map(log => {
-        const room = rooms.find(r => r.id === String(log.roomId));
+      .map((log) => {
+        const room = rooms.find((r) => r.id === String(log.roomId));
         if (!room) return null;
-
         return {
           action: log.eventType,
           room: `${room.name} | ${room.code}`,
           location: room.location || 'N/A',
-          capacity: room.size ?? '-',
+          capacity: (room as any).size ?? '-',
           status: log.currentStatus,
           date: format(new Date(log.timestamp), 'MM/dd/yy\nhh:mmaaa'),
           statusColor: getStatusColor(log.currentStatus),
-        };
+        } as RoomLogRow;
       })
-      .filter(Boolean)
-      .filter(log => log!.action.toLowerCase().includes(search.toLowerCase()));
+      .filter((x): x is RoomLogRow => Boolean(x))
+      .filter((log) => log.action.toLowerCase().includes(search.toLowerCase()));
   }, [logs, rooms, search]);
+
+  // Built-in DataTable pagination will handle slicing; keep currentPage for controlled pagination
 
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">ROOM LOGS</h2>
-      <input
-        type="text"
-        value={search}
-        onChange={e => setSearch(e.target.value)}
-        placeholder="Search actions..."
-        className="border px-3 py-2 mb-4 rounded w-full max-w-sm"
-      />
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr>
-              {ROOM_LOGS_COLUMNS.map(col => (
-                <th key={col} className="px-4 py-3 border-b font-semibold text-gray-700">{col}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredLogs.length > 0 ? (
-              filteredLogs.map((log, idx) => (
-                <tr key={idx} className="border-b">
-                  <td className="px-4 py-3">{log!.action}</td>
-                  <td className="px-4 py-3">{log!.room}</td>
-                  <td className="px-4 py-3">{log!.location}</td>
-                  <td className="px-4 py-3">{log!.capacity}</td>
-                  <td className={`px-4 py-3 ${log!.statusColor} font-semibold`}>{log!.status}</td>
-                  <td className="px-4 py-3 whitespace-pre-line">{log!.date}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={ROOM_LOGS_COLUMNS.length} className="text-center py-4 text-gray-500">
-                  No logs found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+    <div className="px-7 pt-6 pb-8">
+      <div className="flex items-center justify-between mb-4 gap-4">
+        <h2 className="text-2xl font-bold">{mode === 'bookings' ? 'BOOKING LOGS' : 'ROOM LOGS'}</h2>
+        <div className="relative">
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Search actions..."
+            className="w-80 pr-9 pl-3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+          />
+          <FaSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+        </div>
       </div>
+      <DataTable
+        columns={ROOM_LOGS_COLUMNS}
+        rows={filteredLogs}
+        className="whitespace-pre-line"
+        itemsPerPage={pageSize}
+        page={currentPage}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 };

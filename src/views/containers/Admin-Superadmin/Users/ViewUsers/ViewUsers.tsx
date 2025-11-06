@@ -1,23 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { DataTable, DataTableColumn } from '../../../../components/UI';
+import { FaSearch } from 'react-icons/fa';
+import { useBookings } from '../../../../../context/BookingContext';
+import { LuPencilLine } from "react-icons/lu";
 
-interface User {
-  name: string;
-  email: string;
-  booking: number;
-  status: 'ACTIVE' | 'INACTIVE';
-}
 const ViewUser = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'Name' | 'Status'>('Name');
   const [currentPage, setCurrentPage] = useState(1);
   const { users, getAllUsers, getUserById, currentUser } = useAuth();
+  const { bookings } = useBookings();
   const [editUser, setEditUser] = useState(false);
   const navigate = useNavigate();
 
   const filteredUsers = users
-    .filter(user =>
+    .filter((user) =>
       `${user.fname} ${user.lname}`.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase())
     )
@@ -34,19 +33,14 @@ const ViewUser = () => {
     });
 
   const usersPerPage = 8;
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * usersPerPage,
-    currentPage * usersPerPage
-  );
 
   const handleClick = async (id: string) => {
-    localStorage.setItem("selectedRoomId", id);
+    localStorage.setItem('selectedRoomId', id);
     try {
-      console.log(id);
       setEditUser(true);
       await getUserById(id);
     } catch (error) {
-      console.error("Failed to get room by ID:", error);
+      console.error('Failed to get user by ID:', error);
     }
   };
 
@@ -70,112 +64,78 @@ const ViewUser = () => {
   }, [currentUser, navigate, editUser]);
 
   return (
-    <div className="flex flex-col px-10 pt-10 min-h-screen bg-gray-100">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">USER MANAGEMENT</h1>
-
-      {/* Search & Sort */}
-      <div className="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-        <input
-          type="text"
-          placeholder="Search by name or email..."
-          className="w-full md:w-1/2 p-2 border border-gray-300 rounded-md"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex items-center gap-2">
-          <div className="text-sm text-gray-700 whitespace-nowrap">Sort by:</div>
-          <select
-            className="border border-gray-300 rounded px-40 py-2.5 w-full"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as 'Name' | 'Status')}
-          >
-            <option value="Name">Name</option>
-            <option value="Status">Status</option>
-          </select>
+    <div className="px-7 pt-6 pb-8">
+      <div className="flex items-center justify-between mb-4 gap-4">
+        <h1 className="text-2xl font-bold text-gray-800">USER MANAGEMENT</h1>
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              className="w-80 pr-9 pl-3 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <FaSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="text-sm text-gray-700 whitespace-nowrap">Sort by:</div>
+            <select
+              className="border border-gray-300 rounded px-3 py-2 bg-white"
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as 'Name' | 'Status')}
+            >
+              <option value="Name">Name</option>
+              <option value="Status">Status</option>
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white rounded-md shadow text-base">
-          <thead>
-            <tr className="bg-gray-100 text-left text-gray-700">
-              <th className="px-6 py-4">Name</th>
-              <th className="px-6 py-4">Email</th>
-              <th className="px-6 py-4">Booking</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginatedUsers.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="text-center py-4 text-gray-500">
-                  No users found.
-                </td>
-              </tr>
-            ) : (
-              paginatedUsers.map((user, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-4">{user.fname} {user.lname}</td>
-                  <td className="px-6 py-4">{user.email}</td>
-                  {/* number of user bookings */}
-                  {/* <td className="px-6 py-4">{user.booking}</td>  */}
-                  <td className={`px-6 py-4 font-medium ${user.isActive ? 'text-green-600' : 'text-red-500'
-                    }`}>
-                    {user.isActive ? 'ACTIVE' : 'INACTIVE'}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                    onClick={() => handleClick(user.id)}
-                      className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-                    >
-                      EDIT
-                    </button>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex items-center justify-between mt-4">
-        {/* Showing text */}
-        <div className="text-sm text-gray-700">
-          Showing {(currentPage - 1) * usersPerPage + 1}–{Math.min(currentPage * usersPerPage, filteredUsers.length)} of {filteredUsers.length} users
-        </div>
-
-        {/* Pagination buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-            disabled={currentPage === 1}
-            className="px-2 py-1 border rounded disabled:opacity-50"
-          >
-            &lt;
-          </button>
-          <span>{currentPage}</span>
-          <button
-            onClick={() =>
-              setCurrentPage(prev =>
-                prev * usersPerPage < filteredUsers.length ? prev + 1 : prev
-              )
-            }
-            disabled={currentPage * usersPerPage >= filteredUsers.length}
-            className="px-2 py-1 border rounded disabled:opacity-50"
-          >
-            &gt;
-          </button>
-        </div>
-
-        {/* Add User button */}
-        <button
-          className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-        >
-          Add User
-        </button>
-      </div>
+      <DataTable
+        columns={([
+          { key: 'name', header: 'Name' },
+          { key: 'email', header: 'Email' },
+          { key: 'bookings', header: 'Booking', align: 'right' },
+          {
+            key: 'status',
+            header: 'Status',
+            render: (row: any) => (
+              <span className={`font-medium ${row.isActive ? 'text-green-600' : 'text-red-500'}`}>
+                {row.isActive ? 'ACTIVE' : 'INACTIVE'}
+              </span>
+            ),
+          },
+          {
+            key: 'action',
+            header: 'Action',
+            render: (row: any) => (
+              <button
+                onClick={() => handleClick(row.id)}
+                className="text-[#777F8B] font-semibold px-3 py-1.5 rounded-full hover:bg-gray-200 border border-[#777F8B] border-1.5 flex items-center gap-1"
+              >
+                Edit<LuPencilLine/>
+              </button>
+            ),
+          },
+        ]) as unknown as DataTableColumn<any>[]}
+        rows={filteredUsers.map((u) => ({
+          id: u.id,
+          name: `${u.fname} ${u.lname}`,
+          email: u.email,
+          bookings: bookings.filter((b) => String(b.userId) === String(u.id)).length || 0,
+          isActive: u.isActive,
+        }))}
+        emptyMessage="No users found."
+        getRowKey={(row) => row.id}
+        className="text-base"
+        itemsPerPage={usersPerPage}
+        page={currentPage}
+        onPageChange={setCurrentPage}
+        actionButtonLabel="Add User"
+        onActionButtonClick={() => navigate('/admin/users/add')}
+      />
     </div>
   );
 };

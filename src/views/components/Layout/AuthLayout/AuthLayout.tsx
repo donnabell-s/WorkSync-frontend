@@ -14,9 +14,9 @@ type AuthLayoutProps = {
  */
 export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right, showLogo = true }) => {
   return (
-    <div className="w-screen h-screen min-h-screen min-w-screen flex items-stretch bg-cover bg-center overflow-hidden font-sans">
+  <div className="relative w-full h-screen min-h-screen md:h-dvh md:min-h-dvh overflow-hidden overflow-x-hidden overscroll-none font-sans grid grid-cols-12">
       {/* Left Side */}
-      <div className="basis-[55%] flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl">
+      <div className="col-span-7 flex flex-col justify-center items-center relative h-full rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl">
         {/* Subtle white overlay for readability */}
         <div className="absolute inset-0 bg-white/10 rounded-tl-3xl rounded-bl-3xl pointer-events-none z-0" />
 
@@ -30,7 +30,7 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({ left, right, showLogo = 
       </div>
 
       {/* Right Side */}
-      <div className="basis-[45%] flex flex-col justify-center items-center relative min-h-screen p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden">
+      <div className="col-span-5 flex flex-col justify-center items-center relative h-full p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden">
         <div className="absolute inset-0 w-full h-full bg-cover bg-center rounded-tr-3xl rounded-br-3xl z-0 bg-[url('/src/assets/login-bg1.png')]" />
         <div className="w-full max-w-[420px] flex flex-col items-center justify-center mx-auto z-10 relative h-full">
           {right}

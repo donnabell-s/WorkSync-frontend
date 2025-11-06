@@ -54,6 +54,39 @@
       "isActive": false,
       "createdAt": "2025-09-20T01:39:38.382Z",
       "updatedAt": "2025-09-20T01:39:38.382Z"
+    },
+    {
+      "id": "mock-user-1",
+      "email": "user@example.com",
+      "password": "$2b$10$4SPAn0T4cgkeQ7gDemJesu.V5UDdF.yE0SdzXYXQPsXHJ7t9VfymS",
+      "fname": "Reg",
+      "lname": "User",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mock-admin-1",
+      "email": "admin@example.com",
+      "password": "$2b$10$fi0ZwG8tl10TaPmQZezvBeEAjZBgKY0zw9tzbtI55c9PDMYw6fbS6",
+      "fname": "Admin",
+      "lname": "User",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mock-superadmin-1",
+      "email": "superadmin@example.com",
+      "password": "$2b$10$RXzgpshMicXvH1pN2fvZROr.wLjLL9xNZlJTlOVqFH2KQ3Q5l.Y2C",
+      "fname": "Super",
+      "lname": "Admin",
+      "role": "superadmin",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
     }
   ],
   "preferences": [
@@ -259,74 +292,10 @@
   },
   "sessions": [
     {
-      "id": "nop0z-fEDd3OyNCcptaff",
-      "userId": "ldk06K3V_U3O6xOKb-xFb",
-      "createdAt": "2025-05-18T08:58:51.815Z"
-    },
-    {
-      "id": "FfzI7TlSNzP1DX_4tS8_c",
+      "id": "qI8PXyQ9OP8vMl-6mFPmJ",
       "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T15:01:02.599Z"
-    },
-    {
-<<<<<<< HEAD
-      "id": "ZRHqvuvaAWzhiMISFjBQe",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T16:03:53.778Z"
-    },
-    {
-      "id": "bPZtc1_2-A-68IMwkwAB9",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T19:16:10.291Z"
-    },
-    {
-      "id": "uvnwFjk_tUiYT9sBB322x",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T19:17:08.055Z"
-    },
-    {
-      "id": "_VLN9W6BrkLVe0RdcozQa",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T20:11:00.720Z"
-    },
-    {
-      "id": "kYHCeO-gg6MeALFu_cZJw",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T20:45:25.092Z"
-    },
-    {
-      "id": "RygQLTyybsd2mNPbHvhuT",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T21:01:05.523Z"
-    },
-    {
-      "id": "TWgMrsTcLzhCezP07ops3",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T21:22:17.463Z"
-    },
-    {
-      "id": "oZEi8djwVWoWSaVqfvq4j",
-      "auth": true,
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-23T21:55:01.227Z"
-=======
-      "id": "ycVuTi36DjKO6XPRvqrzC",
-      "userId": "w_W2qSw-6bZRuAHL438I8",
-      "createdAt": "2025-05-22T18:12:30.493Z"
-    },
-    {
-      "id": "hzU2d8aY_C_xeLDMfYqNH",
-      "userId": "50q5Mc2vKWQcr20rrpgqE",
-      "createdAt": "2025-05-22T16:38:22.141Z"
->>>>>>> origin/user-db-newbranch/donna
+      "userId": "mock-superadmin-1",
+      "createdAt": "2025-11-06T02:14:46.218Z"
     }
   ]
 }
