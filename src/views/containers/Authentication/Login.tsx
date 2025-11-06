@@ -1,8 +1,8 @@
 import { MdEmail, MdLock } from "react-icons/md";
-import userBrandLogo from "../../../assets/user-brand-logo.svg";
 import { useNavigate } from "react-router";
 import React, { useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
+import AuthLayout from "../../components/Layout/AuthLayout";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { user, login } = useAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ const Login = () => {
       } else {
         navigate("/user/home");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setError("Invalid credentials. Please try again.");
       console.error("Login error:", error);
     } finally {
@@ -34,15 +34,9 @@ const Login = () => {
   };
 
   return (
-    <div className="w-screen h-screen min-h-screen min-w-screen flex items-stretch bg-cover bg-center overflow-hidden font-sans bg-[url('/src/assets/login-bg2.png')]">
-      {/* Left Side */}
-      <div className="basis-[55%] flex flex-col justify-center items-center relative min-h-screen rounded-tl-3xl rounded-bl-3xl bg-[url('/src/assets/login-bg2.png')] bg-cover bg-center shadow-xl">
-        <div className="absolute inset-0 bg-white/40 rounded-tl-3xl rounded-bl-3xl pointer-events-none z-0" />
-
-        <div className="absolute top-8 left-8">
-          <img src={userBrandLogo} alt="WorkSync Logo" className="w-14 h-14" />
-        </div>
-        <form onSubmit={handleSubmit} className="w-full flex flex-col items-center px-2 z-10">
+    <AuthLayout
+      left={
+        <form onSubmit={handleSubmit} className="w-full flex flex-col items-center">
           <h2 className="text-3xl font-extrabold text-center mb-2 tracking-tight text-gray-800 w-[320px]">
             Sign In to WorkSync
           </h2>
@@ -107,12 +101,9 @@ const Login = () => {
             </p>
           </div>
         </form>
-      </div>
-
-      {/* Right Side */}
-      <div className="flex-1 flex flex-col justify-center items-center relative min-h-screen p-4 rounded-tr-3xl rounded-br-3xl bg-white/0 shadow-xl overflow-hidden">
-        <div className="absolute inset-0 w-full h-full bg-cover bg-center rounded-tr-3xl rounded-br-3xl z-0 bg-[url('/src/assets/login-bg1.png')]" />
-        <div className="w-full max-w-[420px] flex flex-col items-center justify-center mx-auto z-10 relative h-full">
+      }
+      right={
+        <>
           <h3 className="text-2xl font-semibold mb-4 mt-2 text-white text-center w-full">
             Welcome to
           </h3>
@@ -124,9 +115,9 @@ const Login = () => {
             <br />
             Simplify Your Schedule.
           </p>
-        </div>
-      </div>
-    </div>
+        </>
+      }
+    />
   );
 };
 
