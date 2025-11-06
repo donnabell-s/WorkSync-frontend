@@ -56,12 +56,12 @@ const ViewAdmins: React.FC = () => {
     <div className="px-7 pt-6 pb-8">
       <div className="flex items-center justify-between mb-4 gap-4">
         <h2 className="text-2xl font-bold text-gray-800">ADMIN MANAGEMENT</h2>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+          <div className="flex items-center gap-3">
+            <div className="relative w-[18rem] md:w-[24rem] lg:w-[28rem]">
             <input
               type="text"
               placeholder="Search by name or email..."
-              className="w-80 pr-9 pl-3 p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="w-full pr-9 pl-3 p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -70,7 +70,7 @@ const ViewAdmins: React.FC = () => {
           <div className="flex items-center gap-2">
             <div className="text-sm text-gray-700 whitespace-nowrap">Sort by:</div>
             <select
-              className="bg-white border border-gray-300 rounded-md px-3 py-2"
+              className="bg-white border border-gray-300 rounded-md px-3 py-2 min-w-[9rem] md:min-w-[11rem] lg:min-w-[12rem]"
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as 'Name' | 'Role' | 'Status')}
             >

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmins } from '../../../../../context/AdminContext';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { User } from '../../../../../../server/types';
 
 const roles = ['Admin', 'Superadmin', 'User'];
@@ -8,7 +8,7 @@ const statuses = ['Active', 'Inactive'];
 
 const EditAdmin = () => {
   const navigate = useNavigate();
-  const { currentAdmin, fetchAdmins, updateAdmin, deleteAdmin, getAdminById } = useAdmins();
+  const { currentAdmin, fetchAdmins, updateAdmin, deleteAdmin } = useAdmins();
 
   // Add a local state for permissions and status
   const [form, setForm] = useState<Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>>({
@@ -78,15 +78,16 @@ const EditAdmin = () => {
   }, [currentAdmin, navigate]);
 
   return (
-    <div className="flex flex-col w-full h-full bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto mt-8">
-      <h2 className="text-2xl font-semibold mb-2">EDIT ADMIN INFORMATION</h2>
-      <p className="text-sm text-gray-500 mb-6">Admins / {form.fname} {form.lname} / Edit</p>
-      <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+    <div className="px-7 pt-6 pb-8">
+      <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">EDIT ADMIN INFORMATION</h2>
+        <p className="text-sm text-gray-500 mb-6">Admins / {form.fname} {form.lname} / Edit</p>
+        <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Name</label>
           <div className="flex gap-2">
             <input
-              className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+              className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
               name="fname"
               placeholder="First Name"
               value={form.fname}
@@ -94,7 +95,7 @@ const EditAdmin = () => {
               required
             />
             <input
-              className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+              className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
               name="lname"
               placeholder="Last Name"
               value={form.lname}
@@ -106,7 +107,7 @@ const EditAdmin = () => {
         <div className="flex flex-col gap-2">
           <label className="font-medium">Role</label>
           <select
-            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             name="role"
             value={form.role}
             onChange={handleChange}
@@ -119,7 +120,7 @@ const EditAdmin = () => {
         <div className="flex flex-col gap-2">
           <label className="font-medium">Email</label>
           <input
-            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             name="email"
             type="email"
             value={form.email}
@@ -130,7 +131,7 @@ const EditAdmin = () => {
         <div className="flex flex-col gap-2">
           <label className="font-medium">Status</label>
           <select
-            className="border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             name="isActive"
             value={form.isActive ? 'Active' : 'Inactive'}
             onChange={handleChange}
@@ -141,7 +142,7 @@ const EditAdmin = () => {
           </select>
         </div>
 
-        <div className="flex gap-4 mt-10 justify-end md:col-span-2">
+  <div className="flex gap-4 mt-25 pt-6 border-t border-gray-200 justify-start md:col-span-2">
           <button
             type="button"
             className="px-6 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 font-medium"
@@ -192,6 +193,7 @@ const EditAdmin = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 };
