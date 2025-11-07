@@ -42,14 +42,14 @@ const CreateBooking = () => {
   }
 
   return (
-    <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
+    <div className='min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>
       <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
 
-      <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
+      <div className='relative flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
         <AdminHeading label="CREATE BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
-          <Input label='Meeting/Event Title' type='text' placeholder='Enter Room Name' className='md:col-span-2' />
+          <Input label='Meeting/Event Title' name='title' type='text' placeholder='Enter Room Name' className='md:col-span-2' />
           <div className='md:col-span-2 flex gap-4'>
             <SchedInput label='Start Date/Time' />
             <SchedInput label='End Date/Time' />
@@ -74,20 +74,20 @@ const CreateBooking = () => {
             }
           </div>
 
-          <div className='flex flex-col gap-4'>
-            <TextAreaInput label='Description' placeholder='Enter description' />
-          </div>
+        <div className='flex flex-col gap-4'>
+          <TextAreaInput label='Description' placeholder='Enter description' />
+        </div>
 
-          <div className='flex flex-col gap-4'>
-            <Input label='Expected Attendees' placeholder='Enter number of expected attendees' type='number' />
-            <SelectInput label='Select Room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
+        <div className='flex flex-col gap-4'>
+          <Input label='Expected Attendees' name='attendees' placeholder='Enter number of expected attendees' type='number' />
+          <SelectInput label='Select Room' name='room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
 
-            {
-              openModal ? (
-                <RoomModal closeFunction={handleModal} value={selectedRoom} selectFunction={handleSelection} />
-              ) : null
-            }
-          </div>
+          {
+            openModal ? (
+              <RoomModal closeFunction={handleModal} value={selectedRoom} selectFunction={handleSelection} />
+            ) : null
+          }
+        </div>
 
           <div className='flex gap-4 pt-5'>
             <AdminButton label='Save' variant='primary' onClick={handleBack} />

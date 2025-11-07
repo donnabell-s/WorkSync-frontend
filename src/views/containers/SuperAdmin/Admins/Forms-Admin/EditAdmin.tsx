@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAdmins } from '../../../../../context/AdminContext';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../../../../../../server/types';
+import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
 const roles = ['Admin', 'Superadmin', 'User'];
 const statuses = ['Active', 'Inactive'];
@@ -79,6 +80,9 @@ const EditAdmin = () => {
 
   return (
     <div className="px-7 pt-6 pb-8">
+      <div className="mb-4">
+        <AdminBackLink label='Back to View Admins' backPath='/admin/admins/view' />
+      </div>
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">EDIT ADMIN INFORMATION</h2>
         <p className="text-sm text-gray-500 mb-6">Admins / {form.fname} {form.lname} / Edit</p>

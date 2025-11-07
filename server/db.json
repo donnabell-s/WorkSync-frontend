@@ -301,12 +301,5 @@
       }
     ]
   },
-  "sessions": [
-    {
-      "id": "zSeGA0p1CyCgpS4NAIVWL",
-      "auth": true,
-      "userId": "mock-superadmin-1",
-      "createdAt": "2025-11-06T14:51:04.950Z"
-    }
-  ]
+  "sessions": []
 }

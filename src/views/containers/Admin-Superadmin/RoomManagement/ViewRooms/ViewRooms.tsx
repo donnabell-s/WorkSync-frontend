@@ -22,7 +22,7 @@ const ViewRooms = () => {
       <div className='h-full min-h-0 flex flex-col mt-5 bg-white rounded-lg shadow-md divide-y-1 divide-[#D2D4D8]'>
         <ViewManagementHeader view="rooms" setFunction={setFilteredRooms} />
   <div className='flex-1 min-h-0 bg-[#EAECEF] p-3 rounded-md overflow-hidden flex flex-col'>
-          <div className='flex-1 min-h-0 overflow-y-auto overscroll-contain'>
+          <div className='flex-1 min-h-0 overflow-y-auto overscroll-contain no-scrollbar'>
             {
               filteredRooms.length > 0 ?
                 <RoomList role='admin' rooms={filteredRooms} /> :

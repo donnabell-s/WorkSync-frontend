@@ -2,6 +2,7 @@ import React from 'react';
 import { FaCheck, FaTimes, FaEdit } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Booking } from './../../../../components/Feature/UserBookingListInterface';
+import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
 interface ViewBookingProps {
   mode?: 'view' | 'approved';
@@ -26,7 +27,6 @@ const dummyBooking = {
 const ViewBooking: React.FC<ViewBookingProps> = ({
   mode = 'view',
   onApprove,
-  onCancel,
 }) => {
   const location = useLocation();
   const booking = (location.state as { booking: Booking })?.booking;
@@ -45,15 +45,12 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#F7F8FA] p-0 m-0">
-      <div className="w-full pt-8 px-0 md:px-8">
-        <a
-          href="/admin/bookings/view"
-          className="flex items-center text-[#0077CC] text-sm font-medium hover:underline mb-6 ml-4 md:ml-0"
-        >
-          <span className="mr-2 text-lg">&lt;</span> Back to View Bookings
-        </a>
-        <div className="bg-white rounded-xl shadow p-0 overflow-hidden border border-[#E5E7EB] w-full">
+    <div className="w-full bg-[#F7F8FA] p-0 m-0 flex flex-col">
+      <div className="w-full pt-8 pb-8 px-0 md:px-8">
+        <div className="mb-6 ml-4 md:ml-0">
+          <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
+        </div>
+        <div className="bg-white rounded-xl shadow p-0 overflow-hidden border border-[#E5E7EB] w-full mb-8">
           <div className="flex justify-between items-center px-4 md:px-8 pt-8 pb-2">
             <h1 className="text-2xl font-bold text-[#2D2D2D]">BOOKING DETAILS</h1>
             {mode === 'view' && (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ViewBooking from './ViewBooking';
 
 const ViewBookingDetails = () => {
@@ -9,7 +9,7 @@ const ViewBookingDetails = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
+    <div className="h-full min-h-0 flex flex-col px-7 pt-6 pb-8">
       <ViewBooking mode={mode} onApprove={handleApprove} />
     </div>
   );

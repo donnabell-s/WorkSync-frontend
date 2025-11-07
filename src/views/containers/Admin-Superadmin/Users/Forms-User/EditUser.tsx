@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { User } from '../../../../../../server/types';
+import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
 const statuses = ['Active', 'Inactive'];
 
@@ -79,6 +80,9 @@ const EditUser: React.FC = () => {
 
   return (
     <div className="px-7 pt-6 pb-8">
+      <div className="mb-4">
+        <AdminBackLink label='Back to View Users' backPath='/admin/users/view' />
+      </div>
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">EDIT USER INFORMATION</h2>
         <p className="text-sm text-gray-500 mb-6">User / {form.fname} {form.lname} / Edit</p>
