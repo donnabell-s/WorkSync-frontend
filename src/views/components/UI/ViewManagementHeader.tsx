@@ -17,7 +17,8 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
 
     const navigate = useNavigate();
     const { rooms } = useRooms();
-    const roomTabs: string[] = ["All", "Available", "Occupied", "Under Maintenance", "Reserved"];
+    // Updated room filters per request
+    const roomTabs: string[] = ["All", "Active", "Inactive", "Under Maintenance"];
     const bookingTabs: string[] = ["All", "Approved", "Pending", "Declined"];
     const bookingTabs2: string[] = ["All", "Recurring", "Non-Recurring"];
     const initTab: string = view === "rooms" ? roomTabs[0] : bookingTabs[0];
@@ -43,7 +44,19 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
         if (view === "rooms") {
             let filteredRooms = rooms;
             if (tab !== "All" && roomTabs.includes(tab)) {
-                filteredRooms = rooms.filter(room => room.status === tab);
+                const t = tab.toLowerCase();
+                let statuses: string[] = [];
+                if (t === 'active') {
+                    // Treat Active as both the new "Active" value AND legacy states
+                    statuses = ['active', 'available', 'occupied', 'reserved', 'booked'];
+                } else if (t === 'inactive') {
+                    statuses = ['inactive'];
+                } else if (t === 'under maintenance') {
+                    statuses = ['under maintenance'];
+                }
+                if (statuses.length > 0) {
+                    filteredRooms = rooms.filter(room => statuses.includes(String(room.status).toLowerCase()));
+                }
             }
             setFunction?.(filteredRooms);
         } else {

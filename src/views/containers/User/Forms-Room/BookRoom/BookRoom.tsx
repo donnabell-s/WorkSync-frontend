@@ -21,6 +21,7 @@ const BookRoom = () => {
         <div>
           <RoomBookingForm edit={false} />
         </div>
+        {/* Additional Details removed: moved into MeetingDetailsForm */}
         <div  className="h-full flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-13">
           <MeetingDetailsForm roomCode={roomCode} />
           <RoomDetailsForm roomCode={roomCode} />

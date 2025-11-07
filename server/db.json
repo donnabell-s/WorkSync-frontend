@@ -277,6 +277,19 @@
       "status": "confirmed",
       "createdAt": "2025-05-24T01:14:12.442Z",
       "updatedAt": "2025-05-24T01:14:12.442Z"
+    },
+    {
+      "id": 8,
+      "userId": null,
+      "roomId": "o74oTjOz37WvatGZdj1fc",
+      "title": "12",
+      "description": "Project sync",
+      "startDateTime": "2025-11-08T05:00:00.000Z",
+      "endDateTime": "2025-11-08T10:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-11-07T08:30:57.375Z",
+      "updatedAt": "2025-11-07T08:30:57.375Z"
     }
   ],
   "logs": {
@@ -301,5 +314,12 @@
       }
     ]
   },
-  "sessions": []
+  "sessions": [
+    {
+      "id": "tj2pe3XUr0snI765filA7",
+      "auth": true,
+      "userId": "mock-superadmin-1",
+      "createdAt": "2025-11-07T09:39:25.574Z"
+    }
+  ]
 }

@@ -5,7 +5,6 @@ import { useNavigate } from "react-router";
 import { useRooms } from "../../../context/RoomContext";
 import { useBookings } from "../../../context/BookingContext";
 import { useAuth } from "../../../context/AuthContext";
-import { Room } from "../../../../server/types";
 
 function generateRecurringDates(
   pattern: string,
@@ -73,7 +72,14 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   const [interval, setInterval] = useState(1);
   const [selectedDays, setSelectedDays] = useState<number[]>([]);
 
-  const todayDate = new Date().toISOString().split("T")[0];
+  // Local YYYY-MM-DD helper
+  const toLocalYMD = (d: Date) => {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  };
+  const todayDate = toLocalYMD(new Date());
 
   const timeOptions = Array.from({ length: 23 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
@@ -85,6 +91,24 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
     setSelectedDays((prev) =>
       prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day]
     );
+  };
+
+  // Compute next future half-hour slot (clamped within booking window)
+  const nextHalfHourSlot = () => {
+    const now = new Date();
+    let h = now.getHours();
+    let m = now.getMinutes();
+    if (m === 0) {
+      m = 30;
+    } else if (m <= 30) {
+      m = 30;
+    } else {
+      m = 0;
+      h += 1;
+    }
+    if (h < 8) { h = 8; m = 0; }
+    if (h > 19 || (h === 19 && m > 0)) { return "19:30"; }
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
   };
 
   const TimeSelect = ({
@@ -103,7 +127,6 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
       if (maxTime && time > maxTime) return false;
       return true;
     });
-
     return (
       <select
         value={value}
@@ -112,85 +135,80 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
       >
         <option value="">Select time</option>
         {filteredOptions.map((time) => (
-          <option key={time} value={time}>
-            {time}
-          </option>
+          <option key={time} value={time}>{time}</option>
         ))}
       </select>
     );
   };
 
+  // Load draft from localStorage (calendar -> modal flow)
   useEffect(() => {
-  const tempBookingRaw = localStorage.getItem("tempBooking");
-  if (tempBookingRaw) {
-    try {
-      const temp = JSON.parse(tempBookingRaw);
-      if (temp?.title && temp?.date) {
-        setTitle(temp.title);
-        const isoDate = new Date(temp.date).toISOString().split("T")[0];
-        setStartDate(isoDate);
-        setEndDate(isoDate);
+    const raw = localStorage.getItem("tempBooking");
+    if (raw) {
+      try {
+        const temp = JSON.parse(raw);
+        if (temp?.title && temp?.date) {
+          setTitle(temp.title);
+          const dateStr = String(temp.date);
+          const ymdPattern = /^\d{4}-\d{2}-\d{2}$/;
+            const normalized = ymdPattern.test(dateStr) ? dateStr : toLocalYMD(new Date(dateStr));
+          setStartDate(normalized);
+          setEndDate(normalized);
+        }
+      } catch (e) {
+        console.error("Failed to parse tempBooking", e);
+      } finally {
+        localStorage.removeItem("tempBooking");
       }
-      // Optionally clear it after use
-      localStorage.removeItem("tempBooking");
-    } catch (err) {
-      console.error("Failed to parse tempBooking:", err);
     }
-  }
-}, [setTitle]);
+  }, []);
 
-
+  // Fetch selected room
   useEffect(() => {
     const roomId = localStorage.getItem("selectedRoomId");
     if (roomId) getRoomById(roomId);
   }, [getRoomById]);
 
-useEffect(() => {
-  if (edit) {
-    const bookingIdStr = localStorage.getItem("selectedBookingId");
-    if (bookingIdStr) {
-      const bookingId = Number(bookingIdStr);
-      if (!isNaN(bookingId)) {
-        console.log(bookingId)
-        getBookingById(bookingId);
-      } else {
-        console.warn("Invalid bookingId:", bookingIdStr);
+  // Editing existing booking
+  useEffect(() => {
+    if (edit) {
+      const bookingIdStr = localStorage.getItem("selectedBookingId");
+      if (bookingIdStr) {
+        const bookingId = Number(bookingIdStr);
+        if (!isNaN(bookingId)) {
+          getBookingById(bookingId);
+        }
       }
     }
-  }
-}, [edit, getBookingById]);
-
-
-
-useEffect(() => {
-  if (edit && currentBooking) {
-    setTitle(currentBooking.title);
-    const start = new Date(currentBooking.startDateTime);
-    const end = new Date(currentBooking.endDateTime);
-    setStartDate(start.toISOString().split("T")[0]);
-    setStartTime(start.toTimeString().slice(0, 5));
-    setEndDate(end.toISOString().split("T")[0]);
-    setEndTime(end.toTimeString().slice(0, 5));
-
-    const rec = currentBooking.recurrence;
-    if (rec?.isRecurring) {
-      setIsRecurring(true);
-      setRecurrenceType(rec.pattern || "");
-      setInterval(rec.interval ?? 1);
-      if (rec.pattern === "weekly" && rec.daysOfWeek) {
-        setSelectedDays(rec.daysOfWeek);
-      }
-    }
-  }
-}, [edit, currentBooking]);
-
+  }, [edit, getBookingById]);
 
   useEffect(() => {
-    if (!isRecurring || !startDate || !recurrenceType || interval < 1) return;
+    if (edit && currentBooking) {
+      setTitle(currentBooking.title);
+      const start = new Date(currentBooking.startDateTime);
+      const end = new Date(currentBooking.endDateTime);
+      setStartDate(start.toISOString().split("T")[0]);
+      setStartTime(start.toTimeString().slice(0, 5));
+      setEndDate(end.toISOString().split("T")[0]);
+      setEndTime(end.toTimeString().slice(0, 5));
 
+      const rec = currentBooking.recurrence;
+      if (rec?.isRecurring) {
+        setIsRecurring(true);
+        setRecurrenceType(rec.pattern || "");
+        setInterval(rec.interval ?? 1);
+        if (rec.pattern === "weekly" && rec.daysOfWeek) {
+          setSelectedDays(rec.daysOfWeek);
+        }
+      }
+    }
+  }, [edit, currentBooking]);
+
+  // Auto-extend end date for recurrence preview
+  useEffect(() => {
+    if (!isRecurring || !startDate || !recurrenceType || interval < 1) return;
     const start = new Date(startDate);
     const nextDate = new Date(start);
-
     switch (recurrenceType) {
       case "daily":
         nextDate.setDate(start.getDate() + interval);
@@ -202,9 +220,11 @@ useEffect(() => {
         nextDate.setMonth(start.getMonth() + interval);
         break;
     }
-
     setEndDate(nextDate.toISOString().split("T")[0]);
   }, [isRecurring, startDate, recurrenceType, interval]);
+
+
+/* Removed duplicated effects and stray JSX */
 
   const calculateMinEndTime = (startTime: string) => {
     const index = timeOptions.indexOf(startTime);
@@ -212,6 +232,14 @@ useEffect(() => {
       ? timeOptions[index + 1]
       : "08:30";
   };
+
+  // Restrict same-day start times to future slots
+  const minStartTime = startDate === todayDate ? nextHalfHourSlot() : undefined;
+  useEffect(() => {
+    if (minStartTime && startTime && startTime < minStartTime) {
+      setStartTime(minStartTime);
+    }
+  }, [minStartTime]);
 
   const handleSave = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -278,6 +306,13 @@ useEffect(() => {
     }
   };
 
+  // If start time is moved to or beyond the previously chosen end time, clear endTime so user must reselect.
+  useEffect(() => {
+    if (endTime && startTime && endTime <= startTime) {
+      setEndTime("");
+    }
+  }, [startTime, endTime]);
+
   return (
     <div className="flex flex-col gap-5 w-full">
       <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
@@ -317,7 +352,8 @@ useEffect(() => {
           }}
           className="bg-[#F3F4F6] rounded px-4 py-2 w-full sm:w-auto"
         />
-        <TimeSelect value={startTime} onChange={setStartTime} maxTime={endTime} />
+        {/* Start time: allow selecting any future slot; if it moves beyond existing endTime we'll reset endTime */}
+        <TimeSelect value={startTime} onChange={setStartTime} minTime={minStartTime} />
         <p className="text-sm whitespace-nowrap">to</p>
         <input
           type="date"
@@ -412,6 +448,5 @@ useEffect(() => {
     </div>
   );
 };
-
 export default RoomBookingForm;
 

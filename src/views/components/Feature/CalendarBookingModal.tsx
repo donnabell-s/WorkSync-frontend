@@ -26,9 +26,15 @@ const CalendarBookingModal: React.FC<CalendarBookingModalProps> = ({ isOpen, onC
   const repeatText = "Does not repeat";
 
   const handleBookRoom = () => {
+    // Use a local date (YYYY-MM-DD) to avoid timezone shifting a day
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    const dateLocal = `${yyyy}-${mm}-${dd}`;
+
     const payload = {
       title,
-      date: date.toISOString(),
+      date: dateLocal,
     };
 
     localStorage.setItem("tempBooking", JSON.stringify(payload));

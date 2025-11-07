@@ -45,8 +45,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
   }
 
   return (
-    <div className="w-full bg-[#F7F8FA] p-0 m-0 flex flex-col">
-      <div className="w-full pt-8 pb-8 px-0 md:px-8">
+    <div className="w-full p-0 m-0 flex flex-col">
         <div className="mb-6 ml-4 md:ml-0">
           <AdminBackLink label='Back to View Bookings' backPath='/admin/bookings/view' />
         </div>
@@ -169,7 +168,6 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             </div>
           )}
         </div>
-      </div>
     </div>
   );
 };

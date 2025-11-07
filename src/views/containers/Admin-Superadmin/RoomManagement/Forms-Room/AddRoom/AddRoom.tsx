@@ -11,7 +11,7 @@ import { Room } from '../../../../../../../server/types';
 
 const AddRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
-    const statuses = ['Available', 'Occupied', 'Under Maintenance'];
+    const statuses = ['Active', 'Inactive', 'Under Maintenance'];
     const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
     const { addRoom } = useRooms();
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const AddRoom: React.FC = () => {
         level: 0,
         size: 'Small',
         seats: 0,
-        status: 'Available',
+    status: 'Active',
         amenities: [],
         operatingHours: {
             weekdays: {

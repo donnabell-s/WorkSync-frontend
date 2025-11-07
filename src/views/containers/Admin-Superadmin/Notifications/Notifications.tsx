@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AdminSearch from '../../../components/UI/AdminSearch';
 
 type NotificationType = 'All' | 'Alert' | 'Update' | 'Report' | 'System';
 
@@ -67,72 +68,70 @@ const Notifications: React.FC = () => {
   });
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-xl font-bold mb-4">NOTIFICATIONS</h1>
+    <div className="h-full min-h-0 flex flex-col px-7 pt-6 pb-8">
+      <div className="flex flex-col gap-4">
+        <h1 className="text-xl font-bold">NOTIFICATIONS</h1>
 
-      {/* Tabs */}
-      <div className="flex space-x-3 mb-4 border-b pb-2">
-        {['All', 'Alert', 'Update', 'Report', 'System'].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab as NotificationType)}
-            className={`px-4 py-1 rounded-md text-sm ${
-              activeTab === tab ? 'bg-gray-200 font-semibold' : 'text-gray-600'
-            }`}
-          >
-            {tab === 'System' ? 'System Notifications' : tab + (tab !== 'All' ? 's' : '')}
-          </button>
-        ))}
-      </div>
-
-      {/* Search and Filter */}
-      <div className="flex justify-between items-center mb-4">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="border px-3 py-2 rounded-md w-1/2"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Filter by:</span>
-          <select
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-            className="border px-2 py-1 rounded-md text-sm"
-          >
-            <option>This Day</option>
-            <option>This Week</option>
-            <option>This Month</option>
-          </select>
-        </div>
-      </div>
-
-      {/* Notifications */}
-      <div className="space-y-4">
-        {filtered.map((n) => (
-          <div
-            key={n.id}
-            className="border border-gray-200 rounded-md px-4 py-3 flex justify-between items-start shadow-sm bg-white"
-          >
-            <div>
-              <div
-                className={`px-2 py-1 text-xs font-semibold rounded mb-1 inline-block ${
-                  tabStyles[n.type]
-                }`}
-              >
-                {n.type === 'System' ? 'System Notifications' : n.type + (n.type !== 'Report' ? 's' : '')}
-              </div>
-              <h4 className="font-semibold">{n.title}</h4>
-              <p className="text-sm text-gray-700">{n.message}</p>
+        {/* Header styled like View/Booking list header */}
+        <div className='divide-y-1 divide-[#D2D4D8] rounded-md bg-white'>
+          <div className='p-3'>
+            <div className='bg-[#F3F4F6] p-1 rounded-md flex flex-wrap gap-2 max-w-max'>
+              {(['All', 'Alert', 'Update', 'Report', 'System'] as NotificationType[]).map((tab) => (
+                <button
+                  key={tab}
+                  className={`px-5 py-2 rounded-md text-sm font-semibold cursor-pointer ${activeTab === tab ? 'bg-white text-[#2563EB]' : 'text-[#374151] hover:bg-[#E5E7EB]'}`}
+                  onClick={() => setActiveTab(tab)}
+                >
+                  {tab === 'System' ? 'System Notifications' : `${tab}${tab !== 'All' ? 's' : ''}`}
+                </button>
+              ))}
             </div>
-            <div className="text-xs text-gray-400 whitespace-nowrap pl-4">{n.timestamp}</div>
           </div>
-        ))}
+          <div className='flex sm:flex-row flex-col p-3 justify-between gap-3'>
+            <div className='flex md:flex-row flex-col gap-4 items-center flex-1 w-full'>
+              <AdminSearch value={search} onChange={(e) => setSearch(e.target.value)} />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-600">Filter by:</span>
+              <select
+                value={filterBy}
+                onChange={(e) => setFilterBy(e.target.value)}
+                className="border border-slate-200 px-3 py-2 rounded-md text-sm bg-[#F3F4F6] text-[#888E96] focus:outline-none focus:ring-2 focus:ring-slate-300"
+              >
+                <option>This Day</option>
+                <option>This Week</option>
+                <option>This Month</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-        {filtered.length === 0 && (
-          <p className="text-center text-gray-500">No notifications found.</p>
-        )}
+  {/* Notifications */}
+  <div className="space-y-3">
+          {filtered.map((n) => (
+            <div
+              key={n.id}
+              className="border border-gray-200 rounded-md px-4 py-3 flex justify-between items-start shadow-sm bg-white"
+            >
+              <div>
+                <div
+                  className={`px-4 py-1 text-xs font-semibold rounded rounded-lg mb-1 inline-block ${
+                    tabStyles[n.type]
+                  }`}
+                >
+                  {n.type === 'System' ? 'System Notifications' : n.type + (n.type !== 'Report' ? 's' : '')}
+                </div>
+                <h4 className="font-semibold">{n.title}</h4>
+                <p className="text-sm text-gray-700">{n.message}</p>
+              </div>
+              <div className="text-xs text-gray-400 whitespace-nowrap pl-4">{n.timestamp}</div>
+            </div>
+          ))}
+
+          {filtered.length === 0 && (
+            <p className="text-center text-gray-500">No notifications found.</p>
+          )}
+        </div>
       </div>
     </div>
   );

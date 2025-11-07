@@ -11,7 +11,7 @@ import { Room } from '../../../../../../../server/types';
 
 const EditRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
-    const statuses = ['Available', 'Occupied', 'Under Maintenance'];
+    const statuses = ['Active', 'Inactive', 'Under Maintenance'];
     const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
     const navigate = useNavigate();
     const { currentRoom, updateRoom, getRoomById, fetchRooms } = useRooms();
@@ -33,12 +33,21 @@ const EditRoom: React.FC = () => {
                 close: '',
             },
         },
-        status: statuses[0],
+    status: statuses[0],
         amenities: [],
     });
 
     useEffect(() => {
         if (currentRoom && currentRoom.operatingHours) {
+            // Normalize legacy statuses to new ones for the dropdown
+            const legacy = String(currentRoom.status).toLowerCase();
+            const mappedStatus = ['available', 'occupied', 'reserved', 'booked'].includes(legacy)
+                ? 'Active'
+                : legacy === 'under maintenance'
+                    ? 'Under Maintenance'
+                    : legacy === 'inactive'
+                        ? 'Inactive'
+                        : currentRoom.status;
             setFormData({
                 name: currentRoom.name,
                 code: currentRoom.code,
@@ -56,7 +65,7 @@ const EditRoom: React.FC = () => {
                         close: currentRoom.operatingHours.weekends.close,
                     },
                 },
-                status: currentRoom.status,
+                status: mappedStatus,
                 amenities: currentRoom.amenities,
             });
         }
@@ -106,10 +115,10 @@ const EditRoom: React.FC = () => {
     }, [currentRoom, navigate]);
 
     return (
-        <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
+        <div className='h-full min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>
             <AdminBackLink label='Back to View Rooms' backPath='/admin/rooms/view' />
 
-            <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
+            <div className='relative flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
                 <AdminHeading label="EDIT ROOM" />
 
                 <div className='grid md:grid-cols-2 gap-4 grid-cols-1'>

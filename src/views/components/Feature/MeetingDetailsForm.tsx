@@ -10,6 +10,8 @@ interface MeetingDetailsFormProps {
 const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => {
   const [notifTime, setNotifTime] = useState<number>(10);
   const [notifUnit, setNotifUnit] = useState<"minutes" | "hours" | "days">("minutes");
+  const [description, setDescription] = useState<string>("");
+  const [attendees, setAttendees] = useState<number>(1);
 
   const { getRoomById, currentRoom } = useRooms();
 
@@ -27,6 +29,29 @@ const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => 
         <p>Meeting Details</p>
       </div>
       <div className="flex flex-col gap-6 px-3">
+        {/* Description */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="description" className="font-medium">Description</label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter description"
+            className="bg-[#F3F4F6] rounded px-4 py-2 w-full min-h-24 resize-y"
+          />
+        </div>
+        {/* Expected Attendees */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-wrap w-full">
+          <label htmlFor="attendees" className="whitespace-nowrap">Expected Attendees</label>
+          <input
+            id="attendees"
+            type="number"
+            min={1}
+            value={attendees}
+            onChange={(e) => setAttendees(Number(e.target.value))}
+            className="bg-[#F3F4F6] rounded px-4 py-2 w-full md:w-20"
+          />
+        </div>
         <div className="flex flex-col md:flex-row md:items-start gap-3">
           <FiMapPin className="text-xl mt-1" />
           <div className="flex-1 min-w-0">
