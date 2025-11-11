@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeading from '../../../../../components/UI/AdminHeading';
 import AdminButton from '../../../../../components/UI/AdminButton';
@@ -36,6 +36,26 @@ const AddRoom: React.FC = () => {
             },
         },
     });
+
+    // Local state for image selection and preview (not yet persisted)
+    // We only need a preview for now; keep file reference if future upload integration is added.
+    const [imagePreview, setImagePreview] = useState<string>("");
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setImagePreview(url);
+        } else {
+            setImagePreview("");
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+        };
+    }, [imagePreview]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -86,7 +106,7 @@ const AddRoom: React.FC = () => {
                         <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
 
                         <MultiSelectInput
-                            label="amenities"
+                            label="Facilities"
                             name="amenities"
                             options={facilities}
                             value={formData.amenities}
@@ -94,8 +114,30 @@ const AddRoom: React.FC = () => {
                                 ...prev,
                                 amenities: selected
                             }))}
-                            placeholder="Select amenities"
+                            placeholder="Select facilities"
                         />
+
+                        {/* Room Image */}
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-sm font-bold text-[#1F2937]'>
+                                Room Image <span className='text-red-500'>*</span>
+                            </label>
+                            <input
+                                type='file'
+                                accept='image/*'
+                                onChange={handleImageChange}
+                                className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
+                            />
+                            {imagePreview && (
+                                <div className='mt-2'>
+                                    <img
+                                        src={imagePreview}
+                                        alt='Room Preview'
+                                        className='w-40 h-40 object-cover rounded-md border'
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className='flex gap-4'>

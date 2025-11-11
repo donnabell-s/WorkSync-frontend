@@ -37,6 +37,25 @@ const EditRoom: React.FC = () => {
         amenities: [],
     });
 
+    // Local state for image preview (optional, not persisted yet)
+    const [imagePreview, setImagePreview] = useState<string>("");
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0] || null;
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setImagePreview(url);
+        } else {
+            setImagePreview("");
+        }
+    };
+
+    useEffect(() => {
+        return () => {
+            if (imagePreview) URL.revokeObjectURL(imagePreview);
+        };
+    }, [imagePreview]);
+
     useEffect(() => {
         if (currentRoom && currentRoom.operatingHours) {
             // Normalize legacy statuses to new ones for the dropdown
@@ -145,6 +164,28 @@ const EditRoom: React.FC = () => {
                             }))}
                             placeholder="Select facilities"
                         />
+
+                        {/* Room Image */}
+                        <div className='flex flex-col gap-2'>
+                            <label className='text-sm font-bold text-[#1F2937]'>
+                                Room Image <span className='text-red-500'>*</span>
+                            </label>
+                            <input
+                                type='file'
+                                accept='image/*'
+                                onChange={handleImageChange}
+                                className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
+                            />
+                            {imagePreview && (
+                                <div className='mt-2'>
+                                    <img
+                                        src={imagePreview}
+                                        alt='Room Preview'
+                                        className='w-40 h-40 object-cover rounded-md border'
+                                    />
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     <div className='flex gap-4'>
