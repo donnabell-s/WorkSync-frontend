@@ -10,14 +10,14 @@ interface AdminContextType {
   error: string | null;
   fetchAdmins: () => Promise<void>;
   getAdminById: (id: string) => Promise<void>;
-  addAdmin: (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateAdmin: (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addAdmin: (admin: { fname: string; lname: string; email: string; password: string; phone: string; isActive?: boolean }) => Promise<void>;
+  updateAdmin: (id: string, admin: Partial<Pick<User, 'fname' | 'lname' | 'email' | 'phone' | 'role' | 'isActive'>> & { password?: string }) => Promise<void>;
   deleteAdmin: (id: string) => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [admins, setAdmins] = useState<User[]>([]);
   const [currentAdmin, setCurrentAdmin] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +44,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
     }
   };
 
-  const addAdmin = async (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => {
+  const addAdmin = async (admin: { fname: string; lname: string; email: string; password: string; phone: string; isActive?: boolean }) => {
     setIsLoading(true);
     try {
       const created = await adminsService.create(admin);
@@ -54,7 +54,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
     }
   };
 
-  const updateAdmin = async (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
+  const updateAdmin = async (id: string, admin: Partial<Pick<User, 'fname' | 'lname' | 'email' | 'phone' | 'role' | 'isActive'>> & { password?: string }) => {
     setIsLoading(true);
     try {
       const updated = await adminsService.update(id, admin);
