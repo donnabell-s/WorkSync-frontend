@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '../../server/types';
-import { adminsApi } from '../api/client';
+import { User } from '../types';
+import { adminService } from '../services/admin.service';
 import { useAuth } from './AuthContext';
 
 interface AdminContextType {
@@ -10,14 +10,14 @@ interface AdminContextType {
   error: string | null;
   fetchAdmins: () => Promise<void>;
   getAdminById: (id: string) => Promise<void>;
-  addAdmin: (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateAdmin: (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addAdmin: (admin: { fname: string; lname: string; email: string; password: string; phone: string; isActive?: boolean }) => Promise<void>;
+  updateAdmin: (id: string, admin: Partial<Pick<User, 'fname' | 'lname' | 'email' | 'phone' | 'role' | 'isActive'>> & { password?: string }) => Promise<void>;
   deleteAdmin: (id: string) => Promise<void>;
 }
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
 
-export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
+export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [admins, setAdmins] = useState<User[]>([]);
   const [currentAdmin, setCurrentAdmin] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,10 +27,8 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.getAll();
-      setAdmins(response.data);
-    } catch (err) {
-      setError('Failed to fetch admins');
+      const data = await adminService.getAll();
+      setAdmins(data);
     } finally {
       setIsLoading(false);
     }
@@ -39,40 +37,29 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const getAdminById = async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.getById(id);
-      setCurrentAdmin(response.data);
-    } catch (err) {
-      setError('Admin not found');
+      const data = await adminService.getById(id);
+      setCurrentAdmin(data);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const addAdmin = async (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => {
+  const addAdmin = async (admin: { fname: string; lname: string; email: string; password: string; phone: string; isActive?: boolean }) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.create({ admin });
-      if (response.data) {
-        setAdmins(prev => [...prev, response.data]);
-      }
-    } catch (err) {
-      setError('Failed to add admin');
+      const created = await adminService.create(admin);
+      setAdmins(prev => [...prev, created]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateAdmin = async (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
+  const updateAdmin = async (id: string, admin: Partial<Pick<User, 'fname' | 'lname' | 'email' | 'phone' | 'role' | 'isActive'>> & { password?: string }) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.update(id, { admin });
-      console.log('Update response:', response.data);
-      if (response.data) {
-        setAdmins(prev => prev.map(a => (a.id === id ? response.data : a)));
-        setCurrentAdmin(response.data);
-      }
-    } catch (err) {
-      setError('Failed to update admin');
+      const updated = await adminService.update(id, admin);
+      setAdmins(prev => prev.map(a => (String(a.id) === String(id) ? updated : a)));
+      setCurrentAdmin(updated);
     } finally {
       setIsLoading(false);
     }
@@ -81,11 +68,9 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const deleteAdmin = async (id: string) => {
     setIsLoading(true);
     try {
-      await adminsApi.delete(id);
-      setAdmins(prev => prev.filter(a => a.id !== id));
+      await adminService.remove(id);
+      setAdmins(prev => prev.filter(a => String(a.id) !== String(id)));
       setCurrentAdmin(null);
-    } catch (err) {
-      setError('Failed to delete admin');
     } finally {
       setIsLoading(false);
     }

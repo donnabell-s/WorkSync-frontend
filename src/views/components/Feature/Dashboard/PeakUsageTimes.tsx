@@ -1,16 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Chart from 'react-apexcharts';
 import { DatePicker } from '../../UI';
-import { 
-  sampleDailyData, 
-  rooms, 
-  ROOMS_PER_PAGE 
-} from './data';
-import { 
-  formatDateKey, 
-  generateSeriesData, 
-  getPaginatedRooms 
-} from './utils';
+import { dashboardService, PeakUsageItem } from '@/services/dashboard.service';
+import { formatDateKey } from './utils';
 import { createHeatmapOptions } from './config';
 import { 
   NoDataState, 
@@ -19,25 +11,73 @@ import {
   RoomInfoDisplay 
 } from './components';
 
+const ROOMS_PER_PAGE = 10;
+
 const PeakUsageTimes: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [peakUsageData, setPeakUsageData] = useState<PeakUsageItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDateChange = (date: Date) => {
     console.log('[DATE CHANGED TO]' + formatDateKey(date));
     setSelectedDate(date);
+    setCurrentPage(0); // Reset to first page when date changes
   };
 
-  // Get data for selected date
-  const dateKey = formatDateKey(selectedDate);
-  const currentHeatmapData = sampleDailyData[dateKey];
-  const hasData = currentHeatmapData !== undefined;
+  // Fetch peak usage data
+  useEffect(() => {
+    const fetchPeakUsage = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const dateString = selectedDate.toISOString().split('T')[0]; // yyyy-MM-dd format
+        const usageData = await dashboardService.getPeakUsage(dateString);
+        setPeakUsageData(usageData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch peak usage data');
+        setPeakUsageData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  // Get paginated rooms
-  const { currentRooms, totalPages } = getPaginatedRooms(rooms, currentPage, ROOMS_PER_PAGE);
+    fetchPeakUsage();
+  }, [selectedDate]);
 
-  // Generate chart series
-  const series = hasData ? generateSeriesData(currentRooms, currentHeatmapData) : [];
+  // Get unique rooms and paginate them
+  const { currentRooms, totalPages } = useMemo(() => {
+    const uniqueRooms = [...new Set(peakUsageData.map(item => item.roomName))];
+    const startIndex = currentPage * ROOMS_PER_PAGE;
+    const endIndex = startIndex + ROOMS_PER_PAGE;
+    const roomsForCurrentPage = uniqueRooms.slice(startIndex, endIndex);
+    
+    return {
+      currentRooms: roomsForCurrentPage,
+      totalPages: Math.ceil(uniqueRooms.length / ROOMS_PER_PAGE)
+    };
+  }, [peakUsageData, currentPage]);
+
+  // Generate chart series for current page rooms
+  const series = useMemo(() => {
+    if (!peakUsageData.length || !currentRooms.length) return [];
+
+    return currentRooms.map(roomName => ({
+      name: roomName,
+      data: Array.from({ length: 24 }, (_, hour) => {
+        const dataPoint = peakUsageData.find(
+          item => item.roomName === roomName && item.hour === hour
+        );
+        return {
+          x: hour,
+          y: dataPoint ? Math.round(dataPoint.occupancyRate * 100) / 100 : 0
+        };
+      })
+    }));
+  }, [peakUsageData, currentRooms]);
+
+  const hasData = peakUsageData.length > 0;
 
   // Create chart options
   const options = createHeatmapOptions();
@@ -56,16 +96,31 @@ const PeakUsageTimes: React.FC = () => {
             initialDate={selectedDate}
           />
         </div>
-        <PaginationControls
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
+        {hasData && totalPages > 1 && (
+          <PaginationControls
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       {/* Chart container */}
       <div className="flex-1">
-        {hasData ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-lg font-medium text-gray-600">Loading...</div>
+              <div className="text-sm text-gray-500">Fetching peak usage data</div>
+            </div>
+          </div>
+        ) : error ? (
+          <NoDataState
+            title="Error loading data"
+            description={`${error}<br />Please try again later or contact support if the problem persists.`}
+            icon="calendar"
+          />
+        ) : hasData ? (
           <Chart
             options={options}
             series={series}

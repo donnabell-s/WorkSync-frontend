@@ -1,22 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart,
 } from 'recharts';
 import { DatePicker } from '../../UI';
-import { sampleWeeklyData } from './data';
-import { formatWeekKey } from './utils';
+import { dashboardService, BookingTrendItem } from '@/services/dashboard.service';
 import { tooltipStyleConfig, axisConfig, chartColors } from './config';
 import { NoDataState, ChartDescription } from './components';
 
+interface ChartDataItem {
+  day: string;
+  bookings: number;
+  utilization: number;
+}
+
 const BookingsPerRoom: React.FC = () => {
   const [selectedWeek, setSelectedWeek] = useState<Date>(new Date());
+  const [data, setData] = useState<ChartDataItem[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
   const handleWeekChange = (date: Date) => {
     setSelectedWeek(date);
   };
 
-  const weekKey = formatWeekKey(selectedWeek);
-  const data = sampleWeeklyData[weekKey];
+  // Get start and end dates for the selected week
+  const { startDate, endDate } = useMemo(() => {
+    const start = new Date(selectedWeek);
+    start.setDate(start.getDate() - start.getDay()); // Go to Sunday
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6); // Go to Saturday
+    
+    return {
+      startDate: start.toISOString().split('T')[0], // yyyy-MM-dd format
+      endDate: end.toISOString().split('T')[0]
+    };
+  }, [selectedWeek]);
+
+  // Fetch booking trend data
+  useEffect(() => {
+    const fetchBookingsTrend = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const trendData = await dashboardService.getBookingsTrend(startDate, endDate);
+        
+        // Transform API data to match chart format
+        const transformedData = trendData.map(item => ({
+          day: new Date(item.date).toLocaleDateString('en-US', { weekday: 'short' }),
+          bookings: item.bookingsCount,
+          utilization: Math.round(item.utilizationPercentage * 100) / 100 // Round to 2 decimal places
+        }));
+        
+        setData(transformedData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to fetch booking trends');
+        setData([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBookingsTrend();
+  }, [startDate, endDate]);
+
   const hasData = data && data.length > 0;
 
   const chartDescriptions = [
@@ -39,7 +85,20 @@ const BookingsPerRoom: React.FC = () => {
       </div>
       
       <div className='flex-1 min-h-0 pt-2'>
-        {hasData ? (
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
+              <div className="text-lg font-medium text-gray-600">Loading...</div>
+              <div className="text-sm text-gray-500">Fetching booking trends</div>
+            </div>
+          </div>
+        ) : error ? (
+          <NoDataState
+            title="Error loading data"
+            description={`${error}<br />Please try again later or contact support if the problem persists.`}
+            icon="chart"
+          />
+        ) : hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <ComposedChart data={data}>
               <CartesianGrid stroke={chartColors.grid} strokeDasharray="3 3" />

@@ -1,12 +1,15 @@
 import type { ChartSeries, DailyOccupancyData } from '../types';
-import { roomData, hours } from '../data';
+
+// These utilities are no longer used since we switched to real API data
+// Keeping them here for reference or potential future use
 
 export const generateSeriesData = (
   currentRooms: string[], // Array of room names to display
   dataSource: DailyOccupancyData // Daily occupancy data source
 ): ChartSeries[] => {
+  const hours = Array.from({ length: 24 }, (_, i) => i);
   return currentRooms.map(room => ({
-    name: roomData[room]?.number || room,
+    name: room,
     data: hours.map((hour) => ({
       x: `${hour}:00`,
       y: dataSource[room]?.[hour] || 0
@@ -35,6 +38,6 @@ export const getPaginatedRooms = (
 export const findRoomNameByNumber = (
     roomNumber: string // Room number to lookup
 ): string => {
-  const roomEntry = Object.entries(roomData).find(([, data]) => data.number === roomNumber);
-  return roomEntry ? roomEntry[1].name : roomNumber;
+  // Since we no longer have static room data, return the room number as is
+  return roomNumber;
 };
