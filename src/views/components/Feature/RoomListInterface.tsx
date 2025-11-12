@@ -1,4 +1,4 @@
-interface MeetingRoom {
+export interface MeetingRoom {
     roomCode: string; // e.g. "CR-101A"
     roomName: string; // e.g. "Strategy Room"
     location: string;
@@ -6,7 +6,7 @@ interface MeetingRoom {
     numberOfSeats: number;
     additionalFacilities: string[];
     imageFile: string;
-    status: 'available' | 'occupied';
+    status: 'available' | 'occupied' | 'under maintenance' | 'reserved';
 }
   
 

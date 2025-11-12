@@ -2,10 +2,24 @@ import React, { useState, useRef, useEffect }  from "react"
 import Avatar from "../../../../assets/user-avatar.svg"
 import ProfileDropdownLink from "./ProfileDropdownLink";
 import { FiLogOut, FiSettings } from "react-icons/fi";
+import { useAuth } from "../../../../context/AuthContext";
+import { useNavigate } from "react-router";
 
 const ProfileDropdown: React.FC = () => {
   const [open, setOpen] = useState(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const {user} = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -28,16 +42,16 @@ const ProfileDropdown: React.FC = () => {
                 shadow-[0_0_9px_rgba(0,0,0,0.1)]`}>
                 <div className="pb-2 flex flex-row text-[#1F2937] gap-2 items-center font-semibold text-md">
                     <img src={Avatar} className="h-9 w-9" ></img>
-                    <p>Alliyana Rose Garcia</p>
+                    <p>{user?.fname} {user?.lname}</p>
                 </div>
                 <div className="border-t border-gray-200 my-2"></div>
                 <div className="flex flex-col gap-3 mt-3 mx-1">
                     <ProfileDropdownLink label="Settings" icon={<FiSettings size={20}/>} path="/user/settings"/>
-                    <ProfileDropdownLink label="Logout" icon={<FiLogOut size={20}/>} path="/login"/>
+                    <ProfileDropdownLink label="Logout" icon={<FiLogOut size={20}/>} onClick={handleLogout} />
                 </div>
             </div>
         </div>
     )
 }
 
-export default ProfileDropdown
+export default ProfileDropdown;

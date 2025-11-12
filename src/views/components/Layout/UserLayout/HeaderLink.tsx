@@ -22,15 +22,15 @@ const HeaderLink: React.FC<SideNavLinkProps> = ({ label, selected, path }) => {
     };
 
     return (
-        <div
+    <div
             onClick={handleClick}
             className={`
-                flex items-center justify-between p-2 cursor-pointer rounded-md
+        h-full flex items-center justify-between px-3 cursor-pointer rounded-md
                 text-[#4B5563] text-md font-medium
                 relative
-                after:content-['']
-                after:absolute after:left-0 after:bottom-0
-                after:h-[2px] after:w-full
+        after:content-['']
+        after:absolute after:left-0 after:bottom-[-2.5px]
+  after:h-[2.5px] after:w-full
                 after:transition-transform after:duration-300
                 after:origin-left
                 ${selected ? 'after:scale-x-100 after:bg-emerald-500' : 'after:scale-x-0 after:bg-emerald-500 hover:after:scale-x-100'}
@@ -42,4 +42,4 @@ const HeaderLink: React.FC<SideNavLinkProps> = ({ label, selected, path }) => {
   };
   
 
-export default HeaderLink
+export default HeaderLink;

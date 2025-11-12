@@ -1,0 +1,27 @@
+{
+  "users": [
+    {
+      "id": "QCnkQ0zfwoEkcTaBDWd2n",
+      "email": "donna@email.com",
+      "password": "$2b$10$Gyw4TXtG8vDDKKxU9GqO4.CzILpcsdS2rT9nJEUtyuR2WPbdE0BWq",
+      "fname": "Donna",
+      "lname": "Sembrano",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-18T07:39:21.199Z",
+      "updatedAt": "2025-05-18T07:39:21.199Z"
+    }
+  ],
+  "rooms": [],
+  "bookings": [],
+  "preferences": [],
+  "bookingLogs": [],
+  "roomLogs": [],
+  "sessions": [
+    {
+      "id": "6nvZitJZpWPJap17d_56P",
+      "userId": "QCnkQ0zfwoEkcTaBDWd2n",
+      "createdAt": "2025-05-18T07:39:21.199Z"
+    }
+  ]
+}

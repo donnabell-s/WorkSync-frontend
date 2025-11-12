@@ -8,13 +8,13 @@ interface UserSearchProps {
 
 const UserSearch = ({ value, onChange }: UserSearchProps) => {
   return (
-    <div className="relative w-full max-w-sm md:flex hidden">
+    <div className="relative w-full max-w-sm min-w-sm md:flex hidden">
       <input
         type="text"
         placeholder="Search..."
         value={value}
         onChange={onChange}
-        className="w-full border border-none rounded-md py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white shadow-[0_0_4px_rgba(0,0,0,0.1)]"
+        className="w-full border-none rounded-md py-2 pl-3 pr-10 focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white shadow-sm shadow-zinc-400"
       />
       <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
     </div>

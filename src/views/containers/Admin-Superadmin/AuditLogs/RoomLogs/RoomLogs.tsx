@@ -1,9 +1,6 @@
-import React from 'react'
+import React from 'react';
+import AuditLogs from '../AuditLogs';
 
-const RoomLogs = () => {
-  return (
-    <div>RoomLogs</div>
-  )
-}
+const RoomLogs = () => <AuditLogs mode="rooms" />;
 
-export default RoomLogs
+export default RoomLogs;

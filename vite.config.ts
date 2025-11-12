@@ -8,5 +8,10 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    watch: {
+      ignored: ['**/server/db.json']
+    }
+  }
 })
 

@@ -1,0 +1,337 @@
+{
+  "users": [
+    {
+      "id": "w_W2qSw-6bZRuAHL438I8",
+      "email": "chaz@email.com",
+      "password": "$2b$10$Tj3P7FUDT9c9tlLAncmsaOum/DKRFIo1LEEkGMFd7cn6bcY3qAfIG",
+      "fname": "Chaz",
+      "lname": "Garcia",
+      "role": "superadmin",
+      "isActive": false,
+      "createdAt": "2025-05-18T08:35:25.649Z",
+      "updatedAt": "2025-05-18T08:35:25.649Z"
+    },
+    {
+      "id": "PrvQ9uYUsMzOHZvrX300f",
+      "email": "yana@email.com",
+      "password": "$2b$10$T95ZEXgjCcGA1FilmYL4j.OSP0mb7t.S5O0r4f8hsTIi2AGxTNQ3y",
+      "fname": "Yana",
+      "lname": "Garcia",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-05-23T21:00:07.236Z",
+      "updatedAt": "2025-05-23T21:00:07.236Z"
+    },
+    {
+      "id": "h8rqGtfmN1H61pabhDRZu",
+      "email": "julien@email.com",
+      "password": "$2b$10$NFeoYDKvEV92DlR2qXAAweCMHjrs2VDSopPKPzcvC0B2TtxqjjDia",
+      "fname": "Julienn",
+      "lname": "Beniz",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2025-05-23T21:00:43.215Z",
+      "updatedAt": "2025-05-23T21:25:34.516Z"
+    },
+    {
+      "id": "k2yhrLZQG3mpfCLbf-b_Q",
+      "email": "karen@email.com",
+      "password": "$2b$10$q95lMcLeGkqmmbNgIxqBIeXjU/ubNZERVndS1agRYEDQ57NrY10CG",
+      "fname": "Karen",
+      "lname": "Carigo",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-05-24T01:30:35.892Z",
+      "updatedAt": "2025-05-24T01:30:35.892Z"
+    },
+    {
+      "id": "6tR0swJu6mhpEwcfr6Ae-",
+      "email": "sampleadmin@email.com",
+      "password": "$2b$10$D4aRdpfKULxWExNgjfdm/.woLm9jGvLNcLhv06vspLf3ucmz4uG02",
+      "fname": "sample",
+      "lname": "admin",
+      "role": "admin",
+      "isActive": false,
+      "createdAt": "2025-09-20T01:39:38.382Z",
+      "updatedAt": "2025-09-20T01:39:38.382Z"
+    },
+    {
+      "id": "mock-user-1",
+      "email": "user@example.com",
+      "password": "$2b$10$4SPAn0T4cgkeQ7gDemJesu.V5UDdF.yE0SdzXYXQPsXHJ7t9VfymS",
+      "fname": "Reg",
+      "lname": "User",
+      "role": "user",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mock-admin-1",
+      "email": "admin@example.com",
+      "password": "$2b$10$fi0ZwG8tl10TaPmQZezvBeEAjZBgKY0zw9tzbtI55c9PDMYw6fbS6",
+      "fname": "Admin",
+      "lname": "User",
+      "role": "admin",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mock-superadmin-1",
+      "email": "superadmin@example.com",
+      "password": "$2b$10$RXzgpshMicXvH1pN2fvZROr.wLjLL9xNZlJTlOVqFH2KQ3Q5l.Y2C",
+      "fname": "Super",
+      "lname": "Admin",
+      "role": "superadmin",
+      "isActive": true,
+      "createdAt": "2025-11-06T00:00:00.000Z",
+      "updatedAt": "2025-11-06T00:00:00.000Z"
+    },
+    {
+      "id": "mDgFAK1JOkwBAndlnTCDW",
+      "email": "donna@email.com",
+      "password": "$2b$10$.mM.WU6EcJL26j/iWCxjauW1OItNobepb8vDuQLDEtbwtXM9DPSVm",
+      "fname": "Donna",
+      "lname": "Sembrano",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-11-06T14:01:31.220Z",
+      "updatedAt": "2025-11-06T14:01:31.220Z"
+    }
+  ],
+  "preferences": [
+    {
+      "id": 1,
+      "userId": 1,
+      "preferences": {
+        "bookingEmailConfirm": false,
+        "cancellationNotif": true,
+        "reminders": {
+          "bookingReminder": true,
+          "notif": {
+            "time": 10,
+            "unit": "minutes"
+          }
+        },
+        "bookingDefaultDuration": 60
+      }
+    }
+  ],
+  "rooms": [
+    {
+      "id": "o74oTjOz37WvatGZdj1fc",
+      "name": "Conference Room A",
+      "code": "CRA-102A",
+      "seats": 10,
+      "location": "North Tower",
+      "level": 2,
+      "size": "Medium",
+      "status": "Available",
+      "operatingHours": {
+        "weekdays": {
+          "open": "08:00",
+          "close": "20:00"
+        },
+        "weekends": {
+          "open": "09:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Projector",
+        "Whiteboard",
+        "Video Conferencing"
+      ],
+      "createdAt": "2023-01-15T09:00:00Z",
+      "updatedAt": "2023-06-20T14:30:00Z"
+    },
+    {
+      "id": "Q7qdhWW8IyPgVMVHq6Tpg",
+      "name": "Proposal Room A",
+      "code": "PRA - 107C",
+      "seats": "10",
+      "location": "West Tower",
+      "level": "18",
+      "size": "Small",
+      "status": "Occupied",
+      "operatingHours": {
+        "weekdays": {
+          "open": "09:00",
+          "close": "17:00"
+        },
+        "weekends": {
+          "open": "10:00",
+          "close": "16:00"
+        }
+      },
+      "amenities": [
+        "Projector",
+        "Video Conferencing"
+      ],
+      "createdAt": "2025-05-23T15:10:14.817Z",
+      "updatedAt": "2025-05-23T18:29:49.813Z"
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "roomId": 1,
+      "userId": 1,
+      "title": "Weekly Team Meeting",
+      "description": "Project sync",
+      "startDateTime": "2023-10-01T10:00:00",
+      "endDateTime": "2023-10-01T11:00:00",
+      "recurrence": {
+        "isRecurring": true,
+        "pattern": "weekly",
+        "interval": 1,
+        "daysOfWeek": [
+          1
+        ],
+        "dates": [
+          "2023-10-01",
+          "2023-10-08",
+          "2023-10-15"
+        ],
+        "endDate": "2023-12-31"
+      },
+      "status": "confirmed",
+      "createdAt": "2023-09-20T08:00:00",
+      "updatedAt": "2023-09-20T08:00:00"
+    },
+    {
+      "id": 2,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "Sample",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T00:00:00.000Z",
+      "endDateTime": "2025-06-06T04:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T17:21:59.832Z",
+      "updatedAt": "2025-05-23T17:21:59.832Z"
+    },
+    {
+      "id": 3,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "book dawe be",
+      "description": "Project sync",
+      "startDateTime": "2025-06-07T01:00:00.000Z",
+      "endDateTime": "2025-06-07T07:00:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T17:53:22.578Z",
+      "updatedAt": "2025-05-23T17:53:22.578Z"
+    },
+    {
+      "id": 4,
+      "userId": null,
+      "roomId": "F7Nu5F51uMGQKjwnWUprv",
+      "title": "final check",
+      "description": "Project sync",
+      "startDateTime": "2025-05-27T01:00:00.000Z",
+      "endDateTime": "2025-05-27T06:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:22:18.599Z",
+      "updatedAt": "2025-05-23T20:22:18.599Z"
+    },
+    {
+      "id": 5,
+      "userId": null,
+      "roomId": "qLAMWN_h35O7qB900xNaX",
+      "title": "try",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T01:30:00.000Z",
+      "endDateTime": "2025-05-30T05:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:32:41.786Z",
+      "updatedAt": "2025-05-23T20:32:41.786Z"
+    },
+    {
+      "id": 6,
+      "userId": null,
+      "roomId": "o74oTjOz37WvatGZdj1fc",
+      "title": "Booking",
+      "description": "Project sync",
+      "startDateTime": "2025-05-24T00:30:00.000Z",
+      "endDateTime": "2025-05-24T05:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-23T20:57:29.695Z",
+      "updatedAt": "2025-05-23T20:57:29.695Z"
+    },
+    {
+      "id": 7,
+      "userId": null,
+      "roomId": "Q7qdhWW8IyPgVMVHq6Tpg",
+      "title": "sample demo",
+      "description": "Project sync",
+      "startDateTime": "2025-05-30T00:30:00.000Z",
+      "endDateTime": "2025-06-27T03:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-05-24T01:14:12.442Z",
+      "updatedAt": "2025-05-24T01:14:12.442Z"
+    },
+    {
+      "id": 8,
+      "userId": null,
+      "roomId": "o74oTjOz37WvatGZdj1fc",
+      "title": "12",
+      "description": "Project sync",
+      "startDateTime": "2025-11-08T05:00:00.000Z",
+      "endDateTime": "2025-11-08T10:30:00.000Z",
+      "recurrence": {},
+      "status": "confirmed",
+      "createdAt": "2025-11-07T08:30:57.375Z",
+      "updatedAt": "2025-11-07T08:30:57.375Z"
+    }
+  ],
+  "logs": {
+    "roomLogs": [
+      {
+        "id": 1,
+        "roomId": 1,
+        "userId": "u123",
+        "eventType": "Room Created",
+        "currentStatus": "available",
+        "timestamp": "2023-10-15T09:02:15Z"
+      }
+    ],
+    "bookingLogs": [
+      {
+        "id": 1,
+        "bookingId": 1,
+        "userId": 1,
+        "eventType": "cancellation",
+        "currentStatus": "available",
+        "timestamp": "2023-10-15T09:05:00Z"
+      }
+    ]
+  },
+  "sessions": [
+    {
+      "id": "tj2pe3XUr0snI765filA7",
+      "auth": true,
+      "userId": "mock-superadmin-1",
+      "createdAt": "2025-11-07T09:39:25.574Z"
+    },
+    {
+      "id": "bp-OoOkba3z7ZgbyO-6NU",
+      "auth": true,
+      "userId": "mDgFAK1JOkwBAndlnTCDW",
+      "createdAt": "2025-11-10T15:12:33.768Z"
+    },
+    {
+      "id": "ff3LwWfR0o3kGxZvsSCtJ",
+      "auth": true,
+      "userId": "mock-superadmin-1",
+      "createdAt": "2025-11-11T13:05:53.743Z"
+    }
+  ]
+}
