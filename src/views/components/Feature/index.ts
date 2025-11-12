@@ -9,3 +9,4 @@ export * from "./RoomListInterface";
 export * from "./UserBookingList";
 export * from "./UserBookingListInterface";
 export * from "./AdminUserInterface";
+export * from "./Dashboard";

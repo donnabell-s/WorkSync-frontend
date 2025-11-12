@@ -38,6 +38,13 @@ export const API = {
       DELETE: (id: string | number) => `/api/BookingLogs/Delete/${id}`,
     },
   },
+    DASHBOARD: {
+        SUMMARY: '/api/Dashboard/Summary',
+        BOOKINGS_TREND: '/api/Dashboard/BookingsTrend',
+        BOOKINGS_TREND_POST: '/api/Dashboard/BookingsTrendPost',
+        PEAK_USAGE: '/api/Dashboard/PeakUsage',
+        PEAK_USAGE_POST: '/api/Dashboard/PeakUsagePost',
+    },
 } as const;
 
 export type ApiPaths = typeof API;
