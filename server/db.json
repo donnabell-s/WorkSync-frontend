@@ -98,6 +98,17 @@
       "isActive": false,
       "createdAt": "2025-11-06T14:01:31.220Z",
       "updatedAt": "2025-11-06T14:01:31.220Z"
+    },
+    {
+      "id": "VzORwgJHZ2JuBVJqH5Ok6",
+      "email": "sampleuser@email.com",
+      "password": "$2b$10$gFOFyQN.8sTBQixzWNRufuZ4W9.IeQg509/Kglx5PviacAvpqG0eO",
+      "fname": "Sample",
+      "lname": "User",
+      "role": "user",
+      "isActive": false,
+      "createdAt": "2025-11-12T09:37:56.283Z",
+      "updatedAt": "2025-11-12T09:37:56.283Z"
     }
   ],
   "preferences": [
@@ -332,6 +343,12 @@
       "auth": true,
       "userId": "mock-superadmin-1",
       "createdAt": "2025-11-11T13:05:53.743Z"
+    },
+    {
+      "id": "MnSNyAFu0848mc1LegKN-",
+      "auth": true,
+      "userId": "6tR0swJu6mhpEwcfr6Ae-",
+      "createdAt": "2025-11-12T16:20:20.843Z"
     }
   ]
 }
