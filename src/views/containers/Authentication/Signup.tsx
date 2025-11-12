@@ -9,8 +9,8 @@ import type { AxiosError } from 'axios';
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    fname: '',
-    lname: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: ''
@@ -39,14 +39,9 @@ const Signup = () => {
 
     setLoading(true);
     try {
-      const newUser = await signup(formData.fname, formData.lname, formData.email, formData.password);
-
-      // console.log("Signup response:", user);
-      if (newUser!.role === "admin" || newUser!.role === "superadmin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/home");
-      }
+      await signup(formData.firstName, formData.lastName, formData.email, formData.password);
+      // After successful signup, redirect to login
+      navigate('/login');
     } catch (error: unknown) {
       const axiosErr = error as AxiosError<{ message?: string }>;
       setError(axiosErr.response?.data?.message || "Signup failed. Please try again.");
@@ -74,9 +69,9 @@ const Signup = () => {
                 <FaUser className="text-gray-400 mr-2 text-xl" />
                 <input
                   type="text"
-                  name="fname"
+                  name="firstName"
                   placeholder="First Name"
-                  value={formData.fname}
+                  value={formData.firstName}
                   onChange={handleChange}
                   className="w-full outline-none bg-transparent text-gray-700 text-base placeholder-gray-400"
                   required
@@ -86,9 +81,9 @@ const Signup = () => {
                 <FaUser className="text-gray-400 mr-2 text-xl" />
                 <input
                   type="text"
-                  name="lname"
+                  name="lastName"
                   placeholder="Last Name"
-                  value={formData.lname}
+                  value={formData.lastName}
                   onChange={handleChange}
                   className="w-full outline-none bg-transparent text-gray-700 text-base placeholder-gray-400"
                   required

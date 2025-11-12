@@ -7,57 +7,39 @@ import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
 import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
 import Input from '../../../../../components/UI/AdminForms/Input';
 import { useRooms } from '../../../../../../context/RoomContext';
-import { Room } from '../../../../../../../server/types';
+import type { Room } from '../../../../../../types';
 
 
 const DeleteRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
-    const statuses = ['Available', 'Occupied', 'Under Maintenance'];
+    const statuses = ['Active', 'Occupied', 'Under Maintenance'];
     const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
     const navigate = useNavigate();
     const { currentRoom, deleteRoom, fetchRooms } = useRooms();
 
-    const [formData, setFormData] = useState<Omit<Room, 'id' | 'createdAt' | 'updatedAt'>>({
+    const [formData, setFormData] = useState<Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>>({
         name: '',
         code: '',
         location: '',
-        level: 0,
-        size: sizes[0],
+        level: '',
+        sizeLabel: sizes[0],
         seats: 0,
-        operatingHours: {
-            weekdays: {
-                open: '',
-                close: '',
-            },
-            weekends: {
-                open: '',
-                close: '',
-            },
-        },
+        operatingHours: '',
         status: statuses[0],
         amenities: [],
     });
 
     useEffect(() => {
-        if (currentRoom && currentRoom.operatingHours) {
+        if (currentRoom) {
             setFormData({
                 name: currentRoom.name,
                 code: currentRoom.code,
                 location: currentRoom.location,
-                level: currentRoom.level,
-                size: currentRoom.size,
+                level: String(currentRoom.level ?? ''),
+                sizeLabel: currentRoom.sizeLabel,
                 seats: currentRoom.seats,
-                operatingHours: {
-                    weekdays: {
-                        open: currentRoom.operatingHours.weekdays.open,
-                        close: currentRoom.operatingHours.weekdays.close,
-                    },
-                    weekends: {
-                        open: currentRoom.operatingHours.weekends.open,
-                        close: currentRoom.operatingHours.weekends.close,
-                    },
-                },
-                status: currentRoom.status,
+                operatingHours: typeof currentRoom.operatingHours === 'string' ? currentRoom.operatingHours : JSON.stringify(currentRoom.operatingHours ?? {}),
+                status: currentRoom.status === 'Available' ? 'Active' : currentRoom.status,
                 amenities: currentRoom.amenities,
             });
         }
@@ -69,13 +51,13 @@ const DeleteRoom: React.FC = () => {
             console.error('No current room found');
             return;
         }
-        deleteRoom(currentRoom.id)
+    deleteRoom(currentRoom.roomId)
             .then(() => {
                 console.log('Room updated successfully');
                 return fetchRooms(); // Fetch updated rooms after updating
             })
             .then(() => {
-                navigate('/admin/rooms/view'); // Navigate to room detail after fetching
+                navigate('/admin/rooms/view'); // After deletion, go back to list
             })
             .catch((error) => {
                 console.error('Error updating room:', error);
@@ -84,7 +66,7 @@ const DeleteRoom: React.FC = () => {
 
     const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        navigate('/admin/rooms/view'); // Navigate back to view rooms
+        navigate('/admin/rooms/room-detail'); // Navigate back to room detail
     };
 
     useEffect(() => {
@@ -95,7 +77,7 @@ const DeleteRoom: React.FC = () => {
 
     return (
         <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
-            <AdminBackLink label='Back to View Rooms' backPath='/admin/rooms/view' />
+            <AdminBackLink label='Back to Room Detail' backPath='/admin/rooms/room-detail' />
 
             <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
                 <AdminHeading label="DELETE ROOM" />
@@ -106,8 +88,8 @@ const DeleteRoom: React.FC = () => {
                         <Input label='Room Number' name='code' type='text' className='md:col-span-2' value={formData.code} readType='delete' />
                         <Input label='Location' name='location' type='text' className='md:col-span-2' value={formData.location} readType='delete' />
                         <Input label='Floor/Level' name='level' type='number' className='md:col-span-2' value={formData.level.toString()} readType='delete' />
-                        <SelectInput label='Size' name='size' value={formData.size} options={sizes} readType='delete' />
-                        <Input label='Seats' name='seats' type='number' className='md:col-span-2' value={formData.seats.toString()} readType='delete' />
+                        <SelectInput label='Size' name='sizeLabel' value={formData.sizeLabel} options={sizes} readType='delete' />
+                        <Input label='Seats' name='seats' type='number' className='md:col-span-2' value={(formData.seats ?? 0).toString()} readType='delete' />
                     </div>
 
                     <div className='flex flex-col gap-4'>

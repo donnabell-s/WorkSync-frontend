@@ -4,7 +4,8 @@ import AdminButton from './AdminButton'
 import { IoAddOutline } from 'react-icons/io5'
 // import { rooms } from "./../Feature/RoomListInterface"
 import { useRooms } from '../../../context/RoomContext'
-import { sampleBookingList as bookings, Booking } from '../Feature/UserBookingListInterface'
+import { useBookings } from '../../../context/BookingContext'
+import type { Booking as ApiBooking } from '../../../types'
 import { useNavigate } from 'react-router'
 
 interface ViewManagementHeaderProps {
@@ -17,6 +18,7 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
 
     const navigate = useNavigate();
     const { rooms } = useRooms();
+    const bookingsCtx = useBookings();
     // Updated room filters per request
     const roomTabs: string[] = ["All", "Active", "Inactive", "Under Maintenance"];
     const bookingTabs: string[] = ["All", "Approved", "Pending", "Declined"];
@@ -45,31 +47,29 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             let filteredRooms = rooms;
             if (tab !== "All" && roomTabs.includes(tab)) {
                 const t = tab.toLowerCase();
-                let statuses: string[] = [];
                 if (t === 'active') {
-                    // Treat Active as both the new "Active" value AND legacy states
-                    statuses = ['active', 'available', 'occupied', 'reserved', 'booked'];
+                    // Show rooms that are available (backend value), UI label is Active
+                    filteredRooms = rooms.filter(room => String(room.status).toLowerCase() === 'available');
                 } else if (t === 'inactive') {
-                    statuses = ['inactive'];
+                    filteredRooms = rooms.filter(room => String(room.status).toLowerCase() === 'inactive');
                 } else if (t === 'under maintenance') {
-                    statuses = ['under maintenance'];
-                }
-                if (statuses.length > 0) {
-                    filteredRooms = rooms.filter(room => statuses.includes(String(room.status).toLowerCase()));
+                    filteredRooms = rooms.filter(room => String(room.status).toLowerCase() === 'under maintenance');
                 }
             }
             setFunction?.(filteredRooms);
         } else {
-            let filteredBookings: Booking[] = bookings;
+            const allBookings = bookingsCtx.bookings as ApiBooking[];
+            let filteredBookings: ApiBooking[] = allBookings;
             if (tab !== "All") {
                 if (bookingTabs.includes(tab)) {
-                    filteredBookings = bookings.filter(b => b.status.toLowerCase() === tab.toLowerCase());
+                    filteredBookings = allBookings.filter(b => String(b.status).toLowerCase() === tab.toLowerCase());
                 }
                 if (bookingTabs2.includes(tab)) {
-                    filteredBookings = filteredBookings.filter(b => b.recurrence.toLowerCase() === tab.toLowerCase());
+                    const isRecurring = tab.toLowerCase() === 'recurring';
+                    filteredBookings = filteredBookings.filter(b => Boolean(b.recurrence) === isRecurring);
                 }
             }
-            setFunction?.(filteredBookings);
+            setFunction?.(filteredBookings as any[]);
         }
     }
 
@@ -86,14 +86,15 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
             }
             setFunction?.(filteredRooms);
         } else {
-            let filteredBookings = bookings;
+            const allBookings = bookingsCtx.bookings as ApiBooking[];
+            let filteredBookings: ApiBooking[] = allBookings;
             if (value !== "") {
-                filteredBookings = bookings.filter(booking => {
-                    const bookingDetails = `${booking.id} ${booking.name} ${booking.location}`.toLowerCase();
+                filteredBookings = allBookings.filter(booking => {
+                    const bookingDetails = `${booking.bookingId} ${booking.title} ${(booking.room?.location ?? '')}`.toLowerCase();
                     return bookingDetails.includes(value.toLowerCase());
                 });
             }
-            setFunction?.(filteredBookings);
+            setFunction?.(filteredBookings as any[]);
         }
     }
 
@@ -106,10 +107,13 @@ const ViewManagementHeader: React.FC<ViewManagementHeaderProps> = ({ view, setFu
     }
 
     useEffect(() => {
-        if (setFunction) {
+        if (!setFunction) return;
+        if (view === 'rooms') {
             setFunction(rooms);
+        } else if (view === 'bookings') {
+            setFunction(bookingsCtx.bookings as any[]);
         }
-    }, [rooms, setFunction]);
+    }, [rooms, bookingsCtx.bookings, setFunction, view]);
 
     return (
         <div className='divide-y-1 divide-[#D2D4D8]'>

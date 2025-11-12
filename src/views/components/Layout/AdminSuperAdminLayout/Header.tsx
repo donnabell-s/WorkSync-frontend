@@ -1,7 +1,6 @@
 import React from 'react'
 import Logo from '../../../../assets/admin-brand-logo.png'
 import { IoNotifications } from "react-icons/io5";
-import { CgProfile } from "react-icons/cg";
 import { IoMenu, IoClose } from "react-icons/io5";
 import ProfileDropdown from './ProfileDropdown';
 import { useAuth } from '../../../../context/AuthContext';
@@ -24,7 +23,7 @@ const Header: React.FC<HeaderProps> = ({ nav, toggleNav }) => {
             <div className='sm:text-white sm:flex sm:items-center gap-10 hidden'>
                 <IoNotifications className='size-6 cursor-pointer' />
                 <div className='flex items-center gap-4'>
-                    <p className='font-medium cursor-pointer'>{user!.fname} {user!.lname}</p>
+                    <p className='font-medium cursor-pointer'>{user!.firstName} {user!.lastName}</p>
                     <ProfileDropdown />
                 </div>
             </div>

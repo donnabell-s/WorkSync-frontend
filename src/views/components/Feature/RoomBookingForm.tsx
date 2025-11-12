@@ -4,6 +4,7 @@ import { RxCross1 } from "react-icons/rx";
 import { useNavigate } from "react-router";
 import { useRooms } from "../../../context/RoomContext";
 import { useBookings } from "../../../context/BookingContext";
+import type { CreateBookingPayload } from "../../../services/bookings.service";
 import { useAuth } from "../../../context/AuthContext";
 
 function generateRecurringDates(
@@ -34,23 +35,7 @@ function generateRecurringDates(
   return dates;
 }
 
-export interface NewBookingDto {
-  userId: number;
-  roomId: string;
-  title: string;
-  description: string;
-  startDateTime: Date;
-  endDateTime: Date;
-  recurrence: {
-    isRecurring: boolean;
-    pattern?: string;
-    interval?: number;
-    endDate?: Date;
-    daysOfWeek?: number[];
-    dates?: Date[];
-  };
-  status: string;
-}
+// Use backend-aligned create payload
 
 interface RoomBookingFormProps {
   edit?: boolean;
@@ -185,22 +170,27 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
   useEffect(() => {
     if (edit && currentBooking) {
       setTitle(currentBooking.title);
-      const start = new Date(currentBooking.startDateTime);
-      const end = new Date(currentBooking.endDateTime);
+      const start = new Date(currentBooking.startDatetime);
+      const end = new Date(currentBooking.endDatetime);
       setStartDate(start.toISOString().split("T")[0]);
       setStartTime(start.toTimeString().slice(0, 5));
       setEndDate(end.toISOString().split("T")[0]);
       setEndTime(end.toTimeString().slice(0, 5));
 
-      const rec = currentBooking.recurrence;
-      if (rec?.isRecurring) {
-        setIsRecurring(true);
-        setRecurrenceType(rec.pattern || "");
-        setInterval(rec.interval ?? 1);
-        if (rec.pattern === "weekly" && rec.daysOfWeek) {
-          setSelectedDays(rec.daysOfWeek);
+      // Parse recurrence if provided as serialized JSON
+      try {
+        const rec = typeof currentBooking.recurrence === 'string'
+          ? JSON.parse(currentBooking.recurrence)
+          : currentBooking.recurrence;
+        if (rec?.isRecurring) {
+          setIsRecurring(true);
+          setRecurrenceType(rec.pattern || "");
+          setInterval(rec.interval ?? 1);
+          if (rec.pattern === "weekly" && rec.daysOfWeek) {
+            setSelectedDays(rec.daysOfWeek);
+          }
         }
-      }
+      } catch {}
     }
   }, [edit, currentBooking]);
 
@@ -276,14 +266,13 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
         )
       : [];
 
-    const payload: NewBookingDto = {
-      userId: parseInt(user.id, 10),
-      roomId: currentRoom.id,
+    const payload: CreateBookingPayload = {
+      userRefId: Number(user.id),
+      roomId: currentRoom.roomId,
       title,
       description: "Project sync",
-      startDateTime,
-      endDateTime,
-      status: "confirmed",
+      startDatetime: startDateTime.toISOString(),
+      endDatetime: endDateTime.toISOString(),
       recurrence: {
         isRecurring,
         pattern: isRecurring ? recurrenceType : undefined,
@@ -296,7 +285,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false }) => {
 
     try {
       if (edit && currentBooking) {
-        await updateBooking(String(currentBooking.id), payload);
+        await updateBooking(String(currentBooking.bookingId), payload);
       } else {
         await addBooking(payload);
       }

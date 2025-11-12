@@ -6,6 +6,7 @@ import AdminBackLink from '../../../../../components/UI/AdminBackLink';
 import Input from '../../../../../components/UI/AdminForms/Input';
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
 import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
+import OperatingHoursInput from '../../../../../components/UI/AdminForms/OperatingHoursInput';
 import { useRooms } from '../../../../../../context/RoomContext';
 import { Room } from '../../../../../../../server/types';
 
@@ -102,8 +103,13 @@ const AddRoom: React.FC = () => {
                         <Input label='Seats' name='seats' type='number' placeholder='Enter Number of Seats' className='md:col-span-2' onChange={handleInputChange} />
                     </div>
 
-                    <div className='flex flex-col gap-4'>
-                        <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
+                                        <div className='flex flex-col gap-4'>
+                                                <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
+
+                                                <OperatingHoursInput
+                                                    value={formData.operatingHours as any}
+                                                    onChange={(val) => setFormData(prev => ({ ...prev, operatingHours: val as any }))}
+                                                />
 
                         <MultiSelectInput
                             label="Facilities"

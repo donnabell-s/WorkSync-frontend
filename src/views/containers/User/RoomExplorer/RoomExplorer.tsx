@@ -5,7 +5,7 @@ import UserHeading from '../../../components/UI/UserHeading';
 import UserSearch from '../../../components/UI/UserSearch';
 import { CiFilter } from "react-icons/ci";
 import { useRooms } from '../../../../context/RoomContext'; // adjust path as needed
-import { Room } from '../../../../../server/types';
+import type { Room } from '../../../../types';
 
 interface FacilityOption {
   label: string;
@@ -73,7 +73,7 @@ const RoomExplorer: React.FC = () => {
         .toLowerCase()
         .includes(searchQuery.toLowerCase());
 
-      const matchesSeats = room.seats >= appliedMinSeats;
+      const matchesSeats = (room.seats ?? 0) >= appliedMinSeats;
 
       const matchesFacilities = appliedFacilities.every(f =>
         room.amenities.includes(f)

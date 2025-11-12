@@ -15,13 +15,13 @@ const ViewAdmins: React.FC = () => {
 
   const filteredAdmins = admins
     .filter((admin) =>
-      `${admin.fname} ${admin.lname}`.toLowerCase().includes(search.toLowerCase()) ||
+      `${admin.firstName ?? ''} ${admin.lastName ?? ''}`.toLowerCase().includes(search.toLowerCase()) ||
       admin.email.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       if (sortBy === 'Name') {
-        const aFull = `${a.fname} ${a.lname}`.toLowerCase();
-        const bFull = `${b.fname} ${b.lname}`.toLowerCase();
+        const aFull = `${a.firstName ?? ''} ${a.lastName ?? ''}`.toLowerCase();
+        const bFull = `${b.firstName ?? ''} ${b.lastName ?? ''}`.toLowerCase();
         return aFull.localeCompare(bFull);
       }
       if (sortBy === 'Status') {
@@ -85,6 +85,7 @@ const ViewAdmins: React.FC = () => {
       {/* Table */}
       <DataTable
         columns={([
+          { key: 'id', header: 'ID' },
           { key: 'name', header: 'Name' },
           { key: 'email', header: 'Email' },
           { key: 'role', header: 'Role' },
@@ -112,7 +113,7 @@ const ViewAdmins: React.FC = () => {
         ]) as unknown as DataTableColumn<any>[]}
         rows={filteredAdmins.map((a) => ({
           id: a.id,
-          name: `${a.fname} ${a.lname}`,
+          name: `${a.firstName ?? ''} ${a.lastName ?? ''}`,
           email: a.email,
           role: a.role,
           isActive: a.isActive,

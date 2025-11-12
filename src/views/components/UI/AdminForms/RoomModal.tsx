@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import AdminSearch from '../AdminSearch';
 import AdminFilter from '../AdminFilter';
 import AdminButton from '../AdminButton';
-import { meetingRooms } from '../../Feature/RoomListInterface';
+import { meetingRooms, type MeetingRoom } from '../../Feature/RoomListInterface';
 import RoomModalItem from '../../Feature/RoomModalItem';
+import { useRooms } from '../../../../context/RoomContext';
 
 interface RoomModalProps {
     closeFunction: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -12,10 +13,27 @@ interface RoomModalProps {
 }
 
 const RoomModal: React.FC<RoomModalProps> = ({ closeFunction, value, selectFunction }) => {
-
     const filters = ['Small', 'Medium', 'Large'];
     const [searchQuery, setSearchQuery] = useState<string>('');
-    const [filteredRooms, setFilteredRooms] = useState(meetingRooms);
+    const { rooms } = useRooms();
+    // Map live rooms to MeetingRoom display shape and filter to active/available only
+    const liveRooms: MeetingRoom[] = useMemo(() => {
+        if (!rooms || rooms.length === 0) return [];
+        return rooms
+            .filter(r => String(r.status).toLowerCase() === 'available' || String(r.status).toLowerCase() === 'active')
+            .map(r => ({
+                roomCode: r.code,
+                roomName: r.name,
+                location: `${r.location}${r.level ? `, Level ${r.level}` : ''}`,
+                size: (r.sizeLabel as any) ?? 'Medium',
+                numberOfSeats: r.seats ?? 0,
+                additionalFacilities: r.amenities ?? [],
+                imageFile: r.sizeLabel?.toLowerCase() === 'small' ? 'small.jpg' : r.sizeLabel?.toLowerCase() === 'large' ? 'large.jpg' : 'medium.jpg',
+                status: 'available',
+            }));
+    }, [rooms]);
+
+    const [filteredRooms, setFilteredRooms] = useState<MeetingRoom[]>([]);
     const [selected, setSelected] = useState<string>('');
 
     const handleSelection = (room: string) => {
@@ -23,28 +41,21 @@ const RoomModal: React.FC<RoomModalProps> = ({ closeFunction, value, selectFunct
     }
 
     const handleFilterRooms = (filter: string) => {
-        let filtered = meetingRooms;
-        switch (filter) {
-            case "Small":
-                filtered = meetingRooms.filter(room => room.size === "Small");
-                break;
-            case "Medium":
-                filtered = meetingRooms.filter(room => room.size === "Medium");
-                break;
-            case "Large":
-                filtered = meetingRooms.filter(room => room.size === "Large");
-                break;
-            default:
-                filtered = meetingRooms;
+        let source = liveRooms.length > 0 ? liveRooms : meetingRooms;
+        let filtered = source;
+        if (filter === 'Small' || filter === 'Medium' || filter === 'Large') {
+            filtered = source.filter(room => room.size === filter);
         }
         setFilteredRooms(filtered);
     }
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchQuery(event.target.value);
-        const filtered = meetingRooms.filter(room => {
+        const q = event.target.value;
+        setSearchQuery(q);
+        const source = liveRooms.length > 0 ? liveRooms : meetingRooms;
+        const filtered = source.filter(room => {
             const roomDetails = `${room.roomCode} ${room.roomName} ${room.location}`.toLowerCase();
-            return roomDetails.includes(event.target.value.toLowerCase());
+            return roomDetails.includes(q.toLowerCase());
         });
         setFilteredRooms(filtered);
     }
@@ -53,13 +64,13 @@ const RoomModal: React.FC<RoomModalProps> = ({ closeFunction, value, selectFunct
         if (value !== '') {
             setSelected(value);
         }
-        
-        const filtered = meetingRooms.filter(room => {
+        const source = liveRooms.length > 0 ? liveRooms : meetingRooms;
+        const filtered = source.filter(room => {
             const roomDetails = `${room.roomCode} ${room.roomName} ${room.location}`.toLowerCase();
             return roomDetails.includes(searchQuery.toLowerCase());
         });
         setFilteredRooms(filtered);
-    }, [searchQuery]);
+    }, [searchQuery, value, liveRooms]);
 
     return (
         <div className='absolute top-0 left-0 w-full h-full bg-black/50 flex justify-center items-center z-50 rounded-md'>

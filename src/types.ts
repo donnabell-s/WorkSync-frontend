@@ -1,22 +1,18 @@
+// Align with backend BookingsController result (camelCase)
 export interface Booking {
-    id: number;
-    userId: number; // ID of the user who made the booking
-    roomId: number; // ID of the booked room
-    title: string; // Title of the booking
-    description: string; // Description of the booking
-    startDateTime: Date; // Start date and time of the booking
-    endDateTime: Date; // End date and time of the booking
-    recurrence: {
-        isRecurring: boolean; // Indicates if the booking is recurring
-        pattern?: string; // e.g., "daily", "weekly", "monthly"
-        interval?: number; // Interval for the recurrence (e.g., every 2 weeks)
-        daysOfWeek?: number[]; // Array of days for weekly recurrence (0 = Sunday, 6 = Saturday)
-        dates?: Date[]; // Specific dates for the booking if not recurring
-        endDate?: Date; // End date for the recurrence
-    };
-    status: string; // e.g., "Confirmed", "Cancelled", "Completed"
-    createdAt: Date; // Timestamp when the booking was created
-    updatedAt: Date; // Timestamp when the booking was last updated
+    bookingId: number;
+    userRefId?: number;
+    roomId: string;
+    title: string;
+    description: string;
+    startDatetime: string; // ISO datetime string
+    endDatetime: string;   // ISO datetime string
+    recurrence?: string | null; // JSON string
+    status: string; // Pending, Approved, Declined
+    expectedAttendees?: number;
+    createdAt: string;
+    updatedAt: string;
+    room?: Room;
 }
 
 export interface Preference {
@@ -37,38 +33,43 @@ export interface Preference {
 }
 
 export interface Room {
-    id: number;
+    roomId: string;
     name: string;
     code: string;
-    seats: number;
+    seats?: number;
     location: string;
-    level: number;
-    size: string; // e.g., "Small", "Medium", "Large"
-    status: string; // e.g., "Available", "Booked", "Under Maintenance"
-    operatingHours: {
-        weekdays: {
-            open: string; // e.g., "09:00"
-            close: string; // e.g., "17:00"
-        };
-        weekends: {
-            open: string; // e.g., "10:00"
-            close: string; // e.g., "16:00"
-        };
-    };
+    level: string;
+    sizeLabel: string; // Small, Medium, Large
+    status: string; // Available, Occupied, Under Maintenance
+    operatingHours?: string; // serialized JSON from backend
+    imageUrl?: string;
     amenities: string[];
-    createdAt: Date; // Timestamp when the room was created
-    updatedAt: Date; // Timestamp when the room was last updated
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface User {
     id: number;
-    fname: string;
-    lname: string;
     email: string;
-    password: string;
-    phone: string;
     role: string;
-    isActive: boolean;
-    createdAt: Date; // Timestamp when the user was created
-    updatedAt: Date; // Timestamp when the user was last updated
+    firstName?: string;
+    lastName?: string;
+    isActive?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+// Minimal log type used by logs context until backend integration
+export interface Log {
+    bookingLogId?: number;
+    bookingId?: number;
+    eventType?: string;
+    timestamp: string; // ISO datetime
+    // generic fields for flexibility
+    type?: string;
+    entity?: string;
+    entityId?: number | string;
+    userId?: number | string;
+    action?: string;
+    message?: string;
 }

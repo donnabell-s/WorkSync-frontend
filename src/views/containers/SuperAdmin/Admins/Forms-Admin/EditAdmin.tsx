@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAdmins } from '../../../../../context/AdminContext';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../../../../../server/types';
+import { User } from '../../../../../types';
 import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
 const roles = ['Admin', 'Superadmin', 'User'];
@@ -12,9 +12,9 @@ const EditAdmin = () => {
   const { currentAdmin, fetchAdmins, updateAdmin, deleteAdmin } = useAdmins();
 
   // Add a local state for permissions and status
-  const [form, setForm] = useState<Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>>({
-    fname: '',
-    lname: '',
+  const [form, setForm] = useState<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>>({
+    firstName: '',
+    lastName: '',
     email: '',
     role: roles[0],
     isActive: true
@@ -44,12 +44,11 @@ const EditAdmin = () => {
     const updatedAdmin = {
       ...form,
       isActive: status === 'Active',
-      password: currentAdmin.password, // Add password back for update
     };
 
     console.log('Updated Admin:', updatedAdmin);
     // console.log('Current Admin:', currentAdmin);
-    updateAdmin(currentAdmin.id, updatedAdmin)
+  updateAdmin(String(currentAdmin.id), updatedAdmin)
       .then(() => {
         console.log('Admin updated successfully');
         return fetchAdmins(); // Fetch updated admins list
@@ -62,7 +61,7 @@ const EditAdmin = () => {
 
   const handleDelete = () => {
     if (currentAdmin!.id) {
-      deleteAdmin(currentAdmin!.id);
+      deleteAdmin(String(currentAdmin!.id));
       navigate('/admin/admins/view');
     }
   };
@@ -85,24 +84,24 @@ const EditAdmin = () => {
       </div>
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">EDIT ADMIN INFORMATION</h2>
-        <p className="text-sm text-gray-500 mb-6">Admins / {form.fname} {form.lname} / Edit</p>
+  <p className="text-sm text-gray-500 mb-6">Admins / {form.firstName} {form.lastName} / Edit</p>
         <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Name</label>
           <div className="flex gap-2">
             <input
               className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
-              name="fname"
+              name="firstName"
               placeholder="First Name"
-              value={form.fname}
+              value={form.firstName}
               onChange={handleChange}
               required
             />
             <input
               className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
-              name="lname"
+              name="lastName"
               placeholder="Last Name"
-              value={form.lname}
+              value={form.lastName}
               onChange={handleChange}
               required
             />

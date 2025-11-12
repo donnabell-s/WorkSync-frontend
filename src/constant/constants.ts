@@ -26,6 +26,10 @@ export const PATHS = {
         path: "/reset-password",
         label: "Reset Password"
     },
+    UNAUTHORIZED: {
+        path: "/unauthorized",
+        label: "Unauthorized"
+    },
     LOGOUT: {
         path: "/logout",
         label: "Logout"

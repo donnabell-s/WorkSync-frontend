@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { FaEdit } from 'react-icons/fa';
 import { useAuth } from '../../../../context/AuthContext';
-import { usersApi } from '../../../../api/client';
-import { User } from '../../../../../server/types';
 
 const Account: React.FC = () => {
   const { user: authUser } = useAuth();
 
   const [personalInfo, setPersonalInfo] = useState({
-    fname: authUser?.fname || '',
-    lname: authUser?.lname || '',
+    firstName: authUser?.firstName || '',
+    lastName: authUser?.lastName || '',
     email: authUser?.email || '',
   });
 
@@ -24,23 +22,15 @@ const Account: React.FC = () => {
   const [isEditingAddress, setIsEditingAddress] = useState(false);
 
   useEffect(() => {
-    async function fetchUser() {
-      if (!authUser?.id) return;
-      try {
-        const response = await usersApi.getUserById(String(authUser.id));
-        const freshUser: User = response.data;
-        setPersonalInfo({
-          fname: freshUser.fname,
-          lname: freshUser.lname,
-          email: freshUser.email,
-        });
-        setAddressInfo({ country: '', city: '' });
-        setProfilePhoto('/user-avatar.svg');
-      } catch (err) {
-        console.error('Failed to fetch fresh user data:', err);
-      }
-    }
-    fetchUser();
+    if (!authUser) return;
+    // Use current auth user until backend integration
+    setPersonalInfo({
+      firstName: authUser.firstName || '',
+      lastName: authUser.lastName || '',
+      email: authUser.email || '',
+    });
+    setAddressInfo({ country: '', city: '' });
+    setProfilePhoto('/user-avatar.svg');
   }, [authUser]);
 
 
@@ -56,15 +46,7 @@ const Account: React.FC = () => {
     if (!authUser?.id) return;
 
     try {
-      // const updatedData = {
-      //   fname: personalInfo.fname,
-      //   lname: personalInfo.lname,
-      //   email: personalInfo.email,
-      // };
-
       // TODO: integrate update API when backend endpoint is ready
-      // await usersApi.updateUser(String(authUser.id), updatedData);
-
       setIsEditingPersonal(false);
     } catch (error) {
       console.error('Failed to update user:', error);
@@ -121,12 +103,12 @@ const Account: React.FC = () => {
           </button>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {['fname', 'lname', 'email'].map((field, i) => (
+          {['firstName', 'lastName', 'email'].map((field, i) => (
             <div key={i}>
               <label className="block text-sm text-gray-600 capitalize">
-                {field === 'fname'
+                {field === 'firstName'
                   ? 'First Name'
-                  : field === 'lname'
+                  : field === 'lastName'
                   ? 'Last Name'
                   : 'Email Address'}
               </label>

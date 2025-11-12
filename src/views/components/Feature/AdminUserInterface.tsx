@@ -7,7 +7,7 @@ export interface Admin {
 }
 
 export interface User {
-    userId: string;
+    id: string;
     name: string;
     email: string;
     department: string;
@@ -33,14 +33,14 @@ export const admins: Admin[] = [
 
 export const users: User[] = [
     {
-        userId: 'USR-001',
+        id: 'USR-001',
         name: 'Alice Johnson',
         email: 'alice.johnson@worksync.com',
         department: 'Engineering',
         status: 'Active',
     },
     {
-        userId: 'USR-002',
+        id: 'USR-002',
         name: 'Bob Williams',
         email: 'bob.williams@worksync.com',
         department: 'Marketing',

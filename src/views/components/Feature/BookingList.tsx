@@ -1,13 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Booking } from './UserBookingListInterface';
+import type { Booking as LegacyBooking } from './UserBookingListInterface';
+import type { Booking as ApiBooking, Room } from '../../../types';
 import { LuClock } from 'react-icons/lu';
 
 interface BookingListProps {
-  bookings: Booking[];
+  bookings: Array<ApiBooking | LegacyBooking>;
 }
 
-const statusColors: Record<Booking['status'], string> = {
+const statusColors: Record<string, string> = {
   Upcoming: 'text-[#10B981]',
   Completed: 'text-[#F59E0B]',
   Cancelled: 'text-[#EF4444]',
@@ -19,18 +20,69 @@ const statusColors: Record<Booking['status'], string> = {
 const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
   const navigate = useNavigate();
 
-  const handleViewDetails = (booking: Booking) => {
+  type BookingItem = ApiBooking | LegacyBooking;
+
+  const handleViewDetails = (booking: BookingItem) => {
     navigate('/admin/bookings/booking-detail', { state: { booking } });
   };
 
   return (
     <div className="h-full flex flex-col space-y-4">
       {bookings.map((booking) => {
-        const [day, month, year] = booking.date ? booking.date.split('-') : ['24', '05', '2025'];
+        // Normalize fields between legacy booking and API booking
+        const isLegacy = (b: BookingItem): b is LegacyBooking => (b as any).date !== undefined || (b as any).name !== undefined;
+
+        const title = isLegacy(booking) ? booking.name : (booking as ApiBooking).title;
+
+        // Derive date parts
+        let day = '01';
+        let month = 'Jan';
+        let year = '1970';
+        if (isLegacy(booking) && booking.date) {
+          const parts = booking.date.split('-');
+          if (parts.length === 3) {
+            [day, month, year] = parts;
+          }
+        } else if (!isLegacy(booking)) {
+          const start = new Date((booking as ApiBooking).startDatetime);
+          const opts: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
+          const formatted = start.toLocaleDateString(undefined, opts); // e.g., "24 May 2025"
+          const [d, m, y] = formatted.replace(',', '').split(' ');
+          day = d ?? day;
+          month = m ?? month;
+          year = y ?? year;
+        }
+
+        // Time window
+        const time = isLegacy(booking)
+          ? booking.time
+          : (() => {
+              const start = new Date((booking as ApiBooking).startDatetime);
+              const end = new Date((booking as ApiBooking).endDatetime);
+              const fmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+              return `${start.toLocaleTimeString(undefined, fmt)}-${end.toLocaleTimeString(undefined, fmt)}`;
+            })();
+
+        // Room and location
+        let roomLabel = '';
+        let location = '';
+        if (isLegacy(booking)) {
+          roomLabel = booking.room;
+          location = booking.location;
+        } else {
+          const room: Room | undefined = (booking as ApiBooking).room;
+          roomLabel = room?.name || room?.code || '';
+          location = room?.location || '';
+        }
+
+        const status: string = (booking as any).status ?? 'Pending';
+        const statusClass = statusColors[status] ?? 'text-gray-500';
+
+        const key = String((booking as any).bookingId ?? (booking as any).id ?? `${title}-${(booking as any).startDatetime ?? ''}`);
 
         return (
           <div
-            key={booking.id}
+            key={key}
             className="bg-white rounded-lg shadow-sm p-3 pl-4 pr-1.5 border border-gray-200 flex flex-col gap-y-3 md:flex-row md:items-center md:justify-between"
           >
 
@@ -44,17 +96,17 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
             <div className="w-full h-28 bg-gray-200 rounded-lg flex-shrink-0 md:w-50 md:h-16" />
 
             <div className="flex flex-col w-full md:w-48 min-w-0 text-sm gap-1 text-[#1F2937]">
-              <h3 className="font-semibold truncate">{booking.name}</h3>
+              <h3 className="font-semibold truncate">{title}</h3>
               <div className="flex items-center text-[#AAAEB3] gap-1">
                 <LuClock className="text-md" />
-                <span className="truncate">{booking.time}</span>
+                <span className="truncate">{time}</span>
               </div>
             </div>
 
             <div className="flex flex-col w-full md:w-48 min-w-0 text-sm gap-1 text-[#81868E]">
-              <span className="font-medium truncate">{booking.room}</span>
+              <span className="font-medium truncate">{roomLabel}</span>
               <div className="flex items-center text-sm gap-1">
-                <span className="truncate">{booking.location}</span>
+                <span className="truncate">{location}</span>
               </div>
             </div>
 
@@ -63,14 +115,18 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
               <span className="truncate">John Doe</span>
 
               <span className="font-medium text-gray-500 whitespace-nowrap">Date Requested</span>
-              <span className="truncate">May 10, 2023</span>
+              <span className="truncate">
+                {(!isLegacy(booking) && (booking as ApiBooking).createdAt)
+                  ? new Date((booking as ApiBooking).createdAt).toLocaleDateString()
+                  : '—'}
+              </span>
             </div>
 
             <div className="flex flex-col items-end w-full md:w-28">
               <span
-                className={`text-sm font-semibold uppercase ${statusColors[booking.status]} mb-2 transform -translate-y-3`}
+                className={`text-sm font-semibold uppercase ${statusClass} mb-2 transform -translate-y-3`}
               >
-                {booking.status}
+                {status}
               </span>
               <button
                 className="text-sm text-white bg-[#10B981] px-3 py-1 rounded-md hover:bg-[#1BAC7C] font-medium  transform translate-y-2.5 cursor-pointer"

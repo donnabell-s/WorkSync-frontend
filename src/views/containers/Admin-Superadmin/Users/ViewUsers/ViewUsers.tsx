@@ -17,13 +17,13 @@ const ViewUser = () => {
 
   const filteredUsers = users
     .filter((user) =>
-      `${user.fname} ${user.lname}`.toLowerCase().includes(search.toLowerCase()) ||
+      `${user.firstName ?? ''} ${user.lastName ?? ''}`.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase())
     )
     .sort((a, b) => {
       if (sortBy === 'Name') {
-        const aFullName = `${a.fname} ${a.lname}`.toLowerCase();
-        const bFullName = `${b.fname} ${b.lname}`.toLowerCase();
+        const aFullName = `${a.firstName ?? ''} ${a.lastName ?? ''}`.toLowerCase();
+        const bFullName = `${b.firstName ?? ''} ${b.lastName ?? ''}`.toLowerCase();
         return aFullName.localeCompare(bFullName);
       }
       if (sortBy === 'Status') {
@@ -95,6 +95,7 @@ const ViewUser = () => {
       {/* Table */}
       <DataTable
         columns={([
+          { key: 'id', header: 'ID' },
           { key: 'name', header: 'Name' },
           { key: 'email', header: 'Email' },
           { key: 'bookings', header: 'Booking', align: 'right' },
@@ -122,9 +123,9 @@ const ViewUser = () => {
         ]) as unknown as DataTableColumn<any>[]}
         rows={filteredUsers.map((u) => ({
           id: u.id,
-          name: `${u.fname} ${u.lname}`,
+          name: `${u.firstName ?? ''} ${u.lastName ?? ''}`,
           email: u.email,
-          bookings: bookings.filter((b) => String(b.userId) === String(u.id)).length || 0,
+          bookings: bookings.filter((b) => String(b.userRefId ?? '') === String(u.id)).length || 0,
           isActive: u.isActive,
         }))}
         emptyMessage="No users found."

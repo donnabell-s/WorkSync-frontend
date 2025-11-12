@@ -10,11 +10,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "server": "set NODE_OPTIONS=--experimental-require-module&& tsx server/server.ts",
-    "server:simple": "json-server --watch server/db.json --port 3001",
-    "dev:all": "concurrently -n \"FRONTEND,BACKEND\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run dev\" \"npm run server\"",
-    "dev:simple": "concurrently \"npm run dev\" \"npm run server:simple\""
+    "preview": "vite preview"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

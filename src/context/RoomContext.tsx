@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Room } from '../../server/types';
-import { roomsApi } from '../api/client';
+import { Room } from '../types';
+import { roomsService } from '../services/rooms.service';
 import { useAuth } from './AuthContext';
 import { useCallback } from "react";
 
@@ -11,8 +11,8 @@ interface RoomContextType {
   error: string | null;
   fetchRooms: () => Promise<void>;
   getRoomById: (id: string) => Promise<void>;
-  addRoom: (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateRoom: (id: string, room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addRoom: (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">) => Promise<void>;
+  updateRoom: (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
 }
 
@@ -58,13 +58,8 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const fetchRooms = useCallback(async () => {
     setIsLoading(true);
     try {
-      console.log("Tesxt");
-      const response = await roomsApi.getAll();
-      console.log('Fetched rooms:', response.data);
-      setRooms(response.data);
-      console.log('Fetched rooms:', rooms);
-    } catch (err) {
-      setError('Failed to fetch rooms');
+      const data = await roomsService.getAll();
+      setRooms(data);
     } finally {
       setIsLoading(false);
     }
@@ -73,45 +68,29 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const getRoomById = useCallback(async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await roomsApi.getById(id);
-      console.log('Fetched room by ID:', response.data);
-      setCurrentRoom(response.data);
-      if (response.data) {
-        console.log("room id", response.data.id);
-      }
-    } catch (err) {
-      setError('Room not found');
+      const data = await roomsService.getById(id);
+      setCurrentRoom(data);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const addRoom = async (room: Omit<Room, "id" | "createdAt" | "updatedAt">) => {
+  const addRoom = async (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">) => {
     setIsLoading(true);
     try {
-      const response = await roomsApi.create({ room });
-      console.log('Added room:', response.data);
-      if (response.data) {
-        setRooms(prev => [...prev, response.data]);
-      }
-    } catch (err) {
-      setError('Failed to add room');
+      const created = await roomsService.create(room);
+      setRooms(prev => [...prev, created]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateRoom = async (id: string, room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const updateRoom = async (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>) => {
     setIsLoading(true);
     try {
-      const response = await roomsApi.update(id, { room });
-      if (response.data) {
-        console.log('Updated room:', response.data);
-        setRooms(prev => prev.map(r => (r.id === id ? response.data : r)));
-        setCurrentRoom(response.data);
-      }
-    } catch (err) {
-      setError('Failed to update room');
+      const updated = await roomsService.update(id, room);
+  setRooms(prev => prev.map(r => (String(r.roomId) === String(id) ? updated : r)));
+      setCurrentRoom(updated);
     } finally {
       setIsLoading(false);
     }
@@ -120,11 +99,9 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
   const deleteRoom = async (id: string) => {
     setIsLoading(true);
     try {
-      await roomsApi.delete(id);
-      setRooms(prev => prev.filter(r => r.id !== id));
+      await roomsService.remove(id);
+  setRooms(prev => prev.filter(r => String(r.roomId) !== String(id)));
       setCurrentRoom(null);
-    } catch (err) {
-      setError('Failed to delete room');
     } finally {
       setIsLoading(false);
     }

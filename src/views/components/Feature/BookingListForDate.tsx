@@ -68,14 +68,9 @@
 import React from 'react';
 import { useBookings } from '../../../context/BookingContext';
 
-type BookingStatus = 'upcoming' | 'completed' | 'cancelled';
+// Status rendering handled via booking.status string values
 
-interface Booking {
-  id: number;
-  startDateTime: string;  // assuming ISO string for date + time
-  title: string;
-  status: BookingStatus;
-}
+// Using context-provided booking shape; keep local types minimal
 
 interface BookingListForDateProps {
   date: Date;
@@ -91,7 +86,9 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
 
   // Filter bookings that fall on the same day as the given date
   const bookingsForDate = bookings.filter((booking: any) => {
-    const bookingDate = booking.startDateTime.slice(0, 10); // YYYY-MM-DD part
+    const src = booking.startDatetime ?? booking.startDateTime;
+    if (!src || typeof src !== 'string') return false;
+    const bookingDate = src.slice(0, 10); // YYYY-MM-DD part
     return bookingDate === formattedDate;
   });
 
@@ -111,19 +108,19 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
   };
 
   // Helper to format time string (you might want to adjust this depending on your date format)
-  const formatTime = (dateTimeString: Date) => {
+  const formatTime = (dateTimeString: string | Date) => {
     const d = new Date(dateTimeString);
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
     <div className="w-full translate-x-[-6px]">
-      {bookingsForDate.map((booking) => (
+      {bookingsForDate.map((booking: any) => (
         <div
-          key={booking.id}
+          key={booking.bookingId ?? booking.id}
           className={`${getStatusStyles(booking.status)} flex items-start text-xs font-semibold rounded px-1 py-1 truncate mb-0.5`}
         >
-          {formatTime(booking.startDateTime)} - {booking.title}
+          {formatTime(booking.startDatetime ?? booking.startDateTime)} - {booking.title}
         </div>
       ))}
     </div>

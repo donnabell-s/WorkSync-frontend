@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { authApi } from '../api/client';
-import { User } from '../../server/types';
+import { User } from '../types';
+import { authService } from '../services/auth.service';
+import { usersService } from '../services/users.service';
 
 type AuthContextType = {
   user: User | null;
@@ -9,12 +10,12 @@ type AuthContextType = {
   error: string | null;
   currentUser: User | null;
   login: (email: string, password: string) => Promise<User | null>;
-  signup: (fname: string, lname: string, email: string, password: string) => Promise<User | null>;
+  signup: (firstName: string, lastName: string, email: string, password: string) => Promise<User | null>;
   logout: () => void;
   getAllUsers: () => Promise<User[]>;
   getUserById: (id: string) => Promise<void>;
-  updateUser: (id: string, user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<User>;
-  deleteUser: (userId: string) => Promise<void>;
+  updateUser: (id: string, user: Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }) => Promise<User>;
+  deleteUser: (id: string) => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -32,108 +33,61 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
 
   const getAllUsers = async () => {
+    setIsLoading(true);
     try {
-      const { data } = await authApi.getAllUsers();
-
+      const data = await usersService.getAll();
       setUsers(data);
-
       return data;
-    } catch (error) {
-      console.error('Fetching users failed:', error);
-      throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const updateUser = async (id: string, user: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
-    try {
-      const { data } = await authApi.update(id, { user });
-
-      if (!data) {
-        throw new Error('Update user failed: No data returned');
-      }
-
-      setUsers(prev =>
-        prev.map(u => (u.id === data.id ? data : u))
-      );
-      return data;
-    } catch (error) {
-      console.error('Update user failed:', error);
-      throw error;
+  const updateUser = async (id: string, payload: Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }) => {
+    const updated = await usersService.update(id, payload);
+    setUsers(prev => prev.map(u => (String(u.id) === String(updated.id) ? updated : u)));
+    if (user && String(user.id) === String(updated.id)) {
+      const merged = { ...user, ...updated } as User;
+      setUser(merged);
+      localStorage.setItem('user', JSON.stringify(merged));
     }
+    return updated;
   };
 
-  const getUserById = async (id: string) => {
-      setIsLoading(true);
-      try {
-        const response = await authApi.getUserById(id);
-        setCurrentUser(response.data);
-      } catch (err) {
-        setError('Admin not found');
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const getUserById = async (_id: string) => {
+    // Backend has no GetUserById; use current user if present
+    setCurrentUser(user);
+  };
 
-  const deleteUser = async (userId: string) => {
-    try {
-      await authApi.delete(userId);
-      // Remove from users list
-      setUsers(prev => prev.filter(u => u.id !== userId));
-      // If the deleted user is the current user, log out
-      if (user && user.id === userId) {
-        await logout();
-      }
-    } catch (error) {
-      console.error('Delete user failed:', error);
-      throw error;
+  const deleteUser = async (id: string) => {
+    await usersService.remove(id);
+    setUsers(prev => prev.filter(u => String(u.id) !== String(id)));
+    if (user && String(user.id) === String(id)) {
+      await logout();
     }
   };
 
   const login = async (email: string, password: string) => {
-    try {
-      const { data } = await authApi.login({ email, password });
-      
-      // Store both token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      // Update state
-      setToken(data.token);
-      setUser(data.user);
-      return data.user;
-    } catch (error) {
-      console.error('Login failed:', error);
-      throw error; // Re-throw for component to handle
-    }
+    const data = await authService.login({ email, password });
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data.user));
+    setToken(data.token);
+    setUser(data.user as User);
+    return data.user as User;
   };
 
-  const signup = async (fname: string, lname: string, email: string, password: string) => {
-    try {
-      const { data } = await authApi.signup({ fname, lname, email, password });
-      
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      setToken(data.token);
-      setUser(data.user);
-      return data.user;
-    } catch (error) {
-      console.error('Signup failed:', error);
-      throw error;
-    }
+  const signup = async (firstName: string, lastName: string, email: string, password: string) => {
+    await authService.signup({ firstName, lastName, email, password });
+    // Optional: auto-login after register if backend supports; for now, return null and let UI redirect to login
+    return null;
   };
 
   const logout = async () => {
-    try {
-      await authApi.logout();
-    } catch (error) {
-      console.error('Logout failed:', error);
-    } finally {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      setToken(null);
-      setUser(null);
-    }
+    try { await authService.logout(); } catch {}
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setToken(null);
+    setUser(null);
   };
 
   return (

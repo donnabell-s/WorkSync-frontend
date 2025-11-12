@@ -75,8 +75,8 @@ const SideCalendar = () => {
       </div>
 
       <div className="grid grid-cols-7 text-center text-xs font-medium text-[#4B5563] mb-2 select-none">
-        {DAYS.map((day) => (
-          <div key={day}>{day}</div>
+        {DAYS.map((day, idx) => (
+          <div key={`${day}-${idx}`}>{day}</div>
         ))}
       </div>
 

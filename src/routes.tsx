@@ -81,11 +81,12 @@ export const AppRoutes = () => {
               <Route path={PATHS.LOGOUT.path} element={<Views.Logout />} />
               <Route path={PATHS.FORGOT_PASS.path} element={<Views.ForgotPassword />} />
               <Route path={PATHS.RESET_PASS.path} element={<Views.ResetPassword />} />
+              <Route path={PATHS.UNAUTHORIZED.path} element={<Views.Unauthorized />} />
               <Route path={PATHS.NOT_FOUND.path} element={<Views.NotFound />} />
             </Routes>
           </AdminProvider>
             </LogsProvider>
-          </BookingProvider>/
+          </BookingProvider>
         </RoomProvider>
       </AuthProvider>
     </BrowserRouter>

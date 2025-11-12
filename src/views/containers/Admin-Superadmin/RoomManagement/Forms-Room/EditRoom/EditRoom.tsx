@@ -5,35 +5,27 @@ import AdminBackLink from '../../../../../components/UI/AdminBackLink';
 import AdminHeading from '../../../../../components/UI/AdminHeading';
 import Input from '../../../../../components/UI/AdminForms/Input';
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
+import OperatingHoursInput from '../../../../../components/UI/AdminForms/OperatingHoursInput';
 import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
 import { useRooms } from '../../../../../../context/RoomContext';
-import { Room } from '../../../../../../../server/types';
+import type { Room } from '../../../../../../types';
 
 const EditRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
-    const statuses = ['Active', 'Inactive', 'Under Maintenance'];
+    const statuses = ['Active', 'Occupied', 'Under Maintenance', 'Inactive'];
     const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
     const navigate = useNavigate();
     const { currentRoom, updateRoom, getRoomById, fetchRooms } = useRooms();
 
-    const [formData, setFormData] = useState<Omit<Room, 'id' | 'createdAt' | 'updatedAt'>>({
+    const [formData, setFormData] = useState<Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>>({
         name: '',
         code: '',
         location: '',
-        level: 0,
-        size: sizes[0],
+        level: '',
+        sizeLabel: sizes[0],
         seats: 0,
-        operatingHours: {
-            weekdays: {
-                open: '',
-                close: '',
-            },
-            weekends: {
-                open: '',
-                close: '',
-            },
-        },
-    status: statuses[0],
+        operatingHours: '',
+        status: statuses[0],
         amenities: [],
     });
 
@@ -57,33 +49,17 @@ const EditRoom: React.FC = () => {
     }, [imagePreview]);
 
     useEffect(() => {
-        if (currentRoom && currentRoom.operatingHours) {
-            // Normalize legacy statuses to new ones for the dropdown
-            const legacy = String(currentRoom.status).toLowerCase();
-            const mappedStatus = ['available', 'occupied', 'reserved', 'booked'].includes(legacy)
-                ? 'Active'
-                : legacy === 'under maintenance'
-                    ? 'Under Maintenance'
-                    : legacy === 'inactive'
-                        ? 'Inactive'
-                        : currentRoom.status;
+        if (currentRoom) {
+            // Map backend 'Available' to UI 'Active'
+            const mappedStatus = currentRoom.status === 'Available' ? 'Active' : currentRoom.status;
             setFormData({
                 name: currentRoom.name,
                 code: currentRoom.code,
                 location: currentRoom.location,
-                level: currentRoom.level,
-                size: currentRoom.size,
+                level: String(currentRoom.level ?? ''),
+                sizeLabel: currentRoom.sizeLabel,
                 seats: currentRoom.seats,
-                operatingHours: {
-                    weekdays: {
-                        open: currentRoom.operatingHours.weekdays.open,
-                        close: currentRoom.operatingHours.weekdays.close,
-                    },
-                    weekends: {
-                        open: currentRoom.operatingHours.weekends.open,
-                        close: currentRoom.operatingHours.weekends.close,
-                    },
-                },
+                operatingHours: typeof currentRoom.operatingHours === 'string' ? currentRoom.operatingHours : JSON.stringify(currentRoom.operatingHours ?? {}),
                 status: mappedStatus,
                 amenities: currentRoom.amenities,
             });
@@ -106,13 +82,13 @@ const EditRoom: React.FC = () => {
             console.error('No current room found');
             return;
         }
-        updateRoom(currentRoom.id, formData)
+    updateRoom(currentRoom.roomId, formData as any)
             .then(() => {
                 console.log('Room updated successfully');
                 return fetchRooms(); // Fetch updated rooms after updating
             })
             .then(() => {
-                return getRoomById(currentRoom.id); // Fetch the updated room details
+                return getRoomById(currentRoom.roomId); // Fetch the updated room details
             })
             .then(() => {
                 navigate('/admin/rooms/room-detail'); // Navigate to room detail after fetching
@@ -124,7 +100,7 @@ const EditRoom: React.FC = () => {
 
     const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        navigate('/admin/rooms/view'); // Navigate back to view rooms
+        navigate('/admin/rooms/room-detail'); // Navigate back to room detail
     };
 
     useEffect(() => {
@@ -135,7 +111,7 @@ const EditRoom: React.FC = () => {
 
     return (
         <div className='h-full min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>
-            <AdminBackLink label='Back to View Rooms' backPath='/admin/rooms/view' />
+            <AdminBackLink label='Back to Room Detail' backPath='/admin/rooms/room-detail' />
 
             <div className='relative flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
                 <AdminHeading label="EDIT ROOM" />
@@ -145,13 +121,18 @@ const EditRoom: React.FC = () => {
                         <Input label='Room Name' name='name' type='text' placeholder='Enter Room Name' value={formData.name} className='md:col-span-2' onChange={handleInputChange} />
                         <Input label='Room Number' name='code' type='text' placeholder='Enter Room Number' value={formData.code} className='md:col-span-2' onChange={handleInputChange} />
                         <Input label='Location' name='location' type='text' placeholder='Enter Location' value={formData.location} className='md:col-span-2' onChange={handleInputChange} />
-                        <Input label='Floor/Level' name='level' type='number' placeholder='Enter Floor/Level' value={formData.level.toString()} className='md:col-span-2' onChange={handleInputChange} />
-                        <SelectInput label='Size' name='size' value={formData.size} options={sizes} onChange={handleSelect} />
-                        <Input label='Seats' name='seats' type='number' placeholder='Enter Number of Seats' value={formData.seats.toString()} className='md:col-span-2' onChange={handleInputChange} />
+                        <Input label='Floor/Level' name='level' type='text' placeholder='Enter Floor/Level' value={formData.level} className='md:col-span-2' onChange={handleInputChange} />
+                        <SelectInput label='Size' name='sizeLabel' value={formData.sizeLabel} options={sizes} onChange={handleSelect} />
+                        <Input label='Seats' name='seats' type='number' placeholder='Enter Number of Seats' value={(formData.seats ?? 0).toString()} className='md:col-span-2' onChange={handleInputChange} />
                     </div>
 
                     <div className='flex flex-col gap-4'>
                         <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
+
+                                                                        <OperatingHoursInput
+                                                                            value={formData.operatingHours}
+                                                                            onChange={(val) => setFormData(prev => ({ ...prev, operatingHours: JSON.stringify(val) }))}
+                                                                        />
 
                         <MultiSelectInput
                             label="Facilities"
