@@ -3,7 +3,7 @@ import {
   Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ComposedChart,
 } from 'recharts';
 import { DatePicker } from '../../UI';
-import { dashboardService, BookingTrendItem } from '@/services/dashboard.service';
+import { dashboardService } from '@/services/dashboard.service';
 import { tooltipStyleConfig, axisConfig, chartColors } from './config';
 import { NoDataState, ChartDescription } from './components';
 

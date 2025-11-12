@@ -63,9 +63,11 @@ const PeakUsageTimes: React.FC = () => {
   const series = useMemo(() => {
     if (!peakUsageData.length || !currentRooms.length) return [];
 
+    const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
+
     return currentRooms.map(roomName => ({
       name: roomName,
-      data: Array.from({ length: 24 }, (_, hour) => {
+      data: hours.map(hour => {
         const dataPoint = peakUsageData.find(
           item => item.roomName === roomName && item.hour === hour
         );
