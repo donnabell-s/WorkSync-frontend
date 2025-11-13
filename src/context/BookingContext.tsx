@@ -99,16 +99,16 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
       }
       if (!existing) throw new Error('Booking not found for update');
 
-      // Preserve recurrence if present; try to send as object if it is a JSON string
+      // Recurrence precedence: use patch if provided; otherwise preserve existing
       let recurrence: any = undefined;
-      if (typeof existing.recurrence === 'string') {
+      if (patch.recurrence !== undefined) {
+        recurrence = patch.recurrence;
+      } else if (typeof existing.recurrence === 'string') {
         try { recurrence = JSON.parse(existing.recurrence); } catch { recurrence = null; }
       } else if (existing.recurrence) {
         recurrence = existing.recurrence as any;
-      } else if (patch.recurrence !== undefined) {
-        recurrence = patch.recurrence;
       } else {
-        recurrence = null; // let backend treat as null/unchanged
+        recurrence = null;
       }
 
       const fullPayload: CreateBookingPayload = {
