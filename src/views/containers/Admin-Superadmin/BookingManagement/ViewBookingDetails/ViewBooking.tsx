@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { FaCheck, FaTimes, FaEdit } from 'react-icons/fa';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -14,8 +15,6 @@ interface ViewBookingProps {
   onDecline?: () => void;
 }
 
-const placeholderRoomImg = '/src/assets/meeting-room.png';
-
 const ViewBooking: React.FC<ViewBookingProps> = ({
   mode = 'view',
   onApprove,
@@ -27,10 +26,6 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
   const { rooms, fetchRooms } = useRooms();
   const { bookings, currentBooking, getBookingById, approveBooking, declineBooking } = useBookings();
   const navigate = useNavigate();
-
-  if (!booking) {
-    return <div>No booking data found.</div>;
-  }
 
   const handleCancel = () => {
     navigate('/admin/bookings/cancel', { state: { booking } });
@@ -52,25 +47,18 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
     onDecline?.();
   };
 
-  // Ensure organizer/room data is available
+  // Ensure organizer/room data is available and fetch latest booking
   React.useEffect(() => {
     if (booking?.userRefId && (!users || users.length === 0)) {
       void getAllUsers().catch(() => {});
     }
-  }, [booking?.userRefId]);
-
-  React.useEffect(() => {
     if (!rooms || rooms.length === 0) {
       void fetchRooms().catch(() => {});
     }
-  }, []);
-
-  // Ensure we have the freshest booking status from backend/context
-  React.useEffect(() => {
     if (booking?.bookingId) {
       void getBookingById(Number(booking.bookingId), { force: true }).catch(() => {});
     }
-  }, [booking?.bookingId]);
+  }, [booking?.userRefId, booking?.bookingId]);
 
   // Prefer the latest booking from context
   const effectiveBooking = React.useMemo(() => {
@@ -128,8 +116,6 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
     return (v && typeof v === 'object') ? v : null;
   }, [effectiveBooking]);
 
-  // Removed rendering of succeeding occurrences to keep the UI concise
-
   // Recurrence summary (pattern, interval, days, end)
   const recurrenceSummary = React.useMemo(() => {
     const rec = recurrence;
@@ -161,6 +147,8 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
     }
     return `${patt} for ${n} ${unit}${daysText}${endStr}`;
   }, [recurrence, effectiveBooking]);
+
+  if (!booking) return <div>No booking data found.</div>;
 
   return (
     <div className="w-full p-0 m-0 flex flex-col">
@@ -227,7 +215,15 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             <div className="text-base text-[#333]">{roomName}</div>
             <div className="hidden lg:block lg:row-span-3 ml-auto w-full max-w-[420px] rounded border overflow-hidden">
               <img
-                src={placeholderRoomImg}
+                src={(function() {
+                  const img = room?.imageUrl?.trim();
+                  if (img) return img;
+                  const size = (room?.sizeLabel || '').toLowerCase();
+                  if (size === 'small') return '/meetingroom/small.jpg';
+                  if (size === 'medium') return '/meetingroom/medium.jpg';
+                  if (size === 'large') return '/meetingroom/large.jpg';
+                  return '/meetingroom/default.jpg';
+                })()}
                 alt="Meeting Room"
                 className="w-full h-full object-cover"
               />
@@ -242,7 +238,15 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
           {/* Mobile/tablet image below rows */}
           <div className="lg:hidden mt-4 w-full rounded border overflow-hidden">
             <img
-              src={placeholderRoomImg}
+              src={(function() {
+                const img = room?.imageUrl?.trim();
+                if (img) return img;
+                const size = (room?.sizeLabel || '').toLowerCase();
+                if (size === 'small') return '/meetingroom/small.jpg';
+                if (size === 'medium') return '/meetingroom/medium.jpg';
+                if (size === 'large') return '/meetingroom/large.jpg';
+                return '/meetingroom/default.jpg';
+              })()}
               alt="Meeting Room"
               className="w-full h-40 object-cover"
             />

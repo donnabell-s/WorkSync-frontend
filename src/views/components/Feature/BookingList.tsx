@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Booking as LegacyBooking } from './UserBookingListInterface';
 import type { Booking as ApiBooking, Room } from '../../../types';
 import { LuClock } from 'react-icons/lu';
+import { useRooms } from '../../../context/RoomContext';
 
 interface BookingListProps {
   bookings: Array<ApiBooking | LegacyBooking>;
@@ -19,6 +21,7 @@ const statusColors: Record<string, string> = {
 
 const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
   const navigate = useNavigate();
+  const { rooms } = useRooms();
 
   type BookingItem = ApiBooking | LegacyBooking;
 
@@ -63,16 +66,18 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
               return `${start.toLocaleTimeString(undefined, fmt)}-${end.toLocaleTimeString(undefined, fmt)}`;
             })();
 
-        // Room and location
+        // Room and location (prefer embedded room, else lookup by roomId from context)
         let roomLabel = '';
         let location = '';
+        let computedRoom: Room | undefined = undefined;
         if (isLegacy(booking)) {
           roomLabel = booking.room;
           location = booking.location;
         } else {
-          const room: Room | undefined = (booking as ApiBooking).room;
-          roomLabel = room?.name || room?.code || '';
-          location = room?.location || '';
+          const api = booking as ApiBooking;
+          computedRoom = api.room ?? rooms.find(r => String(r.roomId) === String(api.roomId));
+          roomLabel = computedRoom?.name || computedRoom?.code || '';
+          location = computedRoom?.location || '';
         }
 
         const status: string = (booking as any).status ?? 'Pending';
@@ -93,7 +98,26 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
               <span className="text-sm text-[#575F69]">{year}</span>
             </div>
 
-            <div className="w-full h-28 bg-gray-200 rounded-lg flex-shrink-0 md:w-50 md:h-16" />
+            {/* Room image: prefer booking.room.imageUrl or context room.imageUrl; fallback by sizeLabel */}
+            <div className="w-full h-28 rounded-lg flex-shrink-0 md:w-50 md:h-16 overflow-hidden">
+              <img
+                src={(() => {
+                  const api = booking as ApiBooking;
+                  const room = !isLegacy(booking)
+                    ? (api.room ?? rooms.find(r => String(r.roomId) === String(api.roomId)))
+                    : undefined;
+                  const img = room?.imageUrl?.trim();
+                  if (img) return img;
+                  const size = (room?.sizeLabel || '').toLowerCase();
+                  if (size === 'small') return '/meetingroom/small.jpg';
+                  if (size === 'medium') return '/meetingroom/medium.jpg';
+                  if (size === 'large') return '/meetingroom/large.jpg';
+                  return '/meetingroom/default.jpg';
+                })()}
+                alt={roomLabel}
+                className="w-full h-full object-cover"
+              />
+            </div>
 
             <div className="flex flex-col w-full md:w-48 min-w-0 text-sm gap-1 text-[#1F2937]">
               <h3 className="font-semibold truncate">{title}</h3>

@@ -28,6 +28,7 @@ const RoomModal: React.FC<RoomModalProps> = ({ closeFunction, value, selectFunct
                 size: (r.sizeLabel as any) ?? 'Medium',
                 numberOfSeats: r.seats ?? 0,
                 additionalFacilities: r.amenities ?? [],
+                imageUrl: (r.imageUrl || '').trim() || undefined,
                 imageFile: r.sizeLabel?.toLowerCase() === 'small' ? 'small.jpg' : r.sizeLabel?.toLowerCase() === 'large' ? 'large.jpg' : 'medium.jpg',
                 status: 'available',
             }));

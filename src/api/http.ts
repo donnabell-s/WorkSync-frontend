@@ -9,10 +9,23 @@ const http: AxiosInstance = axios.create({
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
+  config.headers = config.headers || {};
+
   if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
+    (config.headers as any).Authorization = `Bearer ${token}`;
   }
+
+  // Ensure proper Content-Type: omit for FormData, default to JSON otherwise
+  const isFormData = typeof FormData !== 'undefined' && config.data instanceof FormData;
+  if (isFormData) {
+    // Let the browser set the multipart boundary
+    delete (config.headers as any)['Content-Type'];
+  } else {
+    if (!(config.headers as any)['Content-Type']) {
+      (config.headers as any)['Content-Type'] = 'application/json';
+    }
+  }
+
   return config;
 });
 

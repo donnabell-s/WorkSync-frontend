@@ -38,13 +38,28 @@ const AddRoom: React.FC = () => {
         },
     });
 
-    // Local state for image selection and preview (not yet persisted)
-    // We only need a preview for now; keep file reference if future upload integration is added.
+    // Image selection state for upload + preview
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [imageError, setImageError] = useState<string>("");
+
+    const isValidImage = (file: File) => {
+        const allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+        const max = 5 * 1024 * 1024; // 5MB
+        return allowed.includes(file.type) && file.size <= max;
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
+        setImageError("");
+        setImageFile(null);
         if (file) {
+            if (!isValidImage(file)) {
+                setImageError('Please select a JPG/PNG/GIF/WEBP up to 5 MB.');
+                setImagePreview("");
+                return;
+            }
+            setImageFile(file);
             const url = URL.createObjectURL(file);
             setImagePreview(url);
         } else {
@@ -70,8 +85,8 @@ const AddRoom: React.FC = () => {
 
     const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        console.log('Form Data:', formData);
-        addRoom(formData)
+        console.log('AddRoom submit:', formData, imageFile ? '(with file)' : '(no file)');
+        addRoom(formData as any, imageFile)
             .then(() => {
                 console.log('Room added successfully');
                 navigate('/admin/rooms/view');
@@ -134,6 +149,7 @@ const AddRoom: React.FC = () => {
                                 onChange={handleImageChange}
                                 className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
                             />
+                            {imageError && (<span className='text-xs text-red-600'>{imageError}</span>)}
                             {imagePreview && (
                                 <div className='mt-2'>
                                     <img

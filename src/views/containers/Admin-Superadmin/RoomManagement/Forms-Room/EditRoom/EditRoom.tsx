@@ -29,12 +29,28 @@ const EditRoom: React.FC = () => {
         amenities: [],
     });
 
-    // Local state for image preview (optional, not persisted yet)
+    // Local state for image upload + preview
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [imageError, setImageError] = useState<string>("");
+
+    const isValidImage = (file: File) => {
+        const allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+        const max = 5 * 1024 * 1024; // 5MB
+        return allowed.includes(file.type) && file.size <= max;
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
+        setImageError("");
+        setImageFile(null);
         if (file) {
+            if (!isValidImage(file)) {
+                setImageError('Please select a JPG/PNG/GIF/WEBP up to 5 MB.');
+                setImagePreview("");
+                return;
+            }
+            setImageFile(file);
             const url = URL.createObjectURL(file);
             setImagePreview(url);
         } else {
@@ -82,7 +98,8 @@ const EditRoom: React.FC = () => {
             console.error('No current room found');
             return;
         }
-    updateRoom(currentRoom.roomId, formData as any)
+        console.log('EditRoom submit:', { id: currentRoom.roomId, formData }, imageFile ? '(with file)' : '(no file)');
+    updateRoom(currentRoom.roomId, formData as any, imageFile)
             .then(() => {
                 console.log('Room updated successfully');
                 return fetchRooms(); // Fetch updated rooms after updating
@@ -157,6 +174,7 @@ const EditRoom: React.FC = () => {
                                 onChange={handleImageChange}
                                 className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
                             />
+                            {imageError && (<span className='text-xs text-red-600'>{imageError}</span>)}
                             {imagePreview && (
                                 <div className='mt-2'>
                                     <img
