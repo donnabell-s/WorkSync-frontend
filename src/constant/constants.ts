@@ -128,8 +128,8 @@ export const PATHS = {
             label: "Book Room"
         },
         EDIT: {
-            path: "edit-booking",
-            label: "Edit Booking"
+            path: "view-booking",
+            label: "View Booking"
         },
         SETTINGS: {
             path: "settings",

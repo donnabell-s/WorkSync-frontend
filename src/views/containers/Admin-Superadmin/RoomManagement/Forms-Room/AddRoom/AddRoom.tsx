@@ -8,7 +8,22 @@ import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
 import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
 import OperatingHoursInput from '../../../../../components/UI/AdminForms/OperatingHoursInput';
 import { useRooms } from '../../../../../../context/RoomContext';
-import { Room } from '../../../../../../../server/types';
+// Local form type; service maps to backend shape (sizeLabel/status/etc.)
+interface AddRoomForm {
+    name: string;
+    code: string;
+    location: string;
+    level: string; // stored as string; service normalizes as needed
+    size: 'Small' | 'Medium' | 'Large';
+    seats: number;
+    status: 'Active' | 'Inactive' | 'Under Maintenance';
+    amenities: string[];
+    operatingHours: {
+        weekdays: { open: string; close: string };
+        weekends: { open: string; close: string };
+    };
+    imageUrl?: string;
+}
 
 const AddRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
@@ -17,11 +32,11 @@ const AddRoom: React.FC = () => {
     const { addRoom } = useRooms();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<Omit<Room, 'id' | 'createdAt' | 'updatedAt'>>({
+    const [formData, setFormData] = useState<AddRoomForm>({
         name: '',
         code: '',
         location: '',
-        level: 0,
+        level: '',
         size: 'Small',
         seats: 0,
     status: 'Active',
@@ -75,12 +90,19 @@ const AddRoom: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            if (name === 'seats') return { ...prev, seats: Number(value) || 0 };
+            if (name === 'level') return { ...prev, level: value };
+            if (name === 'name' || name === 'code' || name === 'location') {
+                return { ...prev, [name]: value } as AddRoomForm;
+            }
+            return { ...prev, [name]: value } as AddRoomForm;
+        });
     };
 
     const handleSelect = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value } as AddRoomForm));
     };
 
     const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {

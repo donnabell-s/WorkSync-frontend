@@ -5,7 +5,8 @@ interface RoomDetailsFormProps {
   roomCode: string | null;
 }
 
-const getImageSrc = (size?: string) => {
+const getImageSrc = (size?: string, imageUrl?: string) => {
+  if ((imageUrl || '').trim() !== '') return imageUrl as string;
   switch ((size || '').toLowerCase()) {
     case "small":
       return "/meetingroom/small.jpg";
@@ -36,7 +37,7 @@ const RoomDetailsForm: React.FC<RoomDetailsFormProps> = ({ roomCode }) => {
       </div>
       <div className="flex flex-col gap-2 px-2">
         <img
-          src={`${getImageSrc(currentRoom.sizeLabel)}`}
+          src={`${getImageSrc(currentRoom.sizeLabel, currentRoom.imageUrl)}`}
           alt={currentRoom.name}
           className="w-auto max-w-full h-40 object-cover rounded-md"
         />

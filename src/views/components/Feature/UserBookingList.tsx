@@ -109,12 +109,10 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
               return (
                 <tr
                   key={booking.bookingId ?? booking.id}
-                  className={`text-sm odd:bg-white even:bg-gray-100 ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                  className={`text-sm odd:bg-white even:bg-gray-100 hover:bg-gray-100 cursor-pointer`}
                   onClick={() => {
-                    if (booking.status === "confirmed") {
-                      localStorage.setItem("selectedBookingId", String(booking.bookingId ?? booking.id));
-                      navigate(`/user/edit-booking`);
-                    }
+                    localStorage.setItem("selectedBookingId", String(booking.bookingId ?? booking.id));
+                    navigate(`/user/view-booking`);
                   }}
                 >
                   <td className={getTdClasses()}>{booking.bookingId ?? booking.id}</td>

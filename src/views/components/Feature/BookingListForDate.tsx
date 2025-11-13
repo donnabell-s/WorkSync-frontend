@@ -67,6 +67,7 @@
 
 import React from 'react';
 import { useBookings } from '../../../context/BookingContext';
+import { occursOnDate } from '../../../utils/recurrence';
 
 // Status rendering handled via booking.status string values
 
@@ -79,32 +80,26 @@ interface BookingListForDateProps {
 const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
   const { bookings } = useBookings();
 
-  // Format the date to YYYY-MM-DD for comparison
-  const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
-    .toString()
-    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-
-  // Filter bookings that fall on the same day as the given date
-  const bookingsForDate = bookings.filter((booking: any) => {
-    const src = booking.startDatetime ?? booking.startDateTime;
-    if (!src || typeof src !== 'string') return false;
-    const bookingDate = src.slice(0, 10); // YYYY-MM-DD part
-    return bookingDate === formattedDate;
-  });
+  // Filter bookings that have an occurrence on the date
+  const bookingsForDate = bookings.filter((b: any) => occursOnDate(b, date));
 
   if (bookingsForDate.length === 0) return null;
 
-  const getStatusStyles = (status: string) => {
-    switch (status) {
-      case 'cancelled':
-        return 'bg-[#EF4444] text-white';
-      case 'upcoming':
-        return 'bg-[#10B981] text-white';
-      case 'completed':
-        return 'bg-[#F59E0B] text-white';
-      default:
-        return 'bg-[#10B981] text-white';
+  const isRecurringBooking = (booking: any): boolean => {
+    const r = (booking as any).recurrence;
+    try {
+      const parsed = typeof r === 'string' ? JSON.parse(r as string) : r;
+      return Boolean(parsed && (parsed.isRecurring || (Array.isArray(parsed.dates) && parsed.dates.length > 0)));
+    } catch {
+      return false;
     }
+  };
+
+  const styleForBooking = (booking: any) => {
+    const status = String(booking.status || '').toLowerCase();
+    if (status === 'declined' || status === 'cancelled') return 'bg-[#EF4444] text-white';
+    if (status === 'pending') return 'bg-[#F59E0B] text-white';
+    return isRecurringBooking(booking) ? 'bg-[#1E40AF] text-white' : 'bg-[#10B981] text-white';
   };
 
   // Helper to format time string (you might want to adjust this depending on your date format)
@@ -118,7 +113,8 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
       {bookingsForDate.map((booking: any) => (
         <div
           key={booking.bookingId ?? booking.id}
-          className={`${getStatusStyles(booking.status)} flex items-start text-xs font-semibold rounded px-1 py-1 truncate mb-0.5`}
+          className={`${styleForBooking(booking)} flex items-start text-xs font-semibold rounded px-1 py-1 truncate mb-0.5`}
+          title={isRecurringBooking(booking) ? 'Recurring booking' : 'One-time booking'}
         >
           {formatTime(booking.startDatetime ?? booking.startDateTime)} - {booking.title}
         </div>

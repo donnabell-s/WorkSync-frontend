@@ -14,8 +14,8 @@ interface MainCalendarProps {
 
 const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
   const today = new Date();
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  // Use a single source of truth for displayed month to avoid desync/skips
+  const [current, setCurrent] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   
@@ -58,23 +58,11 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
   };
 
   const prevMonth = () => {
-    setCurrentMonth(prev => {
-      if (prev === 0) {
-        setCurrentYear(year => year - 1);
-        return 11;
-      }
-      return prev - 1;
-    });
+    setCurrent((prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1));
   };
 
   const nextMonth = () => {
-    setCurrentMonth(prev => {
-      if (prev === 11) {
-        setCurrentYear(year => year + 1);
-        return 0;
-      }
-      return prev + 1;
-    });
+    setCurrent((prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1));
   };
 
   const handleDayClick = (date: Date) => {
@@ -88,7 +76,8 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
     setIsModalOpen(true);
   };
 
-
+  const currentYear = current.getFullYear();
+  const currentMonth = current.getMonth();
   const days = getDaysInMonth(currentYear, currentMonth);
   const weeks = chunkDays(days, 7);
 
@@ -99,8 +88,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
           <button
             onClick={() => {
               const now = new Date();
-              setCurrentYear(now.getFullYear());
-              setCurrentMonth(now.getMonth());
+              setCurrent(new Date(now.getFullYear(), now.getMonth(), 1));
             }}
             className="border border-[#D2D4D8] px-5 py-1 rounded-md text-[#1F2937] cursor-pointer hover:bg-[#F5F5F5] "
           >
