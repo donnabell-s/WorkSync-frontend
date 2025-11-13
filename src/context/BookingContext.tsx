@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Booking } from '../types';
 import { bookingsService, type CreateBookingPayload } from '../services/bookings.service';
 import { useCallback } from "react";
+import { useAuth } from './AuthContext';
 
 interface BookingContextType {
   bookings: Booking[];
@@ -27,6 +28,7 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
   const [loaded, setLoaded] = useState(false);
   const inFlightListRef = React.useRef<Promise<Booking[]> | null>(null);
   const inFlightByIdRef = React.useRef<Map<number, Promise<Booking>>>(new Map());
+  const { token } = useAuth();
 
   const fetchBookings = useCallback(async (options?: { force?: boolean }) => {
     if (inFlightListRef.current) {
@@ -173,8 +175,11 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
 
 
   useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+    // Avoid prefetching protected resources before login/token is set to prevent 401+CORS noise
+    if (token) {
+      fetchBookings();
+    }
+  }, [fetchBookings, token]);
 
   return (
     <BookingContext.Provider value={{

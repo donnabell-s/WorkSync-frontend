@@ -77,8 +77,11 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   };
 
   useEffect(() => {
-    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
-      fetchAdmins();
+    if (user) {
+      const r = String(user.role || '').toLowerCase();
+      if (r === 'admin' || r === 'superadmin') {
+        fetchAdmins();
+      }
     }
   }, [user]);
 

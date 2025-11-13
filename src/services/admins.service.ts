@@ -7,6 +7,15 @@ export const adminsService = {
     const { data } = await http.get<User[]>(API.ACCOUNT.GET_ADMINS);
     return data;
   },
+  async getById(id: string) {
+    // Backend lacks a dedicated endpoint; fetch list and find by id
+    const list = await this.getAll();
+    const found = list.find((u) => String(u.id) === String(id));
+    if (!found) {
+      throw new Error(`Admin with id ${id} not found`);
+    }
+    return found;
+  },
   // No dedicated GetAdminById endpoint; fetch list and filter if needed
   async create(admin: { firstName: string; lastName: string; email: string; password: string; isActive?: boolean }) {
     // Ensure role is Admin when creating via account endpoint

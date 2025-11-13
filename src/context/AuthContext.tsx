@@ -54,9 +54,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return updated;
   };
 
-  const getUserById = async (_id: string) => {
-    // Backend has no GetUserById; use current user if present
-    setCurrentUser(user);
+  const getUserById = async (id: string) => {
+    // Find in memory; if absent, refresh list then find
+    const findLocal = (arr: User[], uid: string) => arr.find(u => String(u.id) === String(uid)) || null;
+    let target = findLocal(users, id);
+    if (!target) {
+      try {
+        const refreshed = await usersService.getAll();
+        setUsers(refreshed);
+        target = findLocal(refreshed, id);
+      } catch (e) {
+        console.error('Failed to refresh users list', e);
+      }
+    }
+    setCurrentUser(target);
   };
 
   const deleteUser = async (id: string) => {
@@ -69,11 +80,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     const data = await authService.login({ email, password });
+    const normalizedUser = { ...data.user, role: String((data.user as any)?.role || '').toLowerCase() } as User;
     localStorage.setItem('token', data.token);
-    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('user', JSON.stringify(normalizedUser));
     setToken(data.token);
-    setUser(data.user as User);
-    return data.user as User;
+    setUser(normalizedUser);
+    return normalizedUser;
   };
 
   const signup = async (firstName: string, lastName: string, email: string, password: string) => {

@@ -8,14 +8,14 @@ const statuses = ['Active', 'Inactive'];
 
 const EditUser: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, getAllUsers, updateUser, deleteUser } = useAuth();
+  const { currentUser, getAllUsers, updateUser, deleteUser, getUserById } = useAuth();
 
   // Add a local state for permissions and status
   const [form, setForm] = useState<Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }>({
     firstName: '',
     lastName: '',
     email: '',
-    role: 'user',
+    role: 'User',
     isActive: true,
     password: '',
   });
@@ -24,7 +24,17 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      setForm(currentUser);
+      // Preserve controlled defaults; normalize role to Admin/User only
+      const r = String((currentUser as any).role || '').toLowerCase();
+      const normalizedRole = r === 'admin' ? 'Admin' : 'User';
+      setForm({
+        firstName: currentUser.firstName ?? '',
+        lastName: currentUser.lastName ?? '',
+        email: currentUser.email ?? '',
+        role: normalizedRole,
+        isActive: Boolean(currentUser.isActive),
+        password: '',
+      });
       setStatus(currentUser.isActive ? 'Active' : 'Inactive');
     }
   }, [currentUser]);
@@ -73,6 +83,12 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (!currentUser) {
+      // Try to recover selected user from localStorage on direct loads
+      const sel = localStorage.getItem('selectedUserId');
+      if (sel) {
+        getUserById(sel);
+        return;
+      }
       navigate('/admin/users/view');
     }
   }, [currentUser, navigate]);
@@ -113,29 +129,30 @@ const EditUser: React.FC = () => {
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             name="email"
             type="email"
-            value={form.email}
+            value={form.email ?? ''}
             onChange={handleChange}
             required
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="font-medium">Account Security</label>
-          <input
+          <label className="font-medium">Role</label>
+          <select
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="password"
-            type="password"
-            value={form.password}
+            name="role"
+            value={(form.role as any) ?? 'User'}
             onChange={handleChange}
-            required
-          />
+          >
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
         </div>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Status</label>
           <select
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="isActive"
-            value={form.isActive ? 'Active' : 'Inactive'}
-            onChange={handleChange}
+            name="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
           >
             {statuses.map((status) => (
               <option key={status} value={status}>{status}</option>
