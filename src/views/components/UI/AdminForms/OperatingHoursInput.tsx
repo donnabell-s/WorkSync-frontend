@@ -83,15 +83,52 @@ function normalizeOH(oh: OperatingHoursDto): OperatingHoursDto {
 }
 
 function parseValue(v: OperatingHoursDto | string | null | undefined): OperatingHoursDto {
+  const coerce = (p: any): OperatingHoursDto | null => {
+    if (!p || typeof p !== 'object') return null;
+    // Support various casings: Weekdays/Weekends, Open/Close, lower/upper
+    const getProp = (obj: any, key: string) => {
+      if (!obj || typeof obj !== 'object') return undefined;
+      const direct = obj[key];
+      if (typeof direct !== 'undefined') return direct;
+      const lowerKey = key.toLowerCase();
+      for (const k of Object.keys(obj)) {
+        if (String(k).toLowerCase() === lowerKey) return (obj as any)[k];
+      }
+      return undefined;
+    };
+    const wdRaw = getProp(p, 'weekdays') ?? getProp(p, 'Weekdays');
+    const weRaw = getProp(p, 'weekends') ?? getProp(p, 'Weekends');
+    const wdOpen = getProp(wdRaw, 'open') ?? getProp(wdRaw, 'Open');
+    const wdClose = getProp(wdRaw, 'close') ?? getProp(wdRaw, 'Close');
+    const weOpen = getProp(weRaw, 'open') ?? getProp(weRaw, 'Open');
+    const weClose = getProp(weRaw, 'close') ?? getProp(weRaw, 'Close');
+    const candidate: OperatingHoursDto = {
+      weekdays: { open: wdOpen, close: wdClose } as any,
+      weekends: { open: weOpen, close: weClose } as any,
+    };
+    return normalizeOH(candidate);
+  };
+
   if (!v) return { ...DEFAULT_OH };
   if (typeof v === 'string') {
     try {
-      const p = JSON.parse(v);
-      if (p && p.weekdays && p.weekends) return normalizeOH(p as OperatingHoursDto);
+      // handle possibly double-encoded JSON
+      let parsed: any = v;
+      for (let i = 0; i < 2; i++) {
+        if (typeof parsed === 'string') {
+          try { parsed = JSON.parse(parsed); continue; } catch { break; }
+        }
+        break;
+      }
+      const coerced = coerce(parsed);
+      if (coerced) return coerced;
     } catch {}
     return { ...DEFAULT_OH };
   }
-  if (typeof v === 'object') return normalizeOH(v as OperatingHoursDto);
+  if (typeof v === 'object') {
+    const coerced = coerce(v);
+    if (coerced) return coerced;
+  }
   return { ...DEFAULT_OH };
 }
 
