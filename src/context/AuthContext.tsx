@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { User } from '../types';
 import { authService } from '../services/auth.service';
 import { usersService } from '../services/users.service';
@@ -101,6 +101,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(null);
     setUser(null);
   };
+
+  useEffect(() => {
+    if (!user || (user.firstName && user.lastName)) return;
+    const enrichUser = async () => {
+      try {
+        const list = await usersService.getAll();
+        const match = list.find(u => String(u.id) === String(user.id));
+        if (match) {
+          const enriched = { ...user, ...match } as User;
+          setUser(enriched);
+          localStorage.setItem('user', JSON.stringify(enriched));
+        }
+      } catch (err) {
+        console.error('Failed to enrich user profile', err);
+      }
+    };
+    void enrichUser();
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, users, currentUser, token, error, login, signup, logout, getAllUsers, getUserById, updateUser, deleteUser }}>

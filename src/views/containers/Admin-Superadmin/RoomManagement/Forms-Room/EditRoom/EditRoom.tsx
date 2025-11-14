@@ -13,7 +13,7 @@ import type { Room } from '../../../../../../types';
 const EditRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
     const statuses = ['Active', 'Occupied', 'Under Maintenance', 'Inactive'];
-    const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
+    const facilities = ['Projector', 'Whiteboard', 'LED Display', 'Air Conditioning', 'Internet Access', 'Coffee / Water Station', 'Microphone & Speakers'];
     const navigate = useNavigate();
     const { currentRoom, updateRoom, getRoomById, fetchRooms } = useRooms();
 

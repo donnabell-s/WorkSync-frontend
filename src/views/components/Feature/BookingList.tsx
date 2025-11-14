@@ -5,6 +5,7 @@ import type { Booking as LegacyBooking } from './UserBookingListInterface';
 import type { Booking as ApiBooking, Room } from '../../../types';
 import { LuClock } from 'react-icons/lu';
 import { useRooms } from '../../../context/RoomContext';
+import { useAuth } from '../../../context/AuthContext';
 
 interface BookingListProps {
   bookings: Array<ApiBooking | LegacyBooking>;
@@ -22,32 +23,76 @@ const statusColors: Record<string, string> = {
 const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
   const navigate = useNavigate();
   const { rooms } = useRooms();
+  const { users, getAllUsers } = useAuth();
 
   type BookingItem = ApiBooking | LegacyBooking;
+  const isLegacyBooking = (b: BookingItem): b is LegacyBooking => (b as any).date !== undefined || (b as any).name !== undefined;
 
   const handleViewDetails = (booking: BookingItem) => {
     navigate('/admin/bookings/booking-detail', { state: { booking } });
   };
 
+  React.useEffect(() => {
+    if (!users || users.length === 0) {
+      void getAllUsers().catch(() => {});
+    }
+  }, [users, getAllUsers]);
+
+  const getCreatedAtTime = React.useCallback((booking: BookingItem): number => {
+    const toTime = (value: string | undefined): number => {
+      if (!value) return 0;
+      const t = new Date(value).getTime();
+      return Number.isNaN(t) ? 0 : t;
+    };
+    if (isLegacyBooking(booking)) {
+      return toTime(booking.dateBooked ?? booking.date);
+    }
+    const api = booking as ApiBooking;
+    return toTime(api.createdAt ?? api.startDatetime);
+  }, []);
+
+  const sortedBookings = React.useMemo(() => {
+    const indexed = bookings.map((booking, idx) => ({ booking, idx }));
+    indexed.sort((a, b) => {
+      const diff = getCreatedAtTime(b.booking) - getCreatedAtTime(a.booking);
+      return diff !== 0 ? diff : a.idx - b.idx;
+    });
+    return indexed.map(item => item.booking);
+  }, [bookings, getCreatedAtTime]);
+
+  const resolveOrganizerName = (booking: BookingItem): string => {
+    if (isLegacyBooking(booking)) {
+      return (booking.organizer ?? booking.user ?? '').trim() || '—';
+    }
+    const api = booking as ApiBooking;
+    const userId = (api as any).userRefId;
+    if (!userId) return '—';
+    const user = users?.find(u => Number(u.id) === Number(userId));
+    if (!user) return '—';
+    const full = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+    return full || user.email || `User ${user.id}`;
+  };
+
   return (
     <div className="h-full flex flex-col space-y-4">
-      {bookings.map((booking) => {
+      {sortedBookings.map((booking) => {
         // Normalize fields between legacy booking and API booking
-        const isLegacy = (b: BookingItem): b is LegacyBooking => (b as any).date !== undefined || (b as any).name !== undefined;
+        const legacyBooking = isLegacyBooking(booking) ? booking : null;
+        const apiBooking = legacyBooking ? null : (booking as ApiBooking);
 
-        const title = isLegacy(booking) ? booking.name : (booking as ApiBooking).title;
+        const title = legacyBooking ? legacyBooking.name : apiBooking?.title ?? 'Untitled Booking';
 
         // Derive date parts
         let day = '01';
         let month = 'Jan';
         let year = '1970';
-        if (isLegacy(booking) && booking.date) {
-          const parts = booking.date.split('-');
+        if (legacyBooking?.date) {
+          const parts = legacyBooking.date.split('-');
           if (parts.length === 3) {
             [day, month, year] = parts;
           }
-        } else if (!isLegacy(booking)) {
-          const start = new Date((booking as ApiBooking).startDatetime);
+        } else if (apiBooking) {
+          const start = new Date(apiBooking.startDatetime);
           const opts: Intl.DateTimeFormatOptions = { day: '2-digit', month: 'short', year: 'numeric' };
           const formatted = start.toLocaleDateString(undefined, opts); // e.g., "24 May 2025"
           const [d, m, y] = formatted.replace(',', '').split(' ');
@@ -57,11 +102,12 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
         }
 
         // Time window
-        const time = isLegacy(booking)
-          ? booking.time
+        const time = legacyBooking
+          ? legacyBooking.time
           : (() => {
-              const start = new Date((booking as ApiBooking).startDatetime);
-              const end = new Date((booking as ApiBooking).endDatetime);
+              if (!apiBooking) return '';
+              const start = new Date(apiBooking.startDatetime);
+              const end = new Date(apiBooking.endDatetime);
               const fmt: Intl.DateTimeFormatOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
               return `${start.toLocaleTimeString(undefined, fmt)}-${end.toLocaleTimeString(undefined, fmt)}`;
             })();
@@ -70,20 +116,25 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
         let roomLabel = '';
         let location = '';
         let computedRoom: Room | undefined = undefined;
-        if (isLegacy(booking)) {
-          roomLabel = booking.room;
-          location = booking.location;
-        } else {
-          const api = booking as ApiBooking;
-          computedRoom = api.room ?? rooms.find(r => String(r.roomId) === String(api.roomId));
+        if (legacyBooking) {
+          roomLabel = legacyBooking.room;
+          location = legacyBooking.location;
+        } else if (apiBooking) {
+          computedRoom = apiBooking.room ?? rooms.find(r => String(r.roomId) === String(apiBooking.roomId));
           roomLabel = computedRoom?.name || computedRoom?.code || '';
-          location = computedRoom?.location || '';
+          const levelText = (typeof computedRoom?.level === 'string' && computedRoom.level.trim().length > 0)
+            ? `Level ${computedRoom.level.trim()}`
+            : undefined;
+          const locParts = [computedRoom?.location, levelText].filter((part): part is string => typeof part === 'string' && part.trim().length > 0);
+          location = locParts.join(', ');
         }
 
         const status: string = (booking as any).status ?? 'Pending';
         const statusClass = statusColors[status] ?? 'text-gray-500';
 
-        const key = String((booking as any).bookingId ?? (booking as any).id ?? `${title}-${(booking as any).startDatetime ?? ''}`);
+        const key = String((booking as any).bookingId ?? (booking as any).id ?? `${title ?? ''}-${(booking as any).startDatetime ?? ''}`);
+
+        const organizerName = resolveOrganizerName(booking);
 
         return (
           <div
@@ -102,9 +153,8 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
             <div className="w-full h-28 rounded-lg flex-shrink-0 md:w-50 md:h-16 overflow-hidden">
               <img
                 src={(() => {
-                  const api = booking as ApiBooking;
-                  const room = !isLegacy(booking)
-                    ? (api.room ?? rooms.find(r => String(r.roomId) === String(api.roomId)))
+                  const room = apiBooking
+                    ? (apiBooking.room ?? rooms.find(r => String(r.roomId) === String(apiBooking.roomId)))
                     : undefined;
                   const img = room?.imageUrl?.trim();
                   if (img) return img;
@@ -136,12 +186,12 @@ const BookingList: React.FC<BookingListProps> = ({ bookings }) => {
 
             <div className="grid grid-cols-2 gap-x-9 w-full md:w-52 text-sm text-[#1F2937]">
               <span className="font-medium text-gray-500 whitespace-nowrap">Organizer</span>
-              <span className="truncate">John Doe</span>
+              <span className="truncate">{organizerName}</span>
 
               <span className="font-medium text-gray-500 whitespace-nowrap">Date Requested</span>
               <span className="truncate">
-                {(!isLegacy(booking) && (booking as ApiBooking).createdAt)
-                  ? new Date((booking as ApiBooking).createdAt).toLocaleDateString()
+                {(apiBooking && apiBooking.createdAt)
+                  ? new Date(apiBooking.createdAt).toLocaleDateString()
                   : '—'}
               </span>
             </div>

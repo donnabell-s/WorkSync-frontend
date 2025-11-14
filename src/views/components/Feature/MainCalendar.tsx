@@ -130,7 +130,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
                   >
                     <button
                       onClick={() => handleDayClick(date)}
-                      className="flex flex-col items-center justify-start w-full h-full cursor-pointer transition duration-200 focus:outline-none p-1.5"
+                      className={`flex flex-col items-center justify-start w-full h-full cursor-pointer transition duration-200 focus:outline-none p-1.5 ${date.getMonth() !== currentMonth ? 'bg-[#F5F6F8]' : ''}`}
                       type="button"
                       tabIndex={0}
                     >

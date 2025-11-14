@@ -11,13 +11,18 @@ interface Props {
 }
 
 const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case 'upcoming': return 'text-[#10B981]';
-    case 'confirmed': return 'text-[#10B981]';
-    case 'completed': return 'text-[#F59E0B]';
-    case 'cancelled': return 'text-[#EF4444]';
-    default: return 'text-gray-800';
-  }
+  const normalized = status.toLowerCase();
+  const map: Record<string, string> = {
+    approved: 'text-[#10B981]',
+    upcoming: 'text-[#10B981]',
+    confirmed: 'text-[#10B981]',
+    pending: 'text-[#F59E0B]',
+    completed: 'text-[#F59E0B]',
+    cancelled: 'text-[#EF4444]',
+    canceled: 'text-[#EF4444]',
+    declined: 'text-[#EF4444]',
+  };
+  return map[normalized] ?? 'text-gray-800';
 };
 
 const getTdClasses = () => 'py-4 px-4';

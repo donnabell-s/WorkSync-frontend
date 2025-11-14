@@ -28,7 +28,7 @@ interface AddRoomForm {
 const AddRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
     const statuses = ['Active', 'Inactive', 'Under Maintenance'];
-    const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
+    const facilities = ['Projector', 'Whiteboard', 'LED Display', 'Air Conditioning', 'Internet Access', 'Coffee / Water Station', 'Microphone & Speakers'];
     const { addRoom } = useRooms();
     const navigate = useNavigate();
 
