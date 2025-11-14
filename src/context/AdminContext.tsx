@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '../../server/types';
-import { adminsApi } from '../api/client';
+import { User } from '../types';
+import { adminsService } from '../services/admins.service';
 import { useAuth } from './AuthContext';
 
 interface AdminContextType {
@@ -10,7 +10,7 @@ interface AdminContextType {
   error: string | null;
   fetchAdmins: () => Promise<void>;
   getAdminById: (id: string) => Promise<void>;
-  addAdmin: (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  addAdmin: (admin: { firstName: string; lastName: string; email: string; password: string; isActive?: boolean }) => Promise<void>;
   updateAdmin: (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deleteAdmin: (id: string) => Promise<void>;
 }
@@ -27,10 +27,8 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const fetchAdmins = async () => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.getAll();
-      setAdmins(response.data);
-    } catch (err) {
-      setError('Failed to fetch admins');
+      const data = await adminsService.getAll();
+      setAdmins(data);
     } finally {
       setIsLoading(false);
     }
@@ -39,24 +37,18 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const getAdminById = async (id: string) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.getById(id);
-      setCurrentAdmin(response.data);
-    } catch (err) {
-      setError('Admin not found');
+      const data = await adminsService.getById(id);
+      setCurrentAdmin(data);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const addAdmin = async (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => {
+  const addAdmin = async (admin: { firstName: string; lastName: string; email: string; password: string; isActive?: boolean }) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.create({ admin });
-      if (response.data) {
-        setAdmins(prev => [...prev, response.data]);
-      }
-    } catch (err) {
-      setError('Failed to add admin');
+      const created = await adminsService.create(admin);
+      setAdmins(prev => [...prev, created]);
     } finally {
       setIsLoading(false);
     }
@@ -65,14 +57,9 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const updateAdmin = async (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => {
     setIsLoading(true);
     try {
-      const response = await adminsApi.update(id, { admin });
-      console.log('Update response:', response.data);
-      if (response.data) {
-        setAdmins(prev => prev.map(a => (a.id === id ? response.data : a)));
-        setCurrentAdmin(response.data);
-      }
-    } catch (err) {
-      setError('Failed to update admin');
+      const updated = await adminsService.update(id, admin);
+      setAdmins(prev => prev.map(a => (String(a.id) === String(id) ? updated : a)));
+      setCurrentAdmin(updated);
     } finally {
       setIsLoading(false);
     }
@@ -81,19 +68,20 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   const deleteAdmin = async (id: string) => {
     setIsLoading(true);
     try {
-      await adminsApi.delete(id);
-      setAdmins(prev => prev.filter(a => a.id !== id));
+      await adminsService.remove(id);
+      setAdmins(prev => prev.filter(a => String(a.id) !== String(id)));
       setCurrentAdmin(null);
-    } catch (err) {
-      setError('Failed to delete admin');
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
-      fetchAdmins();
+    if (user) {
+      const r = String(user.role || '').toLowerCase();
+      if (r === 'admin' || r === 'superadmin') {
+        fetchAdmins();
+      }
     }
   }, [user]);
 

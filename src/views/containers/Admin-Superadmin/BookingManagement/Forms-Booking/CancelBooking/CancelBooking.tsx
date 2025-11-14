@@ -57,7 +57,7 @@ const CancelBooking = () => {
         <AdminHeading label="CANCEL BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
-          <Input label='Meeting/Event Title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value='Marketing Project Proposal' />
+          <Input label='Meeting/Event Title' name='title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value='Marketing Project Proposal' />
           <div className='md:col-span-2 flex gap-4'>
             <SchedInput label='Start Date/Time' value1={booking.date} />
             <SchedInput label='End Date/Time' value2={booking.date} />
@@ -87,8 +87,8 @@ const CancelBooking = () => {
           </div>
 
           <div className='flex flex-col gap-4'>
-            <Input label='Expected Attendees' placeholder='Enter number of expected attendees' type='number' value='120' />
-            <SelectInput label='Select Room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
+            <Input label='Expected Attendees' name='attendees' placeholder='Enter number of expected attendees' type='number' value='120' />
+            <SelectInput label='Select Room' name='room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
 
             {
               openModal ? (

@@ -3,7 +3,7 @@ import RoomList from '../../../../components/Feature/RoomList'
 import ViewManagementHeader from '../../../../components/UI/ViewManagementHeader'
 import { useEffect, useState } from 'react'
 import { useRooms } from '../../../../../context/RoomContext'
-import { Room } from '../../../../../../server/types'
+import { Room } from '../../../../../types'
 
 const ViewRooms = () => {
   const { rooms } = useRooms()

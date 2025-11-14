@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { User } from '../../../../../../server/types';
+import { User } from '../../../../../types';
 import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
 const statuses = ['Active', 'Inactive'];
 
 const EditUser: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, getAllUsers, updateUser, deleteUser } = useAuth();
+  const { currentUser, getAllUsers, updateUser, deleteUser, getUserById } = useAuth();
 
   // Add a local state for permissions and status
-  const [form, setForm] = useState<Omit<User, 'id' | 'createdAt' | 'updatedAt'>>({
-    fname: '',
-    lname: '',
+  const [form, setForm] = useState<Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }>({
+    firstName: '',
+    lastName: '',
     email: '',
-    role: 'user',
+    role: 'User',
     isActive: true,
     password: '',
   });
@@ -24,7 +24,17 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (currentUser) {
-      setForm(currentUser);
+      // Preserve controlled defaults; normalize role to Admin/User only
+      const r = String((currentUser as any).role || '').toLowerCase();
+      const normalizedRole = r === 'admin' ? 'Admin' : 'User';
+      setForm({
+        firstName: currentUser.firstName ?? '',
+        lastName: currentUser.lastName ?? '',
+        email: currentUser.email ?? '',
+        role: normalizedRole,
+        isActive: Boolean(currentUser.isActive),
+        password: '',
+      });
       setStatus(currentUser.isActive ? 'Active' : 'Inactive');
     }
   }, [currentUser]);
@@ -44,12 +54,11 @@ const EditUser: React.FC = () => {
     const updatedUser = {
       ...form,
       isActive: status === 'Active',
-      password: currentUser.password, 
     };
 
     console.log('Updated User:', updatedUser);
     // console.log('Current Admin:', user);
-    updateUser(currentUser.id, updatedUser)
+  updateUser(String(currentUser.id), updatedUser)
       .then(() => {
         console.log('User updated successfully');
         return getAllUsers(); // Fetch updated admins list
@@ -62,7 +71,7 @@ const EditUser: React.FC = () => {
 
   const handleDelete = () => {
     if (currentUser!.id) {
-      deleteUser(currentUser!.id);
+      deleteUser(String(currentUser!.id));
       navigate('/admin/users/view');
     }
   };
@@ -74,6 +83,12 @@ const EditUser: React.FC = () => {
 
   useEffect(() => {
     if (!currentUser) {
+      // Try to recover selected user from localStorage on direct loads
+      const sel = localStorage.getItem('selectedUserId');
+      if (sel) {
+        getUserById(sel);
+        return;
+      }
       navigate('/admin/users/view');
     }
   }, [currentUser, navigate]);
@@ -85,24 +100,24 @@ const EditUser: React.FC = () => {
       </div>
       <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 p-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-2">EDIT USER INFORMATION</h2>
-        <p className="text-sm text-gray-500 mb-6">User / {form.fname} {form.lname} / Edit</p>
+  <p className="text-sm text-gray-500 mb-6">User / {form.firstName} {form.lastName} / Edit</p>
         <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Name</label>
           <div className="flex gap-2">
             <input
               className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
-              name="fname"
+              name="firstName"
               placeholder="First Name"
-              value={form.fname}
+              value={form.firstName ?? ''}
               onChange={handleChange}
               required
             />
             <input
               className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
-              name="lname"
+              name="lastName"
               placeholder="Last Name"
-              value={form.lname}
+              value={form.lastName ?? ''}
               onChange={handleChange}
               required
             />
@@ -114,29 +129,30 @@ const EditUser: React.FC = () => {
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             name="email"
             type="email"
-            value={form.email}
+            value={form.email ?? ''}
             onChange={handleChange}
             required
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label className="font-medium">Account Security</label>
-          <input
+          <label className="font-medium">Role</label>
+          <select
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="password"
-            type="password"
-            value={form.password}
+            name="role"
+            value={(form.role as any) ?? 'User'}
             onChange={handleChange}
-            required
-          />
+          >
+            <option value="User">User</option>
+            <option value="Admin">Admin</option>
+          </select>
         </div>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Status</label>
           <select
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="isActive"
-            value={form.isActive ? 'Active' : 'Inactive'}
-            onChange={handleChange}
+            name="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
           >
             {statuses.map((status) => (
               <option key={status} value={status}>{status}</option>

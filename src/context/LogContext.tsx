@@ -1,10 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Log } from '../../server/types';
-import { LogsApi } from '../api';
+import React, { createContext, useContext, useState, useCallback } from 'react';
+import { Log } from '../types';
+import { logsService } from '../services/logs.service';
 
 interface LogsContextType {
   logs: Log[];
-  fetchRoomLogs: () => Promise<void>;
+  fetchRoomLogs: (options?: { force?: boolean }) => Promise<void>;
   addLog: (log: Omit<Log, 'id' | 'timestamp'>) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -16,34 +16,46 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const inFlightRef = React.useRef<Promise<Log[]> | null>(null);
 
-  const fetchRoomLogs = async () => {
+  const fetchRoomLogs = useCallback(async (options?: { force?: boolean }) => {
+    if (inFlightRef.current) {
+      await inFlightRef.current;
+      return;
+    }
+    if (loaded && !options?.force) return;
     setLoading(true);
     setError(null);
-    try {
-      const response = await LogsApi.getAllRoomLogs();
-      console.log('Fetched Room Logs:', response.data);
-      setLogs(response.data);
-    } catch (err: any) {
-      setError(err.message || 'Failed to fetch logs');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const p = logsService.getRoomLogs()
+      .then((data) => {
+        setLogs(Array.isArray(data) ? data : []);
+        setLoaded(true);
+        return Array.isArray(data) ? data : [];
+      })
+      .catch((e: any) => {
+        setError(e?.message ?? 'Failed to load logs');
+        setLogs([]);
+        return [] as Log[];
+      })
+      .finally(() => {
+        inFlightRef.current = null;
+        setLoading(false);
+      });
+    inFlightRef.current = p;
+    await p;
+  }, [loaded]);
 
   const addLog = async (logData: Omit<Log, 'id' | 'timestamp'>) => {
-    setError(null);
     try {
-      await LogsApi.create(logData);
-      await fetchRoomLogs();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create log');
+      await logsService.createRoomLog(logData);
+      await fetchRoomLogs({ force: true });
+    } catch (e: any) {
+      setError(e?.message ?? 'Failed to add log');
     }
   };
 
-  useEffect(() => {
-    fetchRoomLogs();
-  }, []);
+  // Do not auto-fetch on mount; pages should call fetchRoomLogs() on demand
 
   return (
     <LogsContext.Provider value={{ logs, fetchRoomLogs, addLog, loading, error }}>

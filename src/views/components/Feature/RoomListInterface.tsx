@@ -5,6 +5,7 @@ export interface MeetingRoom {
     size: 'Small' | 'Medium' | 'Large';
     numberOfSeats: number;
     additionalFacilities: string[];
+    imageUrl?: string; // prefer live backend image when available
     imageFile: string;
     status: 'available' | 'occupied' | 'under maintenance' | 'reserved';
 }

@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react'
+import React from 'react'
 import { MdEdit, MdDelete } from "react-icons/md";
 import { IoSearch } from "react-icons/io5";
 import {useNavigate} from 'react-router-dom';
@@ -18,15 +18,14 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
             <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
                 <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
                     <img
-                        src={
-                            currentRoom!.size === 'Small'
+                        src={currentRoom!.imageUrl && currentRoom!.imageUrl.length > 0 ? currentRoom!.imageUrl : (
+                            currentRoom!.sizeLabel === 'Small'
                                 ? '/meetingroom/small.jpg'
-                                : currentRoom!.size === 'Medium'
+                                : currentRoom!.sizeLabel === 'Medium'
                                     ? '/meetingroom/medium.jpg'
-                                    : currentRoom!.size === 'Large'
+                                    : currentRoom!.sizeLabel === 'Large'
                                         ? '/meetingroom/large.jpg'
-                                        : '/meetingroom/default.jpg'
-                        }
+                                        : '/meetingroom/default.jpg')}
                         alt={currentRoom!.name}
                         className="w-full h-full object-cover rounded-md"
                     />
@@ -35,7 +34,9 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     <div className='flex flex-col text-sm gap-1'>
                         <div className='font-bold'>{currentRoom!.name}</div>
                         <div className='font-bold'>{currentRoom!.code}</div>
-                        <div className={`font-bold ${currentRoom!.status === 'Available' ? 'text-green-500' : (currentRoom!.status === 'Occupied' ? 'text-[#F59E0B]' : 'text-gray-500')}`}>{currentRoom!.status}</div>
+                        <div className={`font-bold ${String(currentRoom!.status).toLowerCase() === 'available' ? 'text-green-500' : (String(currentRoom!.status).toLowerCase() === 'occupied' ? 'text-[#F59E0B]' : 'text-gray-500')}`}>
+                            {String(currentRoom!.status).toLowerCase() === 'available' ? 'Active' : currentRoom!.status}
+                        </div>
                         <div></div>
                     </div>
                     <div className='flex flex-col text-sm gap-1'>
@@ -46,7 +47,7 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
                     </div>
                     <div className='flex flex-col text-sm gap-1'>
                         <div>{currentRoom!.location}, Level {currentRoom!.level}</div>
-                        <div>{currentRoom!.size}</div>
+                        <div>{currentRoom!.sizeLabel}</div>
                         <div>{currentRoom!.seats}</div>
                         <div>
                             {currentRoom!.amenities && currentRoom!.amenities.length > 0

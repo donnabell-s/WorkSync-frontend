@@ -20,17 +20,8 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className
   const inputRef = useRef<HTMLSelectElement>(null);
 
   useEffect(() => {
-    const input = inputRef.current;
-    if (input) {
-          const handleInput = (event: Event) => {
-            const target = event.target as HTMLSelectElement;
-            setFilled(target.value !== '');
-            onChange && onChange(event as unknown as React.ChangeEvent<HTMLSelectElement>);
-          };
-          input.addEventListener('input', handleInput);
-          return () => input.removeEventListener('input', handleInput);
-        }
-  }, []);
+    setFilled(Boolean(value && value !== ''));
+  }, [value]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -58,17 +49,21 @@ const SelectInput: React.FC<SelectInputProps> = ({ label, placeholder, className
               id='input'
               name={name}
               value={value ?? ''}
+              onChange={(e) => {
+                setFilled(e.target.value !== '');
+                onChange?.(e);
+              }}
               className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2 cursor-pointer'
             >
-              <option value="" disabled selected hidden>
-              {placeholder || 'Select an option'}
+              <option value="" disabled hidden>
+                {placeholder || 'Select an option'}
               </option>
               {options &&
-              options.map((option, index) => (
-                <option key={index} value={option}>
-                {option}
-                </option>
-              ))}
+                options.map((option, index) => (
+                  <option key={index} value={option}>
+                    {option}
+                  </option>
+                ))}
             </select>
             )
         )

@@ -1,5 +1,6 @@
 import React from 'react'
 import { IoIosArrowBack } from 'react-icons/io';
+import { Link } from 'react-router-dom';
 
 interface AdminBackLinkProps {
     label: string;
@@ -11,10 +12,10 @@ const AdminBackLink: React.FC<AdminBackLinkProps> = ({ label, backPath, onBackCl
     return (
         <div className='w-fit'>
             {backPath ?
-                <a href={backPath} className='flex items-center gap-2 text-[#2563EB] text-md font-medium cursor-pointer hover:underline'>
+                <Link to={backPath} className='flex items-center gap-2 text-[#2563EB] text-md font-medium cursor-pointer hover:underline'>
                     <IoIosArrowBack className='size-5' />
                     {label}
-                </a> :
+                </Link> :
                 <button onClick={onBackClick} className='flex items-center gap-2 text-[#2563EB] text-md font-medium cursor-pointer hover:underline'>
                     <IoIosArrowBack className='size-5' />
                     {label}

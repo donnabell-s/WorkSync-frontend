@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLogs } from '../../../../context/LogContext';
 import { useRooms } from '../../../../context/RoomContext';
 import { format } from 'date-fns';
@@ -27,7 +27,10 @@ const ROOM_LOGS_COLUMNS: DataTableColumn<RoomLogRow>[] = [
   {
     key: 'status',
     header: 'Status',
-    render: (row) => <span className={`font-semibold ${row.statusColor}`}>{row.status}</span>,
+    render: (row) => {
+      const label = row.status.toLowerCase() === 'available' ? 'Active' : row.status;
+      return <span className={`font-semibold ${row.statusColor}`}>{label}</span>;
+    },
   },
   { key: 'date', header: 'Date' },
 ];
@@ -47,8 +50,11 @@ const getStatusColor = (status: string) => {
 };
 
 const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
-  const { logs } = useLogs();
+  const { logs, fetchRoomLogs } = useLogs();
   const { rooms } = useRooms();
+  useEffect(() => {
+    fetchRoomLogs().catch(() => {});
+  }, [fetchRoomLogs]);
 
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,16 +64,16 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
     // Currently only room logs are available via context; we format them consistently.
     return logs
       .map((log) => {
-        const room = rooms.find((r) => r.id === String(log.roomId));
+  const room = rooms.find((r: any) => String(r.roomId) === String((log as any).roomId));
         if (!room) return null;
         return {
           action: log.eventType,
           room: `${room.name} | ${room.code}`,
           location: room.location || 'N/A',
           capacity: (room as any).size ?? '-',
-          status: log.currentStatus,
+          status: (log as any).currentStatus ?? 'unknown',
           date: format(new Date(log.timestamp), 'MM/dd/yy\nhh:mmaaa'),
-          statusColor: getStatusColor(log.currentStatus),
+          statusColor: getStatusColor((log as any).currentStatus ?? 'unknown'),
         } as RoomLogRow;
       })
       .filter((x): x is RoomLogRow => Boolean(x))

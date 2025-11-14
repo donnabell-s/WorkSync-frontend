@@ -1,6 +1,7 @@
 // src/components/ProtectedRoute.tsx
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { PATHS } from '../../constant';
 
 interface ProtectedRouteProps {
   roles?: string[];
@@ -15,12 +16,17 @@ export default function ProtectedRoute({ roles, children }: ProtectedRouteProps)
   // }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={PATHS.LOGIN.path} replace />;
   }
 
-  if (roles && !roles.includes(user.role)) {
-    return <Navigate to="/unauthorized" replace />;
+  if (roles) {
+    const allowed = roles.map(r => r.toLowerCase());
+    const userRole = String(user.role || '').toLowerCase();
+    if (!allowed.includes(userRole)) {
+      return <Navigate to={PATHS.UNAUTHORIZED.path} replace />;
+    }
   }
+  
 
   return <>{children ? children : <Outlet />}</>;
 }

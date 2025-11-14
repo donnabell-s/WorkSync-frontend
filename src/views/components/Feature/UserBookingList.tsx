@@ -11,13 +11,18 @@ interface Props {
 }
 
 const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case 'upcoming': return 'text-[#10B981]';
-    case 'confirmed': return 'text-[#10B981]';
-    case 'completed': return 'text-[#F59E0B]';
-    case 'cancelled': return 'text-[#EF4444]';
-    default: return 'text-gray-800';
-  }
+  const normalized = status.toLowerCase();
+  const map: Record<string, string> = {
+    approved: 'text-[#10B981]',
+    upcoming: 'text-[#10B981]',
+    confirmed: 'text-[#10B981]',
+    pending: 'text-[#F59E0B]',
+    completed: 'text-[#F59E0B]',
+    cancelled: 'text-[#EF4444]',
+    canceled: 'text-[#EF4444]',
+    declined: 'text-[#EF4444]',
+  };
+  return map[normalized] ?? 'text-gray-800';
 };
 
 const getTdClasses = () => 'py-4 px-4';
@@ -58,8 +63,8 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
   }
   if (dateOrder !== 'all') {
     filtered.sort((a, b) => {
-      const dateA = new Date(a.startDateTime);
-      const dateB = new Date(b.startDateTime);
+      const dateA = new Date((a as any).startDatetime ?? (a as any).startDateTime);
+      const dateB = new Date((b as any).startDatetime ?? (b as any).startDateTime);
       return dateOrder === 'asc' ? dateA.getTime() - dateB.getTime() : dateB.getTime() - dateA.getTime();
     });
   }
@@ -72,10 +77,10 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
 
   // Trigger loading rooms for visible bookings
   useEffect(() => {
-    visibleBookings.forEach(b => {
-      const hasRoom = rooms.find(r => r.id === b.roomId);
+    visibleBookings.forEach((b: any) => {
+      const hasRoom = rooms.find(r => String((r as any).roomId) === String(b.roomId));
       if (!hasRoom) {
-        getRoomById(b.roomId);
+        getRoomById(String(b.roomId));
       }
     });
   }, [visibleBookings, rooms, getRoomById]);
@@ -104,25 +109,23 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
             </tr>
           </thead>
           <tbody>
-            {visibleBookings.map((booking) => {
-              const room = rooms.find(r => r.id === booking.roomId);
+            {visibleBookings.map((booking: any) => {
+              const room = rooms.find(r => String((r as any).roomId) === String(booking.roomId));
               return (
                 <tr
-                  key={booking.id}
-                  className={`text-sm odd:bg-white even:bg-gray-100 ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                  key={booking.bookingId ?? booking.id}
+                  className={`text-sm odd:bg-white even:bg-gray-100 hover:bg-gray-100 cursor-pointer`}
                   onClick={() => {
-                    if (booking.status === "confirmed") {
-                      localStorage.setItem("selectedBookingId", String(booking.id));
-                      navigate(`/user/edit-booking`);
-                    }
+                    localStorage.setItem("selectedBookingId", String(booking.bookingId ?? booking.id));
+                    navigate(`/user/view-booking`);
                   }}
                 >
-                  <td className={getTdClasses()}>{booking.id}</td>
+                  <td className={getTdClasses()}>{booking.bookingId ?? booking.id}</td>
                   <td className={getTdClasses()}>{booking.title}</td>
                   <td className={getTdClasses()}>{room ? room.name : 'Loading...'}</td>
                   <td className={getTdClasses()}>{room ? room.location : 'Loading...'}</td>
-                  <td className={getTdClasses()}>{formatDate(booking.startDateTime)}</td>
-                  <td className={getTdClasses()}>{formatTime(booking.startDateTime)} - {formatTime(booking.endDateTime)}</td>
+                  <td className={getTdClasses()}>{formatDate(booking.startDatetime ?? booking.startDateTime)}</td>
+                  <td className={getTdClasses()}>{formatTime(booking.startDatetime ?? booking.startDateTime)} - {formatTime(booking.endDatetime ?? booking.endDateTime)}</td>
                   <td className={`py-3 px-4 font-semibold uppercase ${getStatusColor(booking.status)}`}>
                     {booking.status}
                   </td>

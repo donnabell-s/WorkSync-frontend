@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import { LuCalendar1 } from "react-icons/lu";
-import { Room } from "../../../../server/types";
+import type { Room } from "../../../types";
 import { useRooms } from "../../../context/RoomContext";
 
 interface RoomListProps {
@@ -11,7 +11,7 @@ interface RoomListProps {
 
 const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   const navigate = useNavigate();
-  const { currentRoom, getRoomById } = useRooms();
+  const { getRoomById } = useRooms();
 
   const path = role === "admin" ? "/admin/rooms/room-detail" : "/user/book-room";
   const label = role === "admin" ? "View Room Details" : "Book Room";
@@ -27,7 +27,11 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
     }
   };
 
-  const getImageSrc = (size: string) => {
+  const displayStatus = (status: string) => {
+    return status.toLowerCase() === 'available' ? 'Active' : status;
+  };
+
+  const getImageSrc = (size?: string) => {
     if (size) {
       switch (size.toLowerCase()) {
         case "small":
@@ -40,6 +44,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           return "/meetingroom/default.jpg";
       }
     }
+    return "/meetingroom/default.jpg";
   }
 
   const handleClick = async (roomId: string) => {
@@ -48,6 +53,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
     if (role === "admin" && label === "View Room Details") {
       try {
         await getRoomById(roomId);
+        navigate(path);
       } catch (error) {
         console.error("Failed to get room by ID:", error);
       }
@@ -57,12 +63,6 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
   };
 
 
-  useEffect(() => {
-    if (role === "admin" && currentRoom) {
-      navigate(path);
-    }
-  }, [currentRoom, role, navigate, path]);
-
   return (
     <div className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3 3xl:grid-cols-4">
       {rooms.map((room, index) => (
@@ -71,7 +71,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           className="bg-white rounded-md  shadow-[0_0_4px_rgba(0,0,0,0.1)] p-4 flex flex-col"
         >
           <img
-            src={`${getImageSrc(room.size)}`}
+            src={room.imageUrl && room.imageUrl.length > 0 ? room.imageUrl : getImageSrc(room.sizeLabel)}
             alt={room.name}
             className="w-full h-40 object-cover rounded-md"
           />
@@ -84,7 +84,7 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
           <div className="text-sm text-[#4B5563]">
             <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
               <p className="w-35 font-semibold">Size:</p>
-              <p>{room.size}</p>
+              <p>{room.sizeLabel}</p>
             </div>
             <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
               <p className="w-35 font-semibold">Seats:</p>
@@ -98,14 +98,14 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
               <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
                 <p className="w-35 font-semibold">Status:</p>
                 <p className={`uppercase font-semibold ${getStatusClass(room.status)}`}>
-                  {room.status}
+                  {displayStatus(room.status)}
                 </p>
               </div>
             )}
           </div>
           <div className="flex flex-grow items-end mt-4">
             <button
-              onClick={() => handleClick(room.id)}
+              onClick={() => handleClick(room.roomId)}
               className={`bg-[#10B981] py-1.5 text-sm text-white rounded-sm flex items-center justify-center gap-2 cursor-pointer ${role === "admin" ? "p-3" : "p-6"
                 }`}
             >

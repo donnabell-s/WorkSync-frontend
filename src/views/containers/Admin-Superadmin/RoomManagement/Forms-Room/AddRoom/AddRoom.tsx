@@ -6,21 +6,37 @@ import AdminBackLink from '../../../../../components/UI/AdminBackLink';
 import Input from '../../../../../components/UI/AdminForms/Input';
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput';
 import MultiSelectInput from '../../../../../components/UI/AdminForms/MultiSelectInput';
+import OperatingHoursInput from '../../../../../components/UI/AdminForms/OperatingHoursInput';
 import { useRooms } from '../../../../../../context/RoomContext';
-import { Room } from '../../../../../../../server/types';
+// Local form type; service maps to backend shape (sizeLabel/status/etc.)
+interface AddRoomForm {
+    name: string;
+    code: string;
+    location: string;
+    level: string; // stored as string; service normalizes as needed
+    size: 'Small' | 'Medium' | 'Large';
+    seats: number;
+    status: 'Active' | 'Inactive' | 'Under Maintenance';
+    amenities: string[];
+    operatingHours: {
+        weekdays: { open: string; close: string };
+        weekends: { open: string; close: string };
+    };
+    imageUrl?: string;
+}
 
 const AddRoom: React.FC = () => {
     const sizes = ['Small', 'Medium', 'Large'];
     const statuses = ['Active', 'Inactive', 'Under Maintenance'];
-    const facilities = ['Projector', 'Whiteboard', 'Video Conferencing', 'Air Conditioning'];
+    const facilities = ['Projector', 'Whiteboard', 'LED Display', 'Air Conditioning', 'Internet Access', 'Coffee / Water Station', 'Microphone & Speakers'];
     const { addRoom } = useRooms();
     const navigate = useNavigate();
 
-    const [formData, setFormData] = useState<Omit<Room, 'id' | 'createdAt' | 'updatedAt'>>({
+    const [formData, setFormData] = useState<AddRoomForm>({
         name: '',
         code: '',
         location: '',
-        level: 0,
+        level: '',
         size: 'Small',
         seats: 0,
     status: 'Active',
@@ -37,13 +53,28 @@ const AddRoom: React.FC = () => {
         },
     });
 
-    // Local state for image selection and preview (not yet persisted)
-    // We only need a preview for now; keep file reference if future upload integration is added.
+    // Image selection state for upload + preview
+    const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
+    const [imageError, setImageError] = useState<string>("");
+
+    const isValidImage = (file: File) => {
+        const allowed = ['image/jpeg','image/png','image/gif','image/webp'];
+        const max = 5 * 1024 * 1024; // 5MB
+        return allowed.includes(file.type) && file.size <= max;
+    };
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0] || null;
+        setImageError("");
+        setImageFile(null);
         if (file) {
+            if (!isValidImage(file)) {
+                setImageError('Please select a JPG/PNG/GIF/WEBP up to 5 MB.');
+                setImagePreview("");
+                return;
+            }
+            setImageFile(file);
             const url = URL.createObjectURL(file);
             setImagePreview(url);
         } else {
@@ -59,18 +90,25 @@ const AddRoom: React.FC = () => {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            if (name === 'seats') return { ...prev, seats: Number(value) || 0 };
+            if (name === 'level') return { ...prev, level: value };
+            if (name === 'name' || name === 'code' || name === 'location') {
+                return { ...prev, [name]: value } as AddRoomForm;
+            }
+            return { ...prev, [name]: value } as AddRoomForm;
+        });
     };
 
     const handleSelect = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value } as AddRoomForm));
     };
 
     const handleSubmit = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
-        console.log('Form Data:', formData);
-        addRoom(formData)
+        console.log('AddRoom submit:', formData, imageFile ? '(with file)' : '(no file)');
+        addRoom(formData as any, imageFile)
             .then(() => {
                 console.log('Room added successfully');
                 navigate('/admin/rooms/view');
@@ -102,8 +140,13 @@ const AddRoom: React.FC = () => {
                         <Input label='Seats' name='seats' type='number' placeholder='Enter Number of Seats' className='md:col-span-2' onChange={handleInputChange} />
                     </div>
 
-                    <div className='flex flex-col gap-4'>
-                        <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
+                                        <div className='flex flex-col gap-4'>
+                                                <SelectInput label='Status' name='status' value={formData.status} options={statuses} onChange={handleSelect} />
+
+                                                <OperatingHoursInput
+                                                    value={formData.operatingHours as any}
+                                                    onChange={(val) => setFormData(prev => ({ ...prev, operatingHours: val as any }))}
+                                                />
 
                         <MultiSelectInput
                             label="Facilities"
@@ -128,6 +171,7 @@ const AddRoom: React.FC = () => {
                                 onChange={handleImageChange}
                                 className='w-full flex-grow text-sm border-zinc-300 border-1 rounded-md p-2 focus:outline-zinc-300 focus:outline-2'
                             />
+                            {imageError && (<span className='text-xs text-red-600'>{imageError}</span>)}
                             {imagePreview && (
                                 <div className='mt-2'>
                                     <img
