@@ -36,7 +36,7 @@ const ViewAdmins: React.FC = () => {
   const adminsPerPage = 8;
 
   const handleClick = async (id: string) => {
-    localStorage.setItem('selectedRoomId', id);
+    localStorage.setItem('selectedAdminId', id);
     try {
       setEditAdmin(true);
       await getAdminById(id);

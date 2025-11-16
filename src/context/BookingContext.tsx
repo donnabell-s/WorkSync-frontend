@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Booking } from '../types';
 import { bookingsService, type CreateBookingPayload } from '../services/bookings.service';
 import { useCallback } from "react";
+import { useAuth } from './AuthContext';
 
 interface BookingContextType {
   bookings: Booking[];
@@ -27,6 +28,7 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
   const [loaded, setLoaded] = useState(false);
   const inFlightListRef = React.useRef<Promise<Booking[]> | null>(null);
   const inFlightByIdRef = React.useRef<Map<number, Promise<Booking>>>(new Map());
+  const { token } = useAuth();
 
   const fetchBookings = useCallback(async (options?: { force?: boolean }) => {
     if (inFlightListRef.current) {
@@ -99,16 +101,16 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
       }
       if (!existing) throw new Error('Booking not found for update');
 
-      // Preserve recurrence if present; try to send as object if it is a JSON string
+      // Recurrence precedence: use patch if provided; otherwise preserve existing
       let recurrence: any = undefined;
-      if (typeof existing.recurrence === 'string') {
+      if (patch.recurrence !== undefined) {
+        recurrence = patch.recurrence;
+      } else if (typeof existing.recurrence === 'string') {
         try { recurrence = JSON.parse(existing.recurrence); } catch { recurrence = null; }
       } else if (existing.recurrence) {
         recurrence = existing.recurrence as any;
-      } else if (patch.recurrence !== undefined) {
-        recurrence = patch.recurrence;
       } else {
-        recurrence = null; // let backend treat as null/unchanged
+        recurrence = null;
       }
 
       const fullPayload: CreateBookingPayload = {
@@ -173,8 +175,11 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
 
 
   useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
+    // Avoid prefetching protected resources before login/token is set to prevent 401+CORS noise
+    if (token) {
+      fetchBookings();
+    }
+  }, [fetchBookings, token]);
 
   return (
     <BookingContext.Provider value={{

@@ -11,8 +11,8 @@ interface RoomContextType {
   error: string | null;
   fetchRooms: () => Promise<void>;
   getRoomById: (id: string) => Promise<void>;
-  addRoom: (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">) => Promise<void>;
-  updateRoom: (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  addRoom: (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">, file?: File | null) => Promise<void>;
+  updateRoom: (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>, file?: File | null) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
 }
 
@@ -75,20 +75,20 @@ export const RoomProvider: React.FC<{children: React.ReactNode}> = ({ children }
     }
   }, []);
 
-  const addRoom = async (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">) => {
+  const addRoom = async (room: Omit<Room, "roomId" | "createdAt" | "updatedAt">, file?: File | null) => {
     setIsLoading(true);
     try {
-      const created = await roomsService.create(room);
+      const created = await roomsService.create(room, file ?? undefined);
       setRooms(prev => [...prev, created]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const updateRoom = async (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>) => {
+  const updateRoom = async (id: string, room: Omit<Room, 'roomId' | 'createdAt' | 'updatedAt'>, file?: File | null) => {
     setIsLoading(true);
     try {
-      const updated = await roomsService.update(id, room);
+      const updated = await roomsService.update(id, room as any, file ?? undefined);
   setRooms(prev => prev.map(r => (String(r.roomId) === String(id) ? updated : r)));
       setCurrentRoom(updated);
     } finally {

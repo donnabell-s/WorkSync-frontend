@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router';
 import { Booking } from '../../../../../components/Feature/UserBookingListInterface';
 import AdminHeading from '../../../../../components/UI/AdminHeading'
 import AdminBackLink from '../../../../../components/UI/AdminBackLink'
-import { useRooms } from '../../../../../../context/RoomContext'
 import Input from '../../../../../components/UI/AdminForms/Input'
 import SchedInput from '../../../../../components/UI/AdminForms/SchedInput'
 import ToggleButton from '../../../../../components/UI/AdminForms/ToggleButton'
@@ -20,7 +19,6 @@ const CancelBooking = () => {
   const location = useLocation();
   const booking = (location.state as { booking: Booking })?.booking;
   const navigate = useNavigate();
-  const { rooms, getRoomById } = useRooms();
   const [toggle, setToggle] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>('');
@@ -41,37 +39,9 @@ const CancelBooking = () => {
     setOpenModal(!openModal);
   }
 
-  const handleBack = async (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const b: any = booking as any;
-    let targetRoomId: string | null = null;
-    if (b?.roomId) targetRoomId = String(b.roomId);
-    if (!targetRoomId && b?.roomCode && Array.isArray(rooms)) {
-      const match = rooms.find(r => String(r.code).toLowerCase() === String(b.roomCode).toLowerCase());
-      if (match) targetRoomId = String(match.roomId);
-    }
-    if (!targetRoomId && b?.roomName && Array.isArray(rooms)) {
-      const match = rooms.find(r => String(r.name).toLowerCase() === String(b.roomName).toLowerCase());
-      if (match) targetRoomId = String(match.roomId);
-    }
-    if (!targetRoomId) {
-      const fromStorage = localStorage.getItem('selectedRoomId');
-      if (fromStorage) targetRoomId = fromStorage;
-    }
-
-    if (targetRoomId) {
-      try {
-        localStorage.setItem('selectedRoomId', targetRoomId);
-        await getRoomById(targetRoomId);
-      } catch {}
-      navigate('/admin/rooms/room-detail');
-    } else {
-      navigate('/admin/rooms/view');
-    }
-  }
-
-  const handleBackClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    void handleBack(event);
+    navigate('/admin/bookings/booking-detail', { state: { booking } });
   }
 
   const handleCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -81,13 +51,13 @@ const CancelBooking = () => {
 
   return (
     <div className='max-h-max flex p-3 px-7 pb-5 flex-col gap-4'>
-  <AdminBackLink label='Back to Room Detail' onBackClick={handleBackClick} />
+      <AdminBackLink label='Back to Booking Detail' onBackClick={handleBack} />
 
       <div className='relative max-h-max flex flex-col p-5 bg-white rounded-md shadow-sm gap-4'>
         <AdminHeading label="CANCEL BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
-          <Input label='Meeting/Event Title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value='Marketing Project Proposal' />
+          <Input label='Meeting/Event Title' name='title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value='Marketing Project Proposal' />
           <div className='md:col-span-2 flex gap-4'>
             <SchedInput label='Start Date/Time' value1={booking.date} />
             <SchedInput label='End Date/Time' value2={booking.date} />
@@ -117,8 +87,8 @@ const CancelBooking = () => {
           </div>
 
           <div className='flex flex-col gap-4'>
-            <Input label='Expected Attendees' placeholder='Enter number of expected attendees' type='number' value='120' />
-            <SelectInput label='Select Room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
+            <Input label='Expected Attendees' name='attendees' placeholder='Enter number of expected attendees' type='number' value='120' />
+            <SelectInput label='Select Room' name='room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
 
             {
               openModal ? (
@@ -129,7 +99,7 @@ const CancelBooking = () => {
 
           <div className='flex gap-4 pt-5'>
             <AdminButton label='Cancel Booking' variant='primary' onClick={handleCancel} />
-            <AdminButton label='Cancel' variant='secondary' onClick={handleBackClick} />
+            <AdminButton label='Cancel' variant='secondary' onClick={handleBack} />
           </div>
         </form>
       </div>

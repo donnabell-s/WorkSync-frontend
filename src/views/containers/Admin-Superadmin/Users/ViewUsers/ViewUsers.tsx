@@ -35,7 +35,8 @@ const ViewUser = () => {
   const usersPerPage = 8;
 
   const handleClick = async (id: string) => {
-    localStorage.setItem('selectedRoomId', id);
+    // Persist selected user id for downstream pages (if needed)
+    localStorage.setItem('selectedUserId', id);
     try {
       setEditUser(true);
       await getUserById(id);

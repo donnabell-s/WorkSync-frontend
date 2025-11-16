@@ -1,13 +1,34 @@
-import { useState } from 'react'
-import { FaChevronLeft, FaChevronRight  } from "react-icons/fa6";
+import React from 'react';
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 
+const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-const DAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+interface SideCalendarProps {
+  currentMonth?: Date;
+  onMonthChange?: (next: Date) => void;
+}
 
-const SideCalendar = () => {
-  const today = new Date()
-  const [currentYear, setCurrentYear] = useState(today.getFullYear())
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth())
+const SideCalendar: React.FC<SideCalendarProps> = ({ currentMonth, onMonthChange }) => {
+  const today = new Date();
+  const [internalMonth, setInternalMonth] = React.useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+
+  const activeMonth = React.useMemo(() => {
+    if (currentMonth) {
+      return new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+    }
+    return internalMonth;
+  }, [currentMonth, internalMonth]);
+
+  const currentYear = activeMonth.getFullYear();
+  const currentMonthIndex = activeMonth.getMonth();
+
+  const setMonth = React.useCallback((date: Date) => {
+    if (onMonthChange) {
+      onMonthChange(date);
+    } else {
+      setInternalMonth(date);
+    }
+  }, [onMonthChange, setInternalMonth]);
 
   const getDaysInMonth = (year: number, month: number) => {
     const firstDay = new Date(year, month, 1);
@@ -27,36 +48,28 @@ const SideCalendar = () => {
     return days;
   };
 
-  const days = getDaysInMonth(currentYear, currentMonth)
+  const days = getDaysInMonth(currentYear, currentMonthIndex);
 
   const prevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11)
-      setCurrentYear(currentYear - 1)
-    } else {
-      setCurrentMonth(currentMonth - 1)
-    }
-  }
+    const prev = new Date(currentYear, currentMonthIndex - 1, 1);
+    setMonth(prev);
+  };
 
   const nextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0)
-      setCurrentYear(currentYear + 1)
-    } else {
-      setCurrentMonth(currentMonth + 1)
-    }
-  }
+    const next = new Date(currentYear, currentMonthIndex + 1, 1);
+    setMonth(next);
+  };
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
-  ]
+  ];
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-[#1F2937]">
-          {monthNames[currentMonth]} {currentYear}
+          {monthNames[currentMonthIndex]} {currentYear}
         </h2>
         <button
           onClick={prevMonth}
@@ -86,7 +99,7 @@ const SideCalendar = () => {
             key={index}
             className={`flex justify-center items-center w-6 h-6 rounded-full cursor-pointer transition duration-200
               ${
-                date.getMonth() === currentMonth
+                date.getMonth() === currentMonthIndex
                   ? date.toDateString() === today.toDateString()
                     ? 'bg-[#0D9488] text-white font-semibold'
                     : 'hover:bg-blue-100'
@@ -99,7 +112,7 @@ const SideCalendar = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SideCalendar
+export default SideCalendar;

@@ -10,7 +10,7 @@ interface AdminContextType {
   error: string | null;
   fetchAdmins: () => Promise<void>;
   getAdminById: (id: string) => Promise<void>;
-  addAdmin: (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  addAdmin: (admin: { firstName: string; lastName: string; email: string; password: string; isActive?: boolean }) => Promise<void>;
   updateAdmin: (id: string, admin: Omit<User, 'id' | 'password' | 'createdAt' | 'updatedAt'>) => Promise<void>;
   deleteAdmin: (id: string) => Promise<void>;
 }
@@ -44,7 +44,7 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
     }
   };
 
-  const addAdmin = async (admin: Omit<User, "id" | "createdAt" | "updatedAt">) => {
+  const addAdmin = async (admin: { firstName: string; lastName: string; email: string; password: string; isActive?: boolean }) => {
     setIsLoading(true);
     try {
       const created = await adminsService.create(admin);
@@ -77,8 +77,11 @@ export const AdminProvider: React.FC<{children: React.ReactNode}> = ({ children 
   };
 
   useEffect(() => {
-    if (user && (user.role === 'admin' || user.role === 'superadmin')) {
-      fetchAdmins();
+    if (user) {
+      const r = String(user.role || '').toLowerCase();
+      if (r === 'admin' || r === 'superadmin') {
+        fetchAdmins();
+      }
     }
   }, [user]);
 

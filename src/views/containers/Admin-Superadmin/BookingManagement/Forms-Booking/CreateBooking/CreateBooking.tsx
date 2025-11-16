@@ -4,8 +4,6 @@ import AdminBackLink from '../../../../../components/UI/AdminBackLink'
 import Input from '../../../../../components/UI/AdminForms/Input'
 import SchedInput from '../../../../../components/UI/AdminForms/SchedInput'
 import ToggleButton from '../../../../../components/UI/AdminForms/ToggleButton'
-import RecurrenceInput from '../../../../../components/UI/AdminForms/RecurrenceInput'
-import MultipleDateInput from '../../../../../components/UI/AdminForms/MultipleDateInput'
 import TextAreaInput from '../../../../../components/UI/AdminForms/TextAreaInput'
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput'
 import AdminButton from '../../../../../components/UI/AdminButton'
@@ -23,6 +21,20 @@ const CreateBooking = () => {
   const [toggle, setToggle] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>('');
+  // Recurrence state (reference: user RoomBookingForm)
+  const [recurrenceType, setRecurrenceType] = useState<'' | 'daily' | 'weekly' | 'monthly'>('');
+  const [interval, setInterval] = useState<number>(1);
+  const [selectedDays, setSelectedDays] = useState<number[]>([]); // 0=Sun..6=Sat
+  const unitLabel = React.useMemo(() => {
+    const n = Number(interval) || 0;
+    const plural = n === 1 ? '' : 's';
+    switch (recurrenceType) {
+      case 'daily': return `day${plural}`;
+      case 'weekly': return `week${plural}`;
+      case 'monthly': return `month${plural}`;
+      default: return `period${plural}`;
+    }
+  }, [recurrenceType, interval]);
   // selectedRoom is a room code; resolve to room object
   const selectedRoomObj = React.useMemo(() => rooms.find(r => String(r.code) === String(selectedRoom)), [rooms, selectedRoom]);
   const [form, setForm] = useState({
@@ -43,6 +55,33 @@ const CreateBooking = () => {
   const [endDate, setEndDate] = useState<string>(todayDate);
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
+  // Auto-adjust endDate for recurring bookings to reflect the LAST day of the recurrence window
+  React.useEffect(() => {
+    const isRecurring = !toggle;
+    if (!isRecurring || !startDate || !recurrenceType || interval < 1) return;
+    const start = new Date(startDate + 'T00:00:00');
+    const last = new Date(start);
+    const n = Math.max(1, Number(interval));
+    if (recurrenceType === 'daily') {
+      // for N days, last day = start + (N-1) days
+      last.setDate(start.getDate() + (n - 1));
+    } else if (recurrenceType === 'weekly') {
+      // for N weeks, last day = in week (N-1) starting from start, pick the max selected day
+      // default to the start's weekday if none selected
+      const days = (selectedDays && selectedDays.length > 0) ? [...selectedDays].sort((a,b)=>a-b) : [start.getDay()];
+      const maxDow = days[days.length - 1];
+      const weekStart = new Date(start);
+      weekStart.setDate(start.getDate() + 7 * (n - 1));
+      const currentDow = weekStart.getDay();
+      const diff = (maxDow - currentDow + 7) % 7;
+      last.setTime(weekStart.getTime());
+      last.setDate(weekStart.getDate() + diff);
+    } else if (recurrenceType === 'monthly') {
+      // for N months, last day = same day-of-month after (N-1) months
+      last.setMonth(start.getMonth() + (n - 1));
+    }
+    setEndDate(toLocalYMD(last));
+  }, [toggle, startDate, recurrenceType, interval, selectedDays]);
 
   const nextHalfHourSlot = () => {
     const now = new Date();
@@ -111,11 +150,46 @@ const CreateBooking = () => {
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setToggle(!toggle);
+    // Initialize sensible defaults when switching to recurring
+    if (toggle) {
+      if (!recurrenceType) setRecurrenceType('daily');
+      if (!interval) setInterval(1);
+      // If switching to weekly later, default selected day to match start date
+      if (recurrenceType === 'weekly' && (!selectedDays || selectedDays.length === 0)) {
+        const d = new Date(startDate + 'T00:00:00');
+        setSelectedDays([d.getDay()]);
+      }
+    } else {
+      // Switching to one-time: align end date to start date
+      setEndDate(startDate);
+    }
   }
 
   const handleModal = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setOpenModal(!openModal);
+  }
+
+  // When weekly, selecting a weekday should adjust start date to that weekday within the same week
+  const toggleDay = (day: number) => {
+    if (recurrenceType === 'weekly') {
+      // compute target date for selected weekday within the same week as current startDate
+      const start = new Date(startDate + 'T00:00:00');
+      const weekStart = new Date(start);
+      weekStart.setDate(start.getDate() - start.getDay()); // Sunday as 0
+      const target = new Date(weekStart);
+      target.setDate(weekStart.getDate() + day);
+      // Enforce not earlier than today; if earlier, move to next week's same weekday
+      const today = new Date(todayDate + 'T00:00:00');
+      if (target < today) {
+        target.setDate(target.getDate() + 7);
+      }
+      setStartDate(toLocalYMD(target));
+      // Reflect the selected weekday; prefer single selection matching start date
+      setSelectedDays([day]);
+    } else {
+      setSelectedDays((prev) => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
+    }
   }
 
   const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -130,11 +204,25 @@ const CreateBooking = () => {
     if (!selectedRoom) return alert('Please select a room.');
     if (!startDate || !startTime || !endDate || !endTime) return alert('Please select start and end date/time.');
     if (!form.userRefId || isNaN(Number(form.userRefId))) return alert('User Ref ID is required and must be a number.');
+    const isRecurring = !toggle;
+    if (isRecurring) {
+      if (!recurrenceType) return alert('Please select a recurrence pattern.');
+      if (!interval || interval < 1) return alert('Please enter a valid recurrence interval (>= 1).');
+      if (recurrenceType === 'weekly' && (!selectedDays || selectedDays.length === 0)) {
+        return alert('Please select at least one day for weekly recurrence.');
+      }
+    }
 
     // Serialize as local datetime strings (no timezone) to match backend expectations
     const startLocal = `${startDate}T${startTime}:00`;
     const endLocal = `${endDate}T${endTime}:00`;
-    if (new Date(endLocal) <= new Date(startLocal)) return alert('End time must be after start time.');
+    // For recurring, the displayed endDate represents the series end; enforce times logically on the first occurrence
+    if (!isRecurring) {
+      if (new Date(endLocal) <= new Date(startLocal)) return alert('End time must be after start time.');
+    } else {
+      const occurrenceEnd = `${startDate}T${endTime}:00`;
+      if (new Date(occurrenceEnd) <= new Date(startLocal)) return alert('For recurring bookings, end time must be after start time.');
+    }
   // Validate against room operating hours if available
   if (roomOpen && startTime < roomOpen) return alert(`Start time is before room opening time (${roomOpen}).`);
   if (roomClose && endTime > roomClose) return alert(`End time is after room closing time (${roomClose}).`);
@@ -156,9 +244,16 @@ const CreateBooking = () => {
         title: form.title.trim(),
         description: form.description.trim(),
         startDatetime: startLocal,
-        endDatetime: endLocal,
+        endDatetime: isRecurring ? `${startDate}T${endTime}:00` : endLocal,
         userRefId: userRefIdNum,
         expectedAttendees: expectedAttendeesNum,
+        recurrence: isRecurring ? {
+          isRecurring: true,
+          pattern: recurrenceType,
+          interval,
+          endDate: `${endDate}T${(endTime || startTime || '00:00')}:00`,
+          daysOfWeek: recurrenceType === 'weekly' ? selectedDays : undefined,
+        } : undefined,
       };
       console.log('[CreateBooking] Attempting POST /api/Bookings/Post with payload:', payload);
       if (!payload.description) {
@@ -204,6 +299,14 @@ const CreateBooking = () => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
   }
+
+  // Keep weekly selected day in sync with start date changes
+  React.useEffect(() => {
+    if (!toggle && recurrenceType === 'weekly' && startDate) {
+      const dow = new Date(startDate + 'T00:00:00').getDay();
+      setSelectedDays([dow]);
+    }
+  }, [startDate, recurrenceType, toggle]);
 
   return (
     <div className='min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>
@@ -260,9 +363,43 @@ const CreateBooking = () => {
             </div>
             {
               !toggle ?
-                <div className='flex gap-4'>
-                  <RecurrenceInput />
-                  <MultipleDateInput />
+                <div className='flex flex-col gap-3'>
+                  <div className='flex items-center gap-3'>
+                    <label className='text-sm text-zinc-700'>Recurrence</label>
+                    <select
+                      className='text-sm border-zinc-300 border-1 rounded-md p-2'
+                      value={recurrenceType}
+                      onChange={(e) => setRecurrenceType(e.target.value as any)}
+                    >
+                      <option value=''>Select</option>
+                      <option value='daily'>Daily</option>
+                      <option value='weekly'>Weekly</option>
+                      <option value='monthly'>Monthly</option>
+                    </select>
+                    <span className='text-sm text-zinc-700'>for</span>
+                    <input
+                      type='number'
+                      min={1}
+                      className='w-20 text-sm border-zinc-300 border-1 rounded-md p-2'
+                      value={interval}
+                      onChange={(e) => setInterval(Math.max(1, Number(e.target.value)))}
+                    />
+                    <span className='text-sm text-zinc-700'>{unitLabel}</span>
+                  </div>
+                  {recurrenceType === 'weekly' && (
+                    <div className='flex flex-wrap gap-2'>
+                      {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((lbl, idx) => (
+                        <button
+                          key={idx}
+                          type='button'
+                          onClick={() => toggleDay(idx)}
+                          className={`px-3 py-1 rounded-md border text-sm ${selectedDays.includes(idx) ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-black border-gray-300'}`}
+                        >
+                          {lbl}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div> : null
             }
           </div>

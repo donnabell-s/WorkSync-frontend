@@ -1,64 +1,47 @@
-interface Booking {
-  id: number;
-  date: string;
-  title: string;
-  start_time: string;
-  end_time: string;
-  status: string;
+import React from 'react';
+import { useBookings } from '../../../context/BookingContext';
+import { expandOccurrences } from '../../../utils/recurrence';
+
+interface TimeInsightsProps {
+  monthDate: Date;
 }
 
-const mockBookings: Booking[] = [
-  { id: 1, date: '2025-04-27', title: 'Team Meeting', start_time: '10:00 AM', end_time: '11:00 AM', status: 'cancelled' },
-  { id: 2, date: '2025-04-29', title: 'Team Meeting', start_time: '10:00 AM', end_time: '11:00 AM', status: 'completed' },
-  { id: 3, date: '2025-05-16', title: 'Client Call', start_time: '2:30 PM', end_time: '4:00 PM', status: 'upcoming' },
-  { id: 4, date: '2025-05-19', title: 'Project Review', start_time: '11:00 AM', end_time: '1:00 PM', status: 'cancelled' },
-];
+const TimeInsights: React.FC<TimeInsightsProps> = ({ monthDate }) => {
+  const { bookings } = useBookings();
 
-const parseTime = (timeStr: string) => {
-  const [time, modifier] = timeStr.split(' ');
-  let [hours, minutes] = time.split(':').map(Number);
+  const windowStart = React.useMemo(() => new Date(monthDate.getFullYear(), monthDate.getMonth(), 1), [monthDate]);
+  const windowEnd = React.useMemo(() => new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0), [monthDate]);
 
-  if (modifier === 'PM' && hours < 12) hours += 12;
-  if (modifier === 'AM' && hours === 12) hours = 0;
+  const totalHours = React.useMemo(() => {
+    const minutes = bookings.reduce((sum, booking) => {
+      if (!booking) return sum;
+      const status = String(booking.status || '').toLowerCase();
+      if (status !== 'approved') return sum;
 
-  return { hours, minutes };
-};
+      const start = new Date(booking.startDatetime ?? (booking as any).startDateTime ?? 0);
+      const end = new Date(booking.endDatetime ?? (booking as any).endDateTime ?? 0);
+      if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return sum;
+      const durationMinutes = Math.max(0, Math.round((end.getTime() - start.getTime()) / 60000));
+      if (durationMinutes === 0) return sum;
 
-const TimeInsights = () => {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const monthStart = new Date(year, month, 1);
-  const monthEnd = new Date(year, month + 1, 0);
+      const occurrences = expandOccurrences(booking, windowStart, windowEnd);
+      if (!occurrences.length) return sum;
 
-  const monthBookings = mockBookings.filter((booking) => {
-    const bookingDate = new Date(booking.date);
-    return bookingDate.getFullYear() === year && bookingDate.getMonth() === month;
-  });
+      return sum + durationMinutes * occurrences.length;
+    }, 0);
 
-  let totalMinutes = 0;
+    return (minutes / 60).toFixed(2);
+  }, [bookings, windowStart, windowEnd]);
 
-  monthBookings.forEach((booking) => {
-    const start = parseTime(booking.start_time);
-    const end = parseTime(booking.end_time);
-    const startTotal = start.hours * 60 + start.minutes;
-    const endTotal = end.hours * 60 + end.minutes;
-    const diff = endTotal - startTotal;
-
-    if (diff > 0) totalMinutes += diff;
-  });
-
-  const totalHours = (totalMinutes / 60).toFixed(2);
-  const monthName = monthStart.toLocaleString('default', { month: 'long' }).toUpperCase();
+  const monthName = windowStart.toLocaleString(undefined, { month: 'long' }).toUpperCase();
 
   return (
     <div className="w-full flex flex-col text-[#1F2937] gap-2">
-        <p className=' font-semibold text-lg'>Time Insights</p>
-        <div className='flex flex-col gap-1 ml-1'>
-            <p className=' font-semibold text-sm '>{`${monthName} ${monthStart.getDate()} - ${monthName} ${monthEnd.getDate()}, ${year}`}</p>
-            <p className='text-xs'>{totalHours} hr in meetings</p>
-        </div>
-
+      <p className="font-semibold text-lg">Time Insights</p>
+      <div className="flex flex-col gap-1 ml-1">
+        <p className="font-semibold text-sm">{`${monthName} ${windowStart.getDate()} - ${monthName} ${windowEnd.getDate()}, ${windowStart.getFullYear()}`}</p>
+        <p className="text-xs">{totalHours} hr in meetings</p>
+      </div>
     </div>
   );
 };

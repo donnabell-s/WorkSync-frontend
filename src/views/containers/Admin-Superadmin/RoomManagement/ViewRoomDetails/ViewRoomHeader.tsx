@@ -18,15 +18,14 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({ activeTab, handleTabCli
             <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
                 <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
                     <img
-                        src={
+                        src={currentRoom!.imageUrl && currentRoom!.imageUrl.length > 0 ? currentRoom!.imageUrl : (
                             currentRoom!.sizeLabel === 'Small'
                                 ? '/meetingroom/small.jpg'
                                 : currentRoom!.sizeLabel === 'Medium'
                                     ? '/meetingroom/medium.jpg'
                                     : currentRoom!.sizeLabel === 'Large'
                                         ? '/meetingroom/large.jpg'
-                                        : '/meetingroom/default.jpg'
-                        }
+                                        : '/meetingroom/default.jpg')}
                         alt={currentRoom!.name}
                         className="w-full h-full object-cover rounded-md"
                     />

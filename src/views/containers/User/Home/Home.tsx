@@ -6,6 +6,8 @@ const Home = () => {
   const [search, setSearch] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const today = new Date();
+  const [insightsMonth, setInsightsMonth] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -29,8 +31,8 @@ const Home = () => {
               <AiOutlinePlus className="text-[#059669] h-5 w-5" /> Create
             </button>
           </div>
-          <Components.SideCalendar />
-          <Components.TimeInsights />
+          <Components.SideCalendar currentMonth={insightsMonth} onMonthChange={setInsightsMonth} />
+          <Components.TimeInsights monthDate={insightsMonth} />
         </div>
       </Components.SideContainer>
 

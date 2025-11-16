@@ -19,8 +19,8 @@ const Login = () => {
 
     try {
       const loggedUser = await login(email, password);
-
-      if (loggedUser!.role === "admin" || loggedUser!.role === "superadmin") {
+      const r = String(loggedUser!.role || '').toLowerCase();
+      if (r === "admin" || r === "superadmin") {
         navigate("/admin/dashboard");
       } else {
         navigate("/user/home");

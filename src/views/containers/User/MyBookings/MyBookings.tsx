@@ -7,7 +7,7 @@ import { CiFilter } from "react-icons/ci";
 
 const MyBookings = () => {
   const [dateOrder, setDateOrder] = useState<'asc' | 'desc' | 'all'>('all');
-  const [statusFilter, setStatusFilter] = useState<'Completed' | 'Upcoming' | 'Cancelled' | 'See All'>('See All');
+  const [statusFilter, setStatusFilter] = useState<'Pending' | 'Approved' | 'Cancelled' | 'See All'>('See All');
   const [searchQuery, setSearchQuery] = useState('');  // State for search query
 
   const [pendingDateOrder, setPendingDateOrder] = useState(dateOrder);
@@ -56,7 +56,7 @@ const MyBookings = () => {
           <div className="mb-6">
             <h2 className="text-md font-medium mb-2">Status</h2>
             <div className="flex gap-3 flex-wrap flex-col pl-6">
-              {['Completed', 'Upcoming', 'Cancelled', 'See All'].map((status) => (
+              {['Pending', 'Approved', 'Cancelled', 'See All'].map((status) => (
                 <button
                   key={status}
                   className="transition font-medium text-left text-sm"

@@ -11,13 +11,18 @@ interface Props {
 }
 
 const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case 'upcoming': return 'text-[#10B981]';
-    case 'confirmed': return 'text-[#10B981]';
-    case 'completed': return 'text-[#F59E0B]';
-    case 'cancelled': return 'text-[#EF4444]';
-    default: return 'text-gray-800';
-  }
+  const normalized = status.toLowerCase();
+  const map: Record<string, string> = {
+    approved: 'text-[#10B981]',
+    upcoming: 'text-[#10B981]',
+    confirmed: 'text-[#10B981]',
+    pending: 'text-[#F59E0B]',
+    completed: 'text-[#F59E0B]',
+    cancelled: 'text-[#EF4444]',
+    canceled: 'text-[#EF4444]',
+    declined: 'text-[#EF4444]',
+  };
+  return map[normalized] ?? 'text-gray-800';
 };
 
 const getTdClasses = () => 'py-4 px-4';
@@ -109,12 +114,10 @@ const UserBookingList: React.FC<Props> = ({ dateOrder, statusFilter, searchQuery
               return (
                 <tr
                   key={booking.bookingId ?? booking.id}
-                  className={`text-sm odd:bg-white even:bg-gray-100 ${booking.status === "confirmed" ? "hover:bg-gray-100 cursor-pointer" : ""}`}
+                  className={`text-sm odd:bg-white even:bg-gray-100 hover:bg-gray-100 cursor-pointer`}
                   onClick={() => {
-                    if (booking.status === "confirmed") {
-                      localStorage.setItem("selectedBookingId", String(booking.bookingId ?? booking.id));
-                      navigate(`/user/edit-booking`);
-                    }
+                    localStorage.setItem("selectedBookingId", String(booking.bookingId ?? booking.id));
+                    navigate(`/user/view-booking`);
                   }}
                 >
                   <td className={getTdClasses()}>{booking.bookingId ?? booking.id}</td>

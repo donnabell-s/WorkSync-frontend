@@ -4,7 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { User } from '../../../../../types';
 import AdminBackLink from '../../../../components/UI/AdminBackLink';
 
-const roles = ['Admin', 'Superadmin', 'User'];
+// Restrict selectable roles to Admin and User only
+const roles = ['Admin', 'User'];
 const statuses = ['Active', 'Inactive'];
 
 const EditAdmin = () => {
@@ -24,7 +25,10 @@ const EditAdmin = () => {
 
   useEffect(() => {
     if (currentAdmin) {
-      setForm(currentAdmin);
+      // Normalize role to allowed values only (Admin/User)
+      const r = String(currentAdmin.role || '').toLowerCase();
+      const normalizedRole = r === 'admin' ? 'Admin' : r === 'user' ? 'User' : 'Admin';
+      setForm({ ...currentAdmin, role: normalizedRole });
       setStatus(currentAdmin.isActive ? 'Active' : 'Inactive');
     }
   }, [currentAdmin]);
@@ -135,12 +139,12 @@ const EditAdmin = () => {
           <label className="font-medium">Status</label>
           <select
             className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="isActive"
-            value={form.isActive ? 'Active' : 'Inactive'}
-            onChange={handleChange}
+            name="status"
+            value={status}
+            onChange={(e) => setStatus(e.target.value as 'Active' | 'Inactive')}
           >
-            {statuses.map((status) => (
-              <option key={status} value={status}>{status}</option>
+            {statuses.map((s) => (
+              <option key={s} value={s}>{s}</option>
             ))}
           </select>
         </div>

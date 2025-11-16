@@ -5,13 +5,24 @@ import { useRooms } from "../../../context/RoomContext";
 
 interface MeetingDetailsFormProps {
   roomCode: string | null;
+  readOnly?: boolean;
+  description?: string;
+  onDescriptionChange?: (val: string) => void;
+  attendees?: number;
+  onAttendeesChange?: (val: number) => void;
 }
-
-const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => {
+const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({
+  roomCode,
+  readOnly = false,
+  description,
+  onDescriptionChange,
+  attendees,
+  onAttendeesChange,
+}) => {
   const [notifTime, setNotifTime] = useState<number>(10);
   const [notifUnit, setNotifUnit] = useState<"minutes" | "hours" | "days">("minutes");
-  const [description, setDescription] = useState<string>("");
-  const [attendees, setAttendees] = useState<number>(1);
+  const [localDescription, setLocalDescription] = useState<string>("");
+  const [localAttendees, setLocalAttendees] = useState<number>(1);
 
   const { getRoomById, currentRoom } = useRooms();
 
@@ -34,10 +45,15 @@ const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => 
           <label htmlFor="description" className="font-medium">Description</label>
           <textarea
             id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            value={description !== undefined ? description : localDescription}
+            onChange={(e) => {
+              const val = e.target.value;
+              if (onDescriptionChange) onDescriptionChange(val); else setLocalDescription(val);
+            }}
             placeholder="Enter description"
             className="bg-[#F3F4F6] rounded px-4 py-2 w-full min-h-24 resize-y"
+            disabled={readOnly}
+            readOnly={readOnly}
           />
         </div>
         {/* Expected Attendees */}
@@ -47,9 +63,13 @@ const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => 
             id="attendees"
             type="number"
             min={1}
-            value={attendees}
-            onChange={(e) => setAttendees(Number(e.target.value))}
+            value={attendees !== undefined ? attendees : localAttendees}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              if (onAttendeesChange) onAttendeesChange(n); else setLocalAttendees(n);
+            }}
             className="bg-[#F3F4F6] rounded px-4 py-2 w-full md:w-20"
+            disabled={readOnly}
           />
         </div>
         <div className="flex flex-col md:flex-row md:items-start gap-3">
@@ -71,6 +91,7 @@ const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => 
               value={notifTime}
               onChange={(e) => setNotifTime(Number(e.target.value))}
               className="bg-[#F3F4F6] rounded px-4 py-2 w-full md:w-20"
+              disabled={readOnly}
             />
             <div className="relative w-full md:w-fit">
               <select
@@ -79,6 +100,7 @@ const MeetingDetailsForm: React.FC<MeetingDetailsFormProps> = ({ roomCode }) => 
                 onChange={(e) =>
                   setNotifUnit(e.target.value as "minutes" | "hours" | "days")
                 }
+                disabled={readOnly}
               >
                 <option value="minutes">Minutes</option>
                 <option value="hours">Hours</option>

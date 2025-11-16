@@ -6,7 +6,7 @@ interface AdminData {
   id: string;
   name: string;
   email: string;
-  role: 'Admin' | 'Superadmin';
+  role: 'Admin' | 'User';
   status: 'Active' | 'Inactive';
   permissions: {
     viewAuditLogs: boolean;
@@ -102,7 +102,7 @@ const EditDeleteAdminForm: React.FC<EditDeleteAdminFormProps> = ({
               className="w-full p-2 border rounded"
             >
               <option value="Admin">Admin</option>
-              <option value="Superadmin">Superadmin</option>
+              <option value="User">User</option>
             </select>
             <select
               name="status"

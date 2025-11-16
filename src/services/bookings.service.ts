@@ -30,10 +30,18 @@ export const bookingsService = {
     return data;
   },
   async update(id: string | number, booking: CreateBookingPayload) {
-    try { console.debug('[bookingsService] PUT', API.BOOKINGS.PUT(id), booking); } catch {}
-    await http.put(API.BOOKINGS.PUT(id), booking);
+    // Some backends expect recurrence as a JSON string; stringify if it's an object
+    const payload: any = {
+      ...booking,
+      recurrence:
+        booking && (booking as any).recurrence != null && typeof (booking as any).recurrence !== 'string'
+          ? JSON.stringify((booking as any).recurrence)
+          : (booking as any).recurrence,
+    };
+    try { console.debug('[bookingsService] PUT', API.BOOKINGS.PUT(id), payload); } catch {}
+    await http.put(API.BOOKINGS.PUT(id), payload);
     // No content expected; caller should refetch if needed
-    return { bookingId: Number(id), ...(booking as any) } as Booking;
+    return { bookingId: Number(id), ...(payload as any) } as Booking;
   },
   async approve(id: string | number) {
     try { console.debug('[bookingsService] POST', API.BOOKINGS.APPROVE(id)); } catch {}

@@ -7,10 +7,22 @@ import { useNavigate } from "react-router";
 
 const ProfileDropdown: React.FC = () => {
   const [open, setOpen] = useState(false);
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const {user} = useAuth();
+  const [displayName, setDisplayName] = useState<string>('');
+
+  useEffect(() => {
+    if (!user) {
+      setDisplayName('');
+      return;
+    }
+    const first = typeof user.firstName === 'string' ? user.firstName.trim() : '';
+    const last = typeof user.lastName === 'string' ? user.lastName.trim() : '';
+    const name = `${first} ${last}`.trim();
+    const fallbackEmail = typeof user.email === 'string' ? user.email.trim() : '';
+    setDisplayName(name || fallbackEmail || 'User');
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -31,18 +43,23 @@ const ProfileDropdown: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+    const triggerLabel = displayName || 'User';
+
     return (
-        <div className="relative flex items-center h-full" ref={dropdownRef}>
-            <button onClick={() => setOpen(!open)} className="focus:outline-none">
-                <img src={Avatar} className="h-10 w-10 transition duration-200 hover:scale-110" ></img>
-            </button>
+      <div className="relative flex items-center h-full" ref={dropdownRef}>
+        <span className="mr-3 hidden sm:block text-md font-md text-[#1F2937] truncate max-w-[160px]" title={triggerLabel}>
+          {triggerLabel}
+        </span>
+        <button onClick={() => setOpen(!open)} className="focus:outline-none cursor-pointer">
+          <img src={Avatar} className="h-10 w-10 transition duration-200 hover:scale-110" ></img>
+        </button>
             <div
                 className={`absolute right-0 top-full mt-1 w-60 bg-white rounded-md z-50 transform transition-all p-5 duration-300 ease-out 
                 ${open ? 'opacity-100 scale-100 visible' : 'opacity-0 scale-95 invisible'}
                 shadow-[0_0_9px_rgba(0,0,0,0.1)]`}>
                 <div className="pb-2 flex flex-row text-[#1F2937] gap-2 items-center font-semibold text-md">
                     <img src={Avatar} className="h-9 w-9" ></img>
-                    <p>{user?.firstName} {user?.lastName}</p>
+                    <p>{displayName}</p>
                 </div>
                 <div className="border-t border-gray-200 my-2"></div>
                 <div className="flex flex-col gap-3 mt-3 mx-1">

@@ -13,11 +13,15 @@ interface FacilityOption {
 }
 
 const facilityOptions: FacilityOption[] = [
-  { label: "Air Conditioner", value: "Air Conditioner" },
-  { label: "Projector",     value: "Projector" },
-  { label: "Whiteboard",    value: "Whiteboard" },
-  { label: "Coffee Machine",value: "Coffee Machine" },
+  { label: "Projector", value: "Projector" },
+  { label: "Whiteboard", value: "Whiteboard" },
+  { label: "LED Display", value: "LED Display" },
+  { label: "Air Conditioning", value: "Air Conditioning" },
+  { label: "Internet Access", value: "Internet Access" },
+  { label: "Coffee / Water Station", value: "Coffee / Water Station" },
+  { label: "Microphone & Speakers", value: "Microphone & Speakers" },
 ];
+
 
 const RoomExplorer: React.FC = () => {
   const { rooms } = useRooms();           
@@ -93,7 +97,7 @@ const RoomExplorer: React.FC = () => {
           </h1>
 
           {/* Distance */}
-          <div className="mb-2">
+          {/* <div className="mb-2">
             <h2 className="text-md font-medium mb-2">Location</h2>
             <div className="flex flex-col gap-3 pl-6">
               <label className="text-sm">Distance (km)</label>
@@ -106,7 +110,7 @@ const RoomExplorer: React.FC = () => {
               />
               <span className="text-xs font-medium">{distance} km</span>
             </div>
-          </div>
+          </div> */}
 
           {/* Capacity */}
           <div className="mb-2">

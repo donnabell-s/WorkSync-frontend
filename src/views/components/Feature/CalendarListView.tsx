@@ -106,25 +106,21 @@
 
 import React from "react";
 import { useBookings } from "../../../context/BookingContext";
+import type { Booking } from "../../../types";
+import { expandOccurrences, parseRecurrence, toYMD } from "../../../utils/recurrence";
 
 interface CalendarListViewProps {
   search: string;
 }
 
-interface Booking {
-  id: number;
-  startDateTime: string;
-  endDateTime: string;
-  title: string;
-  status: "confirmed" | "cancelled" | "completed" | "upcoming"; // use your actual statuses
-}
+// Using shared Booking type; fields: bookingId, startDatetime, endDatetime, status
 
 const CalendarListView = ({ search }: CalendarListViewProps) => {
   const { bookings } = useBookings();
 
   // Filter bookings by title
-  const filteredBookings = bookings.filter((booking: any) =>
-    booking.title.toLowerCase().includes(search.toLowerCase())
+  const filteredBookings = bookings.filter((booking: Booking) =>
+    (booking.title || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
@@ -149,16 +145,61 @@ const CalendarListView = ({ search }: CalendarListViewProps) => {
 
   // Map your backend booking status to UI status
   const mapStatus = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "upcoming";
-      case "completed":
-        return "completed";
-      case "cancelled":
-        return "cancelled";
-      default:
-        return "upcoming";
+    const s = (status || "").toLowerCase();
+    if (s === "declined" || s === "cancelled") return "cancelled";
+    if (s === "completed") return "completed";
+    // Pending/Approved/default treated as upcoming
+    return "upcoming";
+  };
+
+  const parseRecurrence = (raw: any): any | null => {
+    if (raw == null) return null;
+    let cur: any = raw;
+    for (let i = 0; i < 3 && typeof cur === 'string'; i++) {
+      let s = cur.trim();
+      if ((s.startsWith('"') && s.endsWith('"')) || (s.startsWith("'") && s.endsWith("'"))) {
+        s = s.slice(1, -1);
+      }
+      try { cur = JSON.parse(s); } catch {
+        try { cur = JSON.parse(s.replace(/\\\"/g, '"')); } catch { break; }
+      }
     }
+    if (typeof cur === 'string') return null;
+    // Normalize daysOfWeek if present (strings like "Mon"/"Monday" or numbers)
+    const rawDays = cur?.daysOfWeek ?? cur?.DaysOfWeek;
+    const normalizeDay = (d: any) => {
+      if (typeof d === 'number') {
+        if (d >= 0 && d <= 6) return d;
+        if (d >= 1 && d <= 7) return d % 7; // 7 -> 0 (Sunday)
+      }
+      const name = String(d).toLowerCase();
+      const map: Record<string, number> = {
+        sun: 0, sunday: 0,
+        mon: 1, monday: 1,
+        tue: 2, tues: 2, tuesday: 2,
+        wed: 3, weds: 3, wednesday: 3,
+        thu: 4, thur: 4, thurs: 4, thursday: 4,
+        fri: 5, friday: 5,
+        sat: 6, saturday: 6,
+      };
+      return map[name];
+    };
+    const daysOfWeek = Array.isArray(rawDays)
+      ? rawDays.map(normalizeDay).filter((v: any) => typeof v === 'number')
+      : undefined;
+    return cur ? {
+      isRecurring: cur.isRecurring ?? cur.IsRecurring ?? false,
+      dates: cur.dates ?? cur.Dates,
+      daysOfWeek,
+      pattern: (cur.pattern ?? cur.Pattern ?? '').toString().toLowerCase(),
+      interval: cur.interval ?? cur.Interval ?? 1,
+      endDate: cur.endDate ?? cur.EndDate,
+    } : null;
+  };
+
+  const isRecurring = (booking: Booking) => {
+    const rec = parseRecurrence((booking as any).recurrence as any);
+    return Boolean(rec && rec.isRecurring);
   };
 
   return (
@@ -172,48 +213,69 @@ const CalendarListView = ({ search }: CalendarListViewProps) => {
         <p className="text-gray-500">No bookings found.</p>
       ) : (
         <ul className="space-y-2">
-          {filteredBookings.map((booking: any) => {
-            const formattedDate = formatDate(booking.startDateTime);
-            const startTime = formatTime(booking.startDateTime);
-            const endTime = formatTime(booking.endDateTime);
-            const uiStatus = mapStatus(booking.status);
+          {(() => {
+            const today = new Date();
+            const windowEnd = new Date();
+            windowEnd.setMonth(windowEnd.getMonth() + 3); // next 3 months
+            const occurrenceItems = filteredBookings.flatMap((booking: Booking) => {
+              const occs = expandOccurrences(booking, today, windowEnd);
+              const uiStatus = mapStatus(booking.status);
+              const recurring = isRecurring(booking);
+              return occs.map((d) => ({ booking, occ: d, uiStatus, recurring }));
+            });
+            // Sort by occurrence date then time
+            occurrenceItems.sort((a, b) => a.occ.getTime() - b.occ.getTime());
 
-            return (
-              <li
-                key={booking.id}
-                className="flex flex-row gap-3 rounded-md p-4 shadow-sm bg-white"
-              >
-                <div className="flex flex-row items-center min-w-[50px] gap-3 w-35">
-                  <span className="text-xl font-semibold text-[#1F2937]">
-                    {formattedDate.day}
-                  </span>
+            if (occurrenceItems.length === 0) {
+              return (
+                <li className="text-gray-500">No upcoming occurrences found.</li>
+              );
+            }
 
-                  <span className="text-xs text-[#4B5563] uppercase">
-                    {formattedDate.monthYear}, {formattedDate.dayOfWeek}
-                  </span>
-                </div>
+            return occurrenceItems.map(({ booking, occ, uiStatus, recurring }) => {
+              const formattedDate = formatDate(occ.toISOString());
+              const startTime = formatTime(booking.startDatetime);
+              const endTime = formatTime(booking.endDatetime);
+              return (
+                <li
+                  key={`${booking.bookingId}-${toYMD(occ)}`}
+                  className="flex flex-row gap-3 rounded-md p-4 shadow-sm bg-white"
+                >
+                  <div className="flex flex-row items-center min-w-[50px] gap-3 w-35">
+                    <span className="text-xl font-semibold text-[#1F2937]">
+                      {formattedDate.day}
+                    </span>
 
-                {/* Booking details */}
-                <div className="flex flex-row items-center gap-3">
-                  <div
-                    className={`h-3 w-3 rounded-full ${
-                      uiStatus === "upcoming"
-                        ? "bg-[#10B981]"
-                        : uiStatus === "completed"
-                        ? "bg-[#F59E0B]"
-                        : "bg-[#EF4444]"
-                    }`}
-                  ></div>
-                  <div className="flex flex-row sm:flex-row sm:items-center sm:justify-between">
-                    <div className="text-md text-[#1F2937] w-70">
-                      {startTime} – {endTime}
-                    </div>
-                    <div className="text-md text-[#1F2937]">{booking.title}</div>
+                    <span className="text-xs text-[#4B5563] uppercase">
+                      {formattedDate.monthYear}, {formattedDate.dayOfWeek}
+                    </span>
                   </div>
-                </div>
-              </li>
-            );
-          })}
+
+                  {/* Booking details */}
+                  <div className="flex flex-row items-center gap-3">
+                    <div
+                      className={`h-3 w-3 rounded-full ${
+                        uiStatus === "cancelled"
+                          ? "bg-[#EF4444]"
+                          : uiStatus === "completed"
+                          ? "bg-[#F59E0B]"
+                          : recurring
+                          ? "bg-[#1E40AF]"
+                          : "bg-[#10B981]"
+                      }`}
+                      title={recurring ? 'Recurring booking' : 'One-time booking'}
+                    />
+                    <div className="flex flex-row sm:flex-row sm:items-center sm:justify-between">
+                      <div className="text-md text-[#1F2937] w-70">
+                        {startTime} – {endTime}
+                      </div>
+                      <div className="text-md text-[#1F2937]">{booking.title}</div>
+                    </div>
+                  </div>
+                </li>
+              );
+            });
+          })()}
         </ul>
       )}
     </div>
