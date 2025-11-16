@@ -55,6 +55,7 @@ const PeakUsageTimes: React.FC = () => {
     const roomsForCurrentPage = uniqueRooms.slice(startIndex, endIndex);
     
     return {
+      currentRoomIds: roomsForCurrentPage,
       currentRooms: roomsForCurrentPage,
       totalPages: Math.ceil(uniqueRooms.length / ROOMS_PER_PAGE)
     };
