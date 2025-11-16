@@ -34,6 +34,7 @@ const PeakUsageTimes: React.FC = () => {
       try {
         const dateString = selectedDate.toISOString().split('T')[0]; // yyyy-MM-dd format
         const usageData = await dashboardService.getPeakUsage(dateString);
+        console.log('[FETCHED PEAK USAGE DATA]', usageData);
         setPeakUsageData(usageData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch peak usage data');
@@ -69,7 +70,7 @@ const PeakUsageTimes: React.FC = () => {
       name: roomName,
       data: hours.map(hour => {
         const dataPoint = peakUsageData.find(
-          item => item.roomName === roomName && item.hour === hour
+          item => item.roomName === roomName && (item.hour === hour || item.hour > hour && item.hour < hour + 1)
         );
         return {
           x: hour,

@@ -54,7 +54,7 @@ const Dashboard = () => {
   }, [summary.utilizationRateToday]);
 
   return (
-    <div className='w-full h-[calc(100vh-4rem)] flex flex-col gap-5 p-4'>
+    <div className='w-full h-[calc(100vh-4rem)] flex flex-col gap-5 p-4 overflow-clip'>
       <div className='max-h-max grid grid-cols-5 gap-4'>
         <AdminDashboardCard 
           label='Available Rooms' 
