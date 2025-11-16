@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { bookingSummaryList } from './BookingListInterface'
+import { bookingSummaryList } from '../BookingListInterface'
 
 const BookingSummary: React.FC = () => {
     const [currentPage, setCurrentPage] = useState<number>(0);

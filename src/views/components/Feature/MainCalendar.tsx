@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { use, useState } from 'react';
 import * as Components from '../../components';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa6';
+
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTH_NAMES = [
@@ -18,7 +19,6 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
   const [current, setCurrent] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  
 
   const formatDayDisplay = (date: Date, currentMonth: number) => {
     return date.getDate() === 1 && date.getMonth() === currentMonth
@@ -154,7 +154,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
                         {formatDayDisplay(date, currentMonth)}
                       </div>
                         <div className="w-full mt-1">
-                          <Components.BookingListForDate date={date} />
+                          <Components.BookingListForDate date={date} isAdmin={isAdmin} />
                         </div>
                     </button>
                   </td>
@@ -178,7 +178,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
         </table>
       </div>
 
-      {isModalOpen && selectedDate && (
+      {!isAdmin && isModalOpen && selectedDate && (
         <Components.CalendarBookingModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

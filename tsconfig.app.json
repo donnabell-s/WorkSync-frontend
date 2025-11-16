@@ -24,6 +24,10 @@
     "noUncheckedSideEffectImports": true,
 
     "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
   "ts-node": {
         "esm": true

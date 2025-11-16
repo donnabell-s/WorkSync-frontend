@@ -68,6 +68,9 @@
 import React from 'react';
 import { useBookings } from '../../../context/BookingContext';
 import { occursOnDate } from '../../../utils/recurrence';
+import { useNavigate } from 'react-router-dom';
+import type { Booking as LegacyBooking } from './UserBookingListInterface';
+import type { Booking as ApiBooking } from '../../../types';
 
 // Status rendering handled via booking.status string values
 
@@ -75,12 +78,15 @@ import { occursOnDate } from '../../../utils/recurrence';
 
 interface BookingListForDateProps {
   date: Date;
+  isAdmin: boolean;
 }
 
-const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
+const BookingListForDate: React.FC<BookingListForDateProps> = ({ date, isAdmin }) => {
   const { bookings } = useBookings();
+  const navigate = useNavigate();
 
   // Filter bookings that have an occurrence on the date
+  type BookingItem = ApiBooking | LegacyBooking;
   const bookingsForDate = bookings.filter((b: any) => occursOnDate(b, date));
 
   if (bookingsForDate.length === 0) return null;
@@ -108,6 +114,10 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
     return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleBookingClick = (booking: BookingItem) => {
+    navigate('/admin/bookings/booking-detail', { state: { booking } });
+  };
+
   return (
     <div className="w-full translate-x-[-6px]">
       {bookingsForDate.map((booking: any) => (
@@ -115,6 +125,7 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date }) => {
           key={booking.bookingId ?? booking.id}
           className={`${styleForBooking(booking)} flex items-start text-xs font-semibold rounded px-1 py-1 truncate mb-0.5`}
           title={isRecurringBooking(booking) ? 'Recurring booking' : 'One-time booking'}
+          onClick={() => isAdmin && handleBookingClick(booking.bookingId ?? booking.id)}
         >
           {formatTime(booking.startDatetime ?? booking.startDateTime)} - {booking.title}
         </div>

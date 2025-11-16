@@ -1,4 +1,5 @@
-export * from "./AdminButton";
+export { default as AdminButton } from "./AdminButton";
+export { default as DatePicker } from "./DatePicker";
 export * from "./AdminFilter";
 export * from "./AdminSearch";
 export * from "./AdminHeading";

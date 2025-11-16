@@ -1,12 +1,15 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import * as Views from "./views/containers";
 import { PATHS } from "./constant";
-import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './views/components/ProtectedRoute';
-import { RoomProvider } from "./context/RoomContext";
-import { BookingProvider } from "./context/BookingContext";
-import { LogsProvider } from "./context/LogContext";
-import { AdminProvider } from "./context/AdminContext";
+import { 
+  RoomProvider, 
+  BookingProvider,
+  LogsProvider,
+  AdminProvider,
+  AdminDashboardProvider,
+  AuthProvider
+ } from "@/context";
 
 export const AppRoutes = () => {
   return (
@@ -16,18 +19,19 @@ export const AppRoutes = () => {
          <BookingProvider> 
           <LogsProvider>
           <AdminProvider>
-            <Routes>
-              <Route path="/" element={<Navigate to={PATHS.LOGIN.path} />} />
+            <AdminDashboardProvider>
+              <Routes>
+                <Route path="/" element={<Navigate to={PATHS.LOGIN.path} />} />
 
-              {/* Admin Routes */}
-              <Route
-                path={PATHS.ADMIN_MAIN.path}
-                element={
-                  <ProtectedRoute roles={["admin", "superadmin"]}>
-                    <Views.AdminMain />
-                  </ProtectedRoute>
-                }
-              >
+                {/* Admin Routes */}
+                <Route
+                  path={PATHS.ADMIN_MAIN.path}
+                  element={
+                    <ProtectedRoute roles={["admin", "superadmin"]}>
+                      <Views.AdminMain />
+                    </ProtectedRoute>
+                  }
+                >
                 <Route path={PATHS.ADMIN_VIEW.DASHBOARD.path} element={<Views.Dashboard />} />
                 <Route path={PATHS.ADMIN_VIEW.NOTIFICATION.path} element={<Views.Notifications />} />
 
@@ -84,6 +88,7 @@ export const AppRoutes = () => {
               <Route path={PATHS.UNAUTHORIZED.path} element={<Views.Unauthorized />} />
               <Route path={PATHS.NOT_FOUND.path} element={<Views.NotFound />} />
             </Routes>
+            </AdminDashboardProvider>
           </AdminProvider>
             </LogsProvider>
           </BookingProvider>
