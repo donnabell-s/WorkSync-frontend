@@ -82,7 +82,7 @@ interface BookingListForDateProps {
 }
 
 const BookingListForDate: React.FC<BookingListForDateProps> = ({ date, isAdmin }) => {
-  const { bookings, currentBooking, getBookingById } = useBookings();
+  const { bookings } = useBookings();
   const navigate = useNavigate();
 
   // Filter bookings that have an occurrence on the date

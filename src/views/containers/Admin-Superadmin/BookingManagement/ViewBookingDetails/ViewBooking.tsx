@@ -50,13 +50,13 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
   // Ensure organizer/room data is available and fetch latest booking
   React.useEffect(() => {
     if (booking?.userRefId && (!users || users.length === 0)) {
-      void getAllUsers().catch(() => {});
+      void getAllUsers().catch(() => { });
     }
     if (!rooms || rooms.length === 0) {
-      void fetchRooms().catch(() => {});
+      void fetchRooms().catch(() => { });
     }
     if (booking?.bookingId) {
-      void getBookingById(Number(booking.bookingId), { force: true }).catch(() => {});
+      void getBookingById(Number(booking.bookingId), { force: true }).catch(() => { });
     }
   }, [booking?.userRefId, booking?.bookingId]);
 
@@ -125,11 +125,11 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
     const n = Number(rec.interval) || 1;
     const unit = (rec.pattern || '').toLowerCase() === 'monthly' ? (n === 1 ? 'month' : 'months')
       : (rec.pattern || '').toLowerCase() === 'weekly' ? (n === 1 ? 'week' : 'weeks')
-      : (n === 1 ? 'day' : 'days');
+        : (n === 1 ? 'day' : 'days');
     let daysText = '';
     if ((rec.pattern || '').toLowerCase() === 'weekly') {
-      const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-      const days: number[] = Array.isArray(rec.daysOfWeek) ? rec.daysOfWeek.slice().sort((a: number,b: number)=>a-b) : [];
+      const names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      const days: number[] = Array.isArray(rec.daysOfWeek) ? rec.daysOfWeek.slice().sort((a: number, b: number) => a - b) : [];
       if (days.length) daysText = ` on ${days.map(d => names[d]).join(', ')}`;
     }
     let endStr = '';
@@ -171,11 +171,11 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
         </div>
 
         {/* Details, without the first grey divider */}
-  <DetailRow label="Organizer" value={organizer ?? '—'} />
-  <DetailRow label="User ID" value={String(effectiveBooking?.userRefId ?? '—')} />
-  <Divider />
-  <DetailRow label="Meeting/Event Title" value={effectiveBooking?.title ?? '—'} />
-  <Divider />
+        <DetailRow label="Organizer" value={organizer ?? '—'} />
+        <DetailRow label="User ID" value={String(effectiveBooking?.userRefId ?? '—')} />
+        <Divider />
+        <DetailRow label="Meeting/Event Title" value={effectiveBooking?.title ?? '—'} />
+        <Divider />
 
         <DetailRow
           label="Start Date/Time"
@@ -215,7 +215,7 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             <div className="text-base text-[#333]">{roomName}</div>
             <div className="hidden lg:block lg:row-span-3 ml-auto w-full max-w-[420px] rounded border overflow-hidden">
               <img
-                src={(function() {
+                src={(function () {
                   const img = room?.imageUrl?.trim();
                   if (img) return img;
                   const size = (room?.sizeLabel || '').toLowerCase();
@@ -232,13 +232,13 @@ const ViewBooking: React.FC<ViewBookingProps> = ({
             <div className="text-[#2D2D2D] text-sm font-semibold">Room Number</div>
             <div className="text-base text-[#333]">{roomCode}</div>
 
-    <div className="text-[#2D2D2D] text-sm font-semibold">Status</div>
-      <div className="text-base"><span className="font-bold text-[#28A745]">{statusText}</span></div>
+            <div className="text-[#2D2D2D] text-sm font-semibold">Status</div>
+            <div className="text-base"><span className="font-bold text-[#28A745]">{statusText}</span></div>
           </div>
           {/* Mobile/tablet image below rows */}
           <div className="lg:hidden mt-4 w-full rounded border overflow-hidden">
             <img
-              src={(function() {
+              src={(function () {
                 const img = room?.imageUrl?.trim();
                 if (img) return img;
                 const size = (room?.sizeLabel || '').toLowerCase();
