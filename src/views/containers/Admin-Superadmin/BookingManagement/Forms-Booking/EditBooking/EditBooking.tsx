@@ -320,10 +320,12 @@ const EditBooking = () => {
 
   React.useEffect(() => {
     if (!toggle && recurrenceType === 'weekly' && startDate) {
-      const dow = new Date(startDate + 'T00:00:00').getDay();
-      setSelectedDays([dow]);
+      if (!selectedDays || selectedDays.length === 0) {
+        const dow = new Date(startDate + 'T00:00:00').getDay();
+        setSelectedDays([dow]);
+      }
     }
-  }, [startDate, recurrenceType, toggle]);
+  }, [startDate, recurrenceType, toggle, selectedDays]);
 
   return (
     <div className='h-full min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>
