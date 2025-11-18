@@ -30,6 +30,13 @@ export const API = {
     DECLINE: (id: string | number) => `/api/Bookings/Decline/${id}`,
   },
   LOGS: {
+    ROOM_LOGS: {
+      GET: '/api/RoomLogs/Get',
+      GET_BY_ROOM: (roomId: string) => `/api/RoomLogs/GetByRoom/${roomId}`,
+      GET_BY_ID: (id: string | number) => `/api/RoomLogs/Get/${id}`,
+      POST: '/api/RoomLogs/Post',
+      DELETE: (id: string | number) => `/api/RoomLogs/Delete/${id}`,
+    },
     BOOKING_LOGS: {
       GET: '/api/BookingLogs/Get',
       GET_BY_BOOKING: (bookingId: string | number) => `/api/BookingLogs/GetByBooking/${bookingId}`,

@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 
-const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:58581';
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'https://localhost:65423';
 
 const http: AxiosInstance = axios.create({
   baseURL,
