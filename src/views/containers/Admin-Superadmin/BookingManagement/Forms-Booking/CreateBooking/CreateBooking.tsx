@@ -154,11 +154,7 @@ const CreateBooking = () => {
     if (toggle) {
       if (!recurrenceType) setRecurrenceType('daily');
       if (!interval) setInterval(1);
-      // If switching to weekly later, default selected day to match start date
-      if (recurrenceType === 'weekly' && (!selectedDays || selectedDays.length === 0)) {
-        const d = new Date(startDate + 'T00:00:00');
-        setSelectedDays([d.getDay()]);
-      }
+      // Do not reset selectedDays for weekly recurrence; preserve user selection
     } else {
       // Switching to one-time: align end date to start date
       setEndDate(startDate);
@@ -172,24 +168,57 @@ const CreateBooking = () => {
 
   // When weekly, selecting a weekday should adjust start date to that weekday within the same week
   const toggleDay = (day: number) => {
-    if (recurrenceType === 'weekly') {
-      // compute target date for selected weekday within the same week as current startDate
-      const start = new Date(startDate + 'T00:00:00');
-      const weekStart = new Date(start);
-      weekStart.setDate(start.getDate() - start.getDay()); // Sunday as 0
-      const target = new Date(weekStart);
-      target.setDate(weekStart.getDate() + day);
-      // Enforce not earlier than today; if earlier, move to next week's same weekday
-      const today = new Date(todayDate + 'T00:00:00');
-      if (target < today) {
-        target.setDate(target.getDate() + 7);
-      }
-      setStartDate(toLocalYMD(target));
-      // Reflect the selected weekday; prefer single selection matching start date
-      setSelectedDays([day]);
-    } else {
+    if (recurrenceType !== 'weekly') {
       setSelectedDays((prev) => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
+      return;
     }
+    if (!startDate) return;
+    const start = new Date(startDate + 'T00:00:00');
+    const startDow = start.getDay();
+    setSelectedDays((prev) => {
+      const exists = prev.includes(day);
+      if (exists) {
+        const next = prev.filter((d) => d !== day);
+        if (next.length === 0) {
+          // Prevent empty selection: keep anchored to start date's weekday
+          return [startDow];
+        }
+        // If removing the anchor day, move anchor to a remaining selected day within this week
+        if (day === startDow) {
+          const chosen = Math.min(...next);
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + chosen);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+        }
+        return next;
+      } else {
+        if (prev.length === 0) {
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + day);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+          return [day];
+        }
+        const next = [...prev, day].sort((a, b) => a - b);
+        if (day < startDow) {
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + day);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+        }
+        return next;
+      }
+    });
   }
 
   const handleBack = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -223,10 +252,12 @@ const CreateBooking = () => {
       const occurrenceEnd = `${startDate}T${endTime}:00`;
       if (new Date(occurrenceEnd) <= new Date(startLocal)) return alert('For recurring bookings, end time must be after start time.');
     }
-  // Validate against room operating hours if available
-  if (roomOpen && startTime < roomOpen) return alert(`Start time is before room opening time (${roomOpen}).`);
-  if (roomClose && endTime > roomClose) return alert(`End time is after room closing time (${roomClose}).`);
-  if (roomOpen && roomClose && roomOpen === roomClose) return alert(`This room is closed on the selected day (${roomOpen} - ${roomClose}). Please choose another time or room.`);
+    // Validate against room operating hours if available
+    let roomOpenStr = roomOpen;
+    let roomCloseStr = roomClose;
+    if (roomOpenStr && startTime < roomOpenStr) return alert(`Start time is before room opening time (${roomOpenStr}).`);
+    if (roomCloseStr && endTime > roomCloseStr) return alert(`End time is after room closing time (${roomCloseStr}).`);
+    if (roomOpenStr && roomCloseStr && roomOpenStr === roomCloseStr) return alert(`This room is closed on the selected day (${roomOpenStr} - ${roomCloseStr}). Please choose another time or room.`);
 
     // Map selected room code to roomId
     const room = rooms.find(r => String(r.code) === String(selectedRoom));
@@ -302,7 +333,8 @@ const CreateBooking = () => {
 
   // Keep weekly selected day in sync with start date changes
   React.useEffect(() => {
-    if (!toggle && recurrenceType === 'weekly' && startDate) {
+    // Only set selectedDays if empty, otherwise preserve user selection
+    if (!toggle && recurrenceType === 'weekly' && startDate && selectedDays.length === 0) {
       const dow = new Date(startDate + 'T00:00:00').getDay();
       setSelectedDays([dow]);
     }

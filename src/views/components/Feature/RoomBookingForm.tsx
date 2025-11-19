@@ -346,6 +346,8 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const startDateTime = new Date(startLocal);
     const endDateTime = new Date(nonRecurringEndLocal);
     const now = new Date();
+    // Fix: define endRef for use in operating hours validation
+    const endRef = isRecurring ? new Date(recurringEndLocal) : endDateTime;
 
     if (startDateTime < now) return alert("Start date and time must be in the future.");
     if (!isRecurring && endDateTime <= startDateTime) return alert("End time must be after start time.");
@@ -357,11 +359,27 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const diffMinutes = (endDateTime.getTime() - startDateTime.getTime()) / 60000;
     if (!isRecurring && diffMinutes < 30) return alert("Booking must be at least 30 minutes.");
 
-    const startHour = startDateTime.getHours();
-    const endRef = isRecurring ? new Date(recurringEndLocal) : endDateTime;
-    const endHour = endRef.getHours();
-    if (startHour < 8 || endHour > 19 || (endHour === 19 && endRef.getMinutes() > 0)) {
-      return alert("Bookings must be between 08:00 and 19:00.");
+    // Validate against room operating hours if available
+    let roomOpen: string | undefined;
+    let roomClose: string | undefined;
+    if (currentRoom?.operatingHours) {
+      try {
+        const ops = typeof currentRoom.operatingHours === 'string' ? JSON.parse(currentRoom.operatingHours) : currentRoom.operatingHours;
+        const isWeekend = [0, 6].includes(startDateTime.getDay());
+        roomOpen = isWeekend ? ops?.weekends?.open : ops?.weekdays?.open;
+        roomClose = isWeekend ? ops?.weekends?.close : ops?.weekdays?.close;
+      } catch {}
+    }
+    const startTimeStr = startDateTime.toTimeString().slice(0,5);
+    const endTimeStr = endRef.toTimeString().slice(0,5);
+    if (roomOpen && startTimeStr < roomOpen) {
+      return alert(`Start time is before room opening time (${roomOpen}).`);
+    }
+    if (roomClose && endTimeStr > roomClose) {
+      return alert(`End time is after room closing time (${roomClose}).`);
+    }
+    if (roomOpen && roomClose && roomOpen === roomClose) {
+      return alert(`This room is closed on the selected day (${roomOpen} - ${roomClose}). Please choose another time or room.`);
     }
 
     if (!user) return alert("Missing user info");
