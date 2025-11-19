@@ -11,7 +11,7 @@ interface AdminDashboardCardProps {
 const AdminDashboardCard: React.FC<AdminDashboardCardProps> = ({ label, variant, value, icon, span }) => {
   return (
     variant === 'multiple' ? (
-        <div className={`h-25 w-full bg-white divide-x divide-gray-300 rounded-md shadow-md flex items-center text-[#1F2937] col-span-${span}`}>
+        <div className={`max-h-max md:h-25 w-full bg-white divide-y sm:divide-x divide-gray-300 rounded-md shadow-md flex flex-col sm:flex-row items-center text-[#1F2937] col-span-1 sm:col-span-2 md:col-span-${span}`}>
             {Array.isArray(label) && Array.isArray(value) && Array.isArray(icon) ? (
                 label.map((lbl, index) => (
                     <div key={index} className='w-full h-full flex items-center justify-center gap-4 p-4'>
