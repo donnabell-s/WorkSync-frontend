@@ -89,8 +89,8 @@ const PeakUsageTimes: React.FC = () => {
   return (
     <div className="h-full w-full flex flex-col">
       {/* Header with pagination controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center gap-3">
           <h2 className='font-bold text-[#1F2937]'>
             Peak Usage Times Heatmap
           </h2>
@@ -130,6 +130,7 @@ const PeakUsageTimes: React.FC = () => {
             series={series}
             type="heatmap"
             height="100%"
+            width="100%"
           />
         ) : (
           <NoDataState
@@ -147,10 +148,10 @@ const PeakUsageTimes: React.FC = () => {
       {/* Footer with room info and legend */}
       <div className='flex justify-between items-end'>
         {hasData && (
-          <>
+          <div className='flex flex-col lg:flex-row gap-4'>
             <RoomInfoDisplay currentRooms={currentRooms} />
             <HeatmapLegend />
-          </>
+          </div>
         )}
       </div>
     </div>

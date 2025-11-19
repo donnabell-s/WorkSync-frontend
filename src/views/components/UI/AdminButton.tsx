@@ -2,7 +2,7 @@ import React from 'react'
 
 interface AdminButtonProps {
     className?: string;
-    label: string;
+    label: string | React.ReactNode;
     icon?: React.ReactNode;
     variant?: 'primary' | 'secondary' ;
     onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void | ((room: string) => void) | (() => void);
