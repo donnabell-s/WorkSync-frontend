@@ -63,7 +63,14 @@ export interface User {
 export interface Log {
     bookingLogId?: number;
     bookingId?: number;
-    eventType?: string;
+    bookingName?: string;
+    roomLogId?: number;
+    roomId?: string;
+    roomName?: string;
+    authorId?: number;
+    authorName?: string;
+    changeType?: string;
+    message?: string;
     timestamp: string; // ISO datetime
     // generic fields for flexibility
     type?: string;
@@ -71,5 +78,6 @@ export interface Log {
     entityId?: number | string;
     userId?: number | string;
     action?: string;
-    message?: string;
+    eventType?: string;
+    currentStatus?: string;
 }

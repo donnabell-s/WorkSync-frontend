@@ -5,6 +5,7 @@ import { logsService } from '../services/logs.service';
 interface LogsContextType {
   logs: Log[];
   fetchRoomLogs: (options?: { force?: boolean }) => Promise<void>;
+  fetchBookingLogs: (options?: { force?: boolean }) => Promise<void>;
   addLog: (log: Omit<Log, 'id' | 'timestamp'>) => Promise<void>;
   loading: boolean;
   error: string | null;
@@ -33,8 +34,37 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoaded(true);
         return Array.isArray(data) ? data : [];
       })
-      .catch((e: any) => {
-        setError(e?.message ?? 'Failed to load logs');
+      .catch((e: unknown) => {
+        const err = e as Error;
+        setError(err?.message ?? 'Failed to load logs');
+        setLogs([]);
+        return [] as Log[];
+      })
+      .finally(() => {
+        inFlightRef.current = null;
+        setLoading(false);
+      });
+    inFlightRef.current = p;
+    await p;
+  }, [loaded]);
+
+  const fetchBookingLogs = useCallback(async (options?: { force?: boolean }) => {
+    if (inFlightRef.current) {
+      await inFlightRef.current;
+      return;
+    }
+    if (loaded && !options?.force) return;
+    setLoading(true);
+    setError(null);
+    const p = logsService.getBookingLogs()
+      .then((data) => {
+        setLogs(Array.isArray(data) ? data : []);
+        setLoaded(true);
+        return Array.isArray(data) ? data : [];
+      })
+      .catch((e: unknown) => {
+        const err = e as Error;
+        setError(err?.message ?? 'Failed to load logs');
         setLogs([]);
         return [] as Log[];
       })
@@ -50,15 +80,16 @@ export const LogsProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       await logsService.createRoomLog(logData);
       await fetchRoomLogs({ force: true });
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to add log');
+    } catch (e: unknown) {
+      const err = e as Error;
+      setError(err?.message ?? 'Failed to add log');
     }
   };
 
-  // Do not auto-fetch on mount; pages should call fetchRoomLogs() on demand
+  // Do not auto-fetch on mount; pages should call fetchRoomLogs() or fetchBookingLogs() on demand
 
   return (
-    <LogsContext.Provider value={{ logs, fetchRoomLogs, addLog, loading, error }}>
+    <LogsContext.Provider value={{ logs, fetchRoomLogs, fetchBookingLogs, addLog, loading, error }}>
       {children}
     </LogsContext.Provider>
   );

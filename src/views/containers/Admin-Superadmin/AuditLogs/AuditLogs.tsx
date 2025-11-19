@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useLogs } from '../../../../context/LogContext';
-import { useRooms } from '../../../../context/RoomContext';
 import { format } from 'date-fns';
 import { DataTable, DataTableColumn } from '../../../components/UI';
 import { FaSearch } from 'react-icons/fa';
+import type { Log } from '../../../../types';
 
 interface AuditLogsProps {
   mode: 'rooms' | 'bookings';
@@ -12,100 +12,132 @@ interface AuditLogsProps {
 type RoomLogRow = {
   action: string;
   room: string;
-  location: string;
-  capacity: string | number;
-  status: string;
-  date: string;
-  statusColor: string;
+  message: string;
+  author: string;
+  timestamp: string;
+};
+
+type BookingLogRow = {
+  action: string;
+  booking: string;
+  message: string;
+  author: string;
+  timestamp: string;
 };
 
 const ROOM_LOGS_COLUMNS: DataTableColumn<RoomLogRow>[] = [
   { key: 'action', header: 'Action' },
-  { key: 'room', header: 'Room Name & Number' },
-  { key: 'location', header: 'Location' },
-  { key: 'capacity', header: 'Capacity', align: 'right' },
-  {
-    key: 'status',
-    header: 'Status',
-    render: (row) => {
-      const label = row.status.toLowerCase() === 'available' ? 'Active' : row.status;
-      return <span className={`font-semibold ${row.statusColor}`}>{label}</span>;
-    },
-  },
-  { key: 'date', header: 'Date' },
+  { key: 'room', header: 'Room Name' },
+  { key: 'message', header: 'Message' },
+  { key: 'author', header: 'Author' },
+  { key: 'timestamp', header: 'Timestamp' },
 ];
 
-const getStatusColor = (status: string) => {
-  switch (status.toLowerCase()) {
-    case 'available':
-      return 'text-green-500';
-    case 'booked':
-      return 'text-yellow-500';
-    case 'under maintenance':
-    case 'unavailable':
-      return 'text-red-500';
-    default:
-      return 'text-gray-500';
-  }
-};
+const BOOKING_LOGS_COLUMNS: DataTableColumn<BookingLogRow>[] = [
+  { key: 'action', header: 'Action' },
+  { key: 'booking', header: 'Booking Name' },
+  { key: 'message', header: 'Message' },
+  { key: 'author', header: 'Author' },
+  { key: 'timestamp', header: 'Timestamp' },
+];
 
 const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
-  const { logs, fetchRoomLogs } = useLogs();
-  const { rooms } = useRooms();
+  const { logs, fetchRoomLogs, fetchBookingLogs } = useLogs();
+
   useEffect(() => {
-    fetchRoomLogs().catch(() => {});
-  }, [fetchRoomLogs]);
+    if (mode === 'bookings') {
+      fetchBookingLogs().catch(() => {});
+    } else {
+      fetchRoomLogs().catch(() => {});
+    }
+  }, [mode, fetchRoomLogs, fetchBookingLogs]);
+
+  // Add polling for automatic updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (mode === 'bookings') {
+        fetchBookingLogs({ force: true }).catch(() => {});
+      } else {
+        fetchRoomLogs({ force: true }).catch(() => {});
+      }
+    }, 30000); // Poll every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [mode, fetchRoomLogs, fetchBookingLogs]);
 
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 8;
 
-  const filteredLogs = useMemo<RoomLogRow[]>(() => {
-    // Currently only room logs are available via context; we format them consistently.
+  const filteredRoomLogs = useMemo<RoomLogRow[]>(() => {
+    if (mode !== 'rooms') return [];
     return logs
       .map((log) => {
-  const room = rooms.find((r: any) => String(r.roomId) === String((log as any).roomId));
-        if (!room) return null;
+        const l = log as Log;
         return {
-          action: log.eventType,
-          room: `${room.name} | ${room.code}`,
-          location: room.location || 'N/A',
-          capacity: (room as any).size ?? '-',
-          status: (log as any).currentStatus ?? 'unknown',
-          date: format(new Date(log.timestamp), 'MM/dd/yy\nhh:mmaaa'),
-          statusColor: getStatusColor((log as any).currentStatus ?? 'unknown'),
+          action: l.changeType || 'unknown',
+          room: l.roomName || 'N/A',
+          message: l.message || 'N/A',
+          author: l.authorName || `User #${l.authorId}` || 'N/A',
+          timestamp: format(new Date(l.timestamp || ''), 'MM/dd/yy hh:mma'),
         } as RoomLogRow;
       })
       .filter((x): x is RoomLogRow => Boolean(x))
       .filter((log) => log.action.toLowerCase().includes(search.toLowerCase()));
-  }, [logs, rooms, search]);
+  }, [logs, search, mode]);
 
-  // Built-in DataTable pagination will handle slicing; keep currentPage for controlled pagination
-
+  const filteredBookingLogs = useMemo<BookingLogRow[]>(() => {
+    if (mode !== 'bookings') return [];
+    return logs
+      .map((log) => {
+        const l = log as Log;
+        return {
+          action: l.changeType || 'unknown',
+          booking: l.bookingName || 'N/A',
+          message: l.message || 'N/A',
+          author: l.authorName || `User #${l.authorId}` || 'N/A',
+          timestamp: format(new Date(l.timestamp || ''), 'MM/dd/yy hh:mma'),
+        } as BookingLogRow;
+      })
+      .filter((x): x is BookingLogRow => Boolean(x))
+      .filter((log) => log.action.toLowerCase().includes(search.toLowerCase()));
+  }, [logs, search, mode]);
 
   return (
     <div className="px-7 pt-6 pb-8">
       <div className="flex items-center justify-between mb-4 gap-4">
-  <h2 className="text-2xl font-bold text-gray-800">{mode === 'bookings' ? 'BOOKING LOGS' : 'ROOM LOGS'}</h2>
+        <h2 className="text-2xl font-bold text-gray-800">{mode === 'bookings' ? 'BOOKING LOGS' : 'ROOM LOGS'}</h2>
         <div className="relative w-[18rem] md:w-[24rem] lg:w-[28rem]">
           <input
             type="text"
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search actions..."
             className="w-full pr-9 pl-3 p-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
           <FaSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
         </div>
       </div>
-      <DataTable
-        columns={ROOM_LOGS_COLUMNS}
-        rows={filteredLogs}
-        className="text-base whitespace-pre-line"
-        itemsPerPage={pageSize}
-        page={currentPage}
-        onPageChange={setCurrentPage}
-      />
+
+      {mode === 'bookings' ? (
+        <DataTable
+          columns={BOOKING_LOGS_COLUMNS}
+          rows={filteredBookingLogs}
+          className="text-base whitespace-pre-line"
+          itemsPerPage={pageSize}
+          page={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      ) : (
+        <DataTable
+          columns={ROOM_LOGS_COLUMNS}
+          rows={filteredRoomLogs}
+          className="text-base whitespace-pre-line"
+          itemsPerPage={pageSize}
+          page={currentPage}
+          onPageChange={setCurrentPage}
+        />
+      )}
     </div>
   );
 };
