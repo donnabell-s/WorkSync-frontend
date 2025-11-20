@@ -21,7 +21,7 @@ const Header: React.FC<HeaderProps> = ({ nav, toggleNav }) => {
                     <IoMenu className='text-white size-7 cursor-pointer' onClick={() => { toggleNav() }} />}
             </div>
             <div className='sm:text-white sm:flex sm:items-center gap-10 hidden'>
-                <IoNotifications className='size-6 cursor-pointer' />
+                {/* <IoNotifications className='size-6 cursor-pointer' /> */}
                 <div className='flex items-center gap-4'>
                     <p className='font-medium cursor-pointer'>{user!.firstName} {user!.lastName}</p>
                     <ProfileDropdown />

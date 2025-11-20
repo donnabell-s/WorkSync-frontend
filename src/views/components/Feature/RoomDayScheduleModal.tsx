@@ -70,9 +70,91 @@ export const RoomDayScheduleModal: React.FC<RoomDayScheduleModalProps> = ({ room
         // eslint-disable-next-line no-console
         console.log('API response for bookings:', data);
         // Always treat API response as BookingSlot[]
-        const arr: BookingSlot[] = Array.isArray(data) ? data : [];
-        const filtered = arr.filter((slot) => slot.startDateTime.slice(0, 10) === selectedDate);
-        setSlots(filtered);
+        const arr: any[] = Array.isArray(data) ? data : [];
+        const expanded: BookingSlot[] = [];
+        arr.forEach((slot) => {
+          // Always show the original booking on its start date
+          if (slot.startDateTime && slot.startDateTime.slice(0, 10) === selectedDate) {
+            expanded.push({
+              startDateTime: slot.startDateTime,
+              endDateTime: slot.endDateTime,
+            });
+          }
+          // Handle recurring bookings using recurrenceJson
+          let rec = null;
+          if (slot.recurrenceJson) {
+            try { rec = JSON.parse(slot.recurrenceJson); } catch { rec = null; }
+          } else if (slot.recurrence) {
+            try { rec = JSON.parse(slot.recurrence); } catch { rec = null; }
+          }
+          if (rec && rec.IsRecurring) {
+            const startDate = new Date(slot.startDateTime);
+            const endDate = rec.EndDate ? new Date(rec.EndDate) : null;
+            const selected = new Date(selectedDate);
+            const startDateStr = slot.startDateTime.slice(0, 10);
+            const selectedDateStr = selectedDate;
+            const startTime = slot.startDateTime.slice(11);
+            const endTime = slot.endDateTime.slice(11);
+            // Weekly recurrence
+            if (rec.Pattern === 'weekly' && Array.isArray(rec.DaysOfWeek)) {
+              const selectedDay = selected.getDay();
+              if (
+                selected >= startDate &&
+                (!endDate || selected <= endDate) &&
+                rec.DaysOfWeek.includes(selectedDay)
+              ) {
+                if (startDateStr !== selectedDateStr) {
+                  expanded.push({
+                    startDateTime: selectedDateStr + 'T' + startTime,
+                    endDateTime: selectedDateStr + 'T' + endTime,
+                  });
+                }
+              }
+            }
+            // Daily recurrence
+            if (rec.Pattern === 'daily') {
+              const interval = Number(rec.Interval) || 1;
+              const diffDays = Math.floor((selected.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+              if (
+                selected >= startDate &&
+                (!endDate || selected <= endDate) &&
+                diffDays % interval === 0
+              ) {
+                if (startDateStr !== selectedDateStr) {
+                  expanded.push({
+                    startDateTime: selectedDateStr + 'T' + startTime,
+                    endDateTime: selectedDateStr + 'T' + endTime,
+                  });
+                }
+              }
+            }
+            // Monthly recurrence
+            if (rec.Pattern === 'monthly') {
+              const interval = Number(rec.Interval) || 1;
+              const startDay = startDate.getDate();
+              const diffMonths = (selected.getFullYear() - startDate.getFullYear()) * 12 + (selected.getMonth() - startDate.getMonth());
+              const lastDayOfMonth = new Date(selected.getFullYear(), selected.getMonth() + 1, 0).getDate();
+              let matchDay = startDay;
+              if (startDay > lastDayOfMonth) {
+                matchDay = lastDayOfMonth;
+              }
+              if (
+                selected >= startDate &&
+                (!endDate || selected <= endDate) &&
+                selected.getDate() === matchDay &&
+                (diffMonths % interval === 0 || (endDate && selected.toISOString().slice(0,10) === endDate.toISOString().slice(0,10)))
+              ) {
+                if (startDateStr !== selectedDateStr) {
+                  expanded.push({
+                    startDateTime: selectedDateStr + 'T' + startTime,
+                    endDateTime: selectedDateStr + 'T' + endTime,
+                  });
+                }
+              }
+            }
+          }
+        });
+        setSlots(expanded);
       })
       .catch((err) => {
         // Debug: log error

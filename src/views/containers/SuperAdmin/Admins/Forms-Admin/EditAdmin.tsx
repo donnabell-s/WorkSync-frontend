@@ -57,7 +57,7 @@ const EditAdmin = () => {
         console.log('Admin updated successfully');
         return fetchAdmins(); // Fetch updated admins list
       })
-      .then(() => navigate('/admin/admins/view'))
+      .then(() => navigate('/admin/admins/view', { state: { refetch: true } }))
       .catch((error) => {
         console.error('Error updating admin:', error);
       });

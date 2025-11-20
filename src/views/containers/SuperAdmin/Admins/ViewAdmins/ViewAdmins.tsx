@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdmins } from '../../../../../context/AdminContext';
 import { DataTable, DataTableColumn } from '../../../../components/UI';
 import { FaSearch } from 'react-icons/fa';
 import { LuPencilLine } from "react-icons/lu";
 
 const ViewAdmins: React.FC = () => {
-  const { admins, currentAdmin, getAdminById } = useAdmins();
+  const { admins, currentAdmin, getAdminById, fetchAdmins } = useAdmins();
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'Name' | 'Role' | 'Status'>('Name');
   const [currentPage, setCurrentPage] = useState(1);
   const [editAdmin, setEditAdmin] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const filteredAdmins = admins
     .filter((admin) =>
@@ -46,11 +47,18 @@ const ViewAdmins: React.FC = () => {
   };
 
   useEffect(() => {
+    const fetchAndRefetchAdmins = async () => {
+      await fetchAdmins();
+      if (location.state && location.state.refetch) {
+        navigate(location.pathname, { replace: true, state: {} });
+      }
+    };
+    fetchAndRefetchAdmins();
     if (currentAdmin && editAdmin) {
       navigate('/admin/admins/edit');
       setEditAdmin(false);
     }
-  }, [currentAdmin, navigate, editAdmin]);
+  }, [currentAdmin, navigate, editAdmin, location.state, location.pathname, fetchAdmins]);
 
   return (
     <div className="px-7 pt-6 pb-8">

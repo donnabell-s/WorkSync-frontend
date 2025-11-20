@@ -56,10 +56,12 @@ export const AppRoutes = () => {
                 {/* User Management */}
                 <Route path={PATHS.USER_MGNT.VIEW.path} element={<Views.ViewUsers />} />
                 <Route path={PATHS.USER_MGNT.EDIT.path} element={<Views.EditUser />} />
+                <Route path={PATHS.USER_MGNT.ADD.path} element={<Views.AddUser />} />
 
                 {/* Admin Management */}
                 <Route path={PATHS.ADMIN_MGNT.VIEW.path} element={<Views.ViewAdmins />} />
                 <Route path={PATHS.ADMIN_MGNT.EDIT.path} element={<Views.EditAdmin />} />
+                <Route path={PATHS.ADMIN_MGNT.ADD.path} element={<Views.AddAdmin />} />
               </Route>
 
               {/* User Routes */}

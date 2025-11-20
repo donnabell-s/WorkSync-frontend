@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../../../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DataTable, DataTableColumn } from '../../../../components/UI';
 import { FaSearch } from 'react-icons/fa';
 import { useBookings } from '../../../../../context/BookingContext';
@@ -14,6 +14,7 @@ const ViewUser = () => {
   const { bookings } = useBookings();
   const [editUser, setEditUser] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const filteredUsers = users
     .filter((user) =>
@@ -53,9 +54,15 @@ const ViewUser = () => {
         console.error('Failed to fetch users:', error);
       }
     };
-
-    fetchUsers();
-  }, []);
+    // Refetch if coming from edit with refetch state
+    if (location.state && location.state.refetch) {
+      fetchUsers();
+      // Clear state so it doesn't refetch again on next mount
+      navigate(location.pathname, { replace: true, state: {} });
+    } else {
+      fetchUsers();
+    }
+  }, [location.state, getAllUsers, navigate, location.pathname]);
 
   useEffect(() => {
     if (currentUser && editUser) {
