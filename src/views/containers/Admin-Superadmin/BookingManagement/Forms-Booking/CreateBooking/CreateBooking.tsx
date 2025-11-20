@@ -8,6 +8,8 @@ import TextAreaInput from '../../../../../components/UI/AdminForms/TextAreaInput
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput'
 import AdminButton from '../../../../../components/UI/AdminButton'
 import RoomModal from '../../../../../components/UI/AdminForms/RoomModal'
+import RoomScheduleButton from '../../../../../../components/UI/RoomScheduleButton';
+import RoomDayScheduleModal from '../../../../../components/Feature/RoomDayScheduleModal';
 import { RiNumber1 } from "react-icons/ri";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import { useNavigate } from 'react-router'
@@ -19,7 +21,8 @@ const CreateBooking = () => {
   const { addBooking } = useBookings();
   const { rooms } = useRooms();
   const [toggle, setToggle] = useState(true);
-  const [openModal, setOpenModal] = useState(false);
+  const [openRoomScheduleModal, setOpenRoomScheduleModal] = useState(false);
+  const [openRoomModal, setOpenRoomModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>('');
   // Recurrence state (reference: user RoomBookingForm)
   const [recurrenceType, setRecurrenceType] = useState<'' | 'daily' | 'weekly' | 'monthly'>('');
@@ -135,8 +138,8 @@ const CreateBooking = () => {
         close: obj.close || obj.Close,
       };
     }
-    const weekdayHours = getOpenClose(oh?.weekdays || oh?.Weekdays);
-    const weekendHours = getOpenClose(oh?.weekends || oh?.Weekends);
+    const weekdayHours = getOpenClose(oh?.weekdays);
+    const weekendHours = getOpenClose(oh?.weekends);
     const open = isWeekend ? weekendHours.open : weekdayHours.open;
     const close = isWeekend ? weekendHours.close : weekdayHours.close;
     return { roomOpen: open, roomClose: close } as { roomOpen?: string; roomClose?: string };
@@ -154,7 +157,7 @@ const CreateBooking = () => {
   const handleSelection = (event: React.MouseEvent<HTMLButtonElement>, room: string) => {
     event.preventDefault();
     setSelectedRoom(room);
-    setOpenModal(!openModal);
+    setOpenRoomModal(false);
   }
 
   const handleToggle = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -173,7 +176,7 @@ const CreateBooking = () => {
 
   const handleModal = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    setOpenModal(!openModal);
+    setOpenRoomModal(!openRoomModal);
   }
 
   // When weekly, selecting a weekday should adjust start date to that weekday within the same week
@@ -358,7 +361,33 @@ const CreateBooking = () => {
         <AdminHeading label="CREATE BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
-          <Input label='Meeting/Event Title' name='title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value={form.title} onChange={handleChange} />
+          <div className='md:col-span-2 flex gap-4 items-center'>
+            <Input
+              label='Meeting/Event Title'
+              name='title'
+              type='text'
+              placeholder='Enter Room Name'
+              className='flex-1'
+              value={form.title}
+              onChange={handleChange}
+            />
+            <div className='mt-7'>
+            <RoomScheduleButton
+              onClick={() => {
+                console.log('RoomScheduleButton clicked', { selectedRoomObj, openRoomScheduleModal, selectedRoom });
+                setOpenRoomScheduleModal(true);
+              }}
+              disabled={rooms.length === 0 || !selectedRoomObj || !selectedRoomObj.roomId}
+            />
+            </div>
+            {selectedRoomObj?.roomId && (
+              <RoomDayScheduleModal
+                roomId={String(selectedRoomObj.roomId)}
+                isOpen={openRoomScheduleModal}
+                onClose={() => setOpenRoomScheduleModal(false)}
+              />
+            )}
+          </div>
           <div className='md:col-span-2 flex gap-4'>
             <SchedInput
               label='Start Date/Time'
@@ -455,11 +484,11 @@ const CreateBooking = () => {
           <Input label='Expected Attendees' name='attendees' placeholder='Enter number of expected attendees' type='number' value={form.attendees} onChange={handleChange} />
           <SelectInput label='Select Room' name='room' placeholder={selectedRoom === '' ? 'Select Room' : selectedRoom} type='rooms' onClick={handleModal} />
 
-          {
-            openModal ? (
-              <RoomModal closeFunction={handleModal} value={selectedRoom} selectFunction={handleSelection} />
-            ) : null
-          }
+            {
+              openRoomModal ? (
+                <RoomModal closeFunction={handleModal} value={selectedRoom} selectFunction={handleSelection} />
+              ) : null
+            }
         </div>
 
           <div className='flex gap-4 pt-5'>

@@ -93,7 +93,7 @@ export const RoomDayScheduleModal: React.FC<RoomDayScheduleModalProps> = ({ room
       <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b">
-          <button onClick={onClose} className="p-2 text-gray-500 hover:text-black">
+          <button type="button" onClick={onClose} className="p-2 text-gray-500 hover:text-black">
             <FaTimes size={20} />
           </button>
           <div className="flex-1 text-center font-semibold text-lg">
@@ -101,6 +101,7 @@ export const RoomDayScheduleModal: React.FC<RoomDayScheduleModalProps> = ({ room
           </div>
           <div className="flex items-center gap-2">
             <button
+              type="button"
               onClick={() => {
                 const prev = new Date(selectedDate);
                 prev.setDate(prev.getDate() - 1);
@@ -118,6 +119,7 @@ export const RoomDayScheduleModal: React.FC<RoomDayScheduleModalProps> = ({ room
               className="border rounded px-2 py-1 text-sm"
             />
             <button
+              type="button"
               onClick={() => {
                 const next = new Date(selectedDate);
                 next.setDate(next.getDate() + 1);
