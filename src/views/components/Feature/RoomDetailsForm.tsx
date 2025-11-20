@@ -56,6 +56,34 @@ const RoomDetailsForm: React.FC<RoomDetailsFormProps> = ({ roomCode }) => {
               {currentRoom.amenities?.join(", ") || "N/A"}
             </p>
           </div>
+          {/* Operating Hours styled as requested */}
+          {currentRoom.operatingHours && (() => {
+            try {
+              const hours = JSON.parse(currentRoom.operatingHours);
+              const formatTime = (t: string) => {
+                if (!t) return "";
+                const [h, m] = t.split(":");
+                let hour = parseInt(h, 10);
+                const min = m;
+                let ampm = "AM";
+                if (hour >= 12) ampm = "PM";
+                if (hour > 12) hour -= 12;
+                if (hour === 0) hour = 12;
+                return `${hour}:${min}${ampm}`;
+              };
+              return (
+                <div className="flex flex-col sm:flex-row sm:items-start gap-1">
+                  <p className="w-full sm:w-50 min-w-0 font-semibold truncate">Operating Hours:</p>
+                  <div className="flex-1 min-w-0 truncate flex flex-col">
+                    <span>Weekday: {formatTime(hours.Weekdays?.Open)} - {formatTime(hours.Weekdays?.Close)}</span>
+                    <span>Weekend: {formatTime(hours.Weekends?.Open)} - {formatTime(hours.Weekends?.Close)}</span>
+                  </div>
+                </div>
+              );
+            } catch {
+              return null;
+            }
+          })()}
         </div>
       </div>
     </div>

@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 import ViewRoomHeader from './ViewRoomHeader';
 import Calendar from './RoomDetails/Calendar';
 import History from './RoomDetails/History';
 import Reservations from './RoomDetails/Reservations';
 import AdminBackLink from '../../../../components/UI/AdminBackLink';
+import { useRooms } from '../../../../../context/RoomContext';
 
 const ViewRoomDetails = () => {
 
@@ -11,6 +12,17 @@ const ViewRoomDetails = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedWeek, setSelectedWeek] = useState<Date | undefined>(undefined);
   const [selectedStatus, setSelectedStatus] = useState('all');
+  const { currentRoom, getRoomById } = useRooms();
+
+  useEffect(() => {
+    // Restore currentRoom from localStorage if missing
+    if (!currentRoom) {
+      const roomId = localStorage.getItem('selectedRoomId');
+      if (roomId) {
+        getRoomById(roomId);
+      }
+    }
+  }, [currentRoom, getRoomById]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);

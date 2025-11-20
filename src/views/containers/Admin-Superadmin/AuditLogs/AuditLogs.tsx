@@ -43,6 +43,14 @@ const BOOKING_LOGS_COLUMNS: DataTableColumn<BookingLogRow>[] = [
 
 const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
   const { logs, fetchRoomLogs, fetchBookingLogs } = useLogs();
+  // Fetch correct logs when switching modes
+  useEffect(() => {
+    if (mode === 'bookings') {
+      fetchBookingLogs({ force: true }).catch(() => {});
+    } else {
+      fetchRoomLogs({ force: true }).catch(() => {});
+    }
+  }, [mode, fetchRoomLogs, fetchBookingLogs]);
 
   useEffect(() => {
     if (mode === 'bookings') {

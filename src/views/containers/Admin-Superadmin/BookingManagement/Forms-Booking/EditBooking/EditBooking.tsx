@@ -10,6 +10,8 @@ import TextAreaInput from '../../../../../components/UI/AdminForms/TextAreaInput
 import SelectInput from '../../../../../components/UI/AdminForms/SelectInput'
 import AdminButton from '../../../../../components/UI/AdminButton'
 import RoomModal from '../../../../../components/UI/AdminForms/RoomModal'
+import RoomScheduleButton from '../../../../../../components/UI/RoomScheduleButton';
+import RoomDayScheduleModal from '../../../../../components/Feature/RoomDayScheduleModal';
 import { RiNumber1 } from "react-icons/ri";
 import { FaArrowRotateRight } from "react-icons/fa6";
 import { useBookings } from '../../../../../../context/BookingContext'
@@ -25,6 +27,9 @@ const EditBooking = () => {
   const [openModal, setOpenModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>(''); // holds room code
   const [selectedRoomId, setSelectedRoomId] = useState<string>('');
+    // Get the selected room object for use in JSX
+    const roomObj = rooms.find(r => String(r.roomId) === String(selectedRoomId));
+  const [openRoomScheduleModal, setOpenRoomScheduleModal] = useState(false);
   // Recurrence state
   const [recurrenceType, setRecurrenceType] = useState<'' | 'daily' | 'weekly' | 'monthly'>('');
   const [interval, setInterval] = useState<number>(1);
@@ -426,7 +431,30 @@ const EditBooking = () => {
         <AdminHeading label="EDIT BOOKING" />
 
         <form action="" className='grid md:grid-cols-2 gap-4 grid-cols-1'>
-          <Input name='title' label='Meeting/Event Title' type='text' placeholder='Enter Room Name' className='md:col-span-2' value={form.title} onChange={handleChange} />
+          <div className='md:col-span-2 flex gap-4 items-center'>
+            <Input
+              label='Meeting/Event Title'
+              name='title'
+              type='text'
+              placeholder='Enter Room Name'
+              className='flex-1'
+              value={form.title}
+              onChange={handleChange}
+            />
+            <div  className='mt-7'>
+            <RoomScheduleButton
+                onClick={() => setOpenRoomScheduleModal(true)}
+                disabled={!roomObj?.roomId}
+            />
+            </div>
+              {roomObj?.roomId && (
+                <RoomDayScheduleModal
+                  roomId={String(roomObj.roomId)}
+                  isOpen={openRoomScheduleModal}
+                  onClose={() => setOpenRoomScheduleModal(false)}
+                />
+              )}
+          </div>
           <div className='md:col-span-2 flex gap-4'>
             <SchedInput
               label='Start Date/Time'

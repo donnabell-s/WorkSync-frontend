@@ -19,12 +19,14 @@ const Login = () => {
 
     try {
       const loggedUser = await login(email, password);
-      const r = String(loggedUser!.role || '').toLowerCase();
-      if (r === "admin" || r === "superadmin") {
-        navigate("/admin/dashboard");
-      } else {
-        navigate("/user/home");
+      // Determine redirect path based on role
+      const r = String(loggedUser?.role || '').toLowerCase();
+      let redirectPath = '/user/home';
+      if (r === 'admin' || r === 'superadmin') {
+        redirectPath = '/admin/dashboard';
       }
+      // Use window.location.replace to reload and redirect
+      window.location.replace(redirectPath);
     } catch (error: unknown) {
       setError("Invalid credentials. Please try again.");
       console.error("Login error:", error);

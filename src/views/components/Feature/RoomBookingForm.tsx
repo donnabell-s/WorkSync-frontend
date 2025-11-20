@@ -9,6 +9,7 @@ import { useBookings } from "../../../context/BookingContext";
 import type { CreateBookingPayload } from "../../../services/bookings.service";
 import { useAuth } from "../../../context/AuthContext";
 import { FaCalendarCheck } from "react-icons/fa6";
+import RoomScheduleButton from "../../../components/UI/RoomScheduleButton";
 
 function generateRecurringDates(
   pattern: string,
@@ -78,6 +79,12 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     return `${y}-${m}-${day}`;
   };
   const todayDate = toLocalYMD(new Date());
+
+  // Set default date to today for user booking
+  useEffect(() => {
+    setStartDate(todayDate);
+    setEndDate(todayDate);
+  }, []);
 
   const timeOptions = Array.from({ length: 23 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
@@ -559,15 +566,12 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
           onChange={setEndTime}
           minTime={calculateMinEndTime(startTime)}
         />
-        <button
-          type="button"
-          className="pb-1.5 pl-1 text-emerald-600 focus:outline-none"
+        <div className="mb-1">
+        <RoomScheduleButton
           onClick={() => setShowScheduleModal(true)}
-          aria-label="Show room day schedule"
           disabled={!currentRoom?.roomId}
-        >
-          <FaCalendarCheck size={30} />
-        </button>
+        />
+        </div>
         {currentRoom?.roomId && (
           <RoomDayScheduleModal
             roomId={String(currentRoom.roomId)}

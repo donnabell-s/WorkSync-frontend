@@ -52,25 +52,29 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({
         <div className='max-h-max flex flex-col items-center justify-between w-full bg-white divide-zinc-200 divide-y-2 border-b-2 border-zinc-200 rounded-tl-md rounded-tr-md text-[#1F2937]'>
             <div className='w-full flex lg:flex-row flex-col p-2.5 gap-4 max-h-max'>
                 <div className='h-22 rounded-md shadow-sm bg-zinc-100 lg:w-2/6 w-full'>
-                    <img
-                        src={currentRoom!.imageUrl && currentRoom!.imageUrl.length > 0 ? currentRoom!.imageUrl : (
-                            currentRoom!.sizeLabel === 'Small'
-                                ? '/meetingroom/small.jpg'
-                                : currentRoom!.sizeLabel === 'Medium'
-                                    ? '/meetingroom/medium.jpg'
-                                    : currentRoom!.sizeLabel === 'Large'
-                                        ? '/meetingroom/large.jpg'
-                                        : '/meetingroom/default.jpg')}
-                        alt={currentRoom!.name}
-                        className="w-full h-full object-cover rounded-md"
-                    />
+                    {currentRoom ? (
+                        <img
+                            src={currentRoom.imageUrl && currentRoom.imageUrl.length > 0 ? currentRoom.imageUrl : (
+                                currentRoom.sizeLabel === 'Small'
+                                    ? '/meetingroom/small.jpg'
+                                    : currentRoom.sizeLabel === 'Medium'
+                                        ? '/meetingroom/medium.jpg'
+                                        : currentRoom.sizeLabel === 'Large'
+                                            ? '/meetingroom/large.jpg'
+                                            : '/meetingroom/default.jpg')}
+                            alt={currentRoom.name}
+                            className="w-full h-full object-cover rounded-md"
+                        />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">No room selected</div>
+                    )}
                 </div>
                 <div className='max-h-max rounded-md lg:w-3/6 w-full flex gap-8'>
                     <div className='flex flex-col text-sm gap-1'>
-                        <div className='font-bold'>{currentRoom!.name}</div>
-                        <div className='font-bold'>{currentRoom!.code}</div>
-                        <div className={`font-bold ${String(currentRoom!.status).toLowerCase() === 'active' ? 'text-green-500' : (String(currentRoom!.status).toLowerCase() === 'occupied' ? 'text-[#F59E0B]' : 'text-gray-500')}`}>
-                            {String(currentRoom!.status).toLowerCase() === 'active' ? 'Active' : currentRoom!.status}
+                        <div className='font-bold'>{currentRoom ? currentRoom.name : 'No room selected'}</div>
+                        <div className='font-bold'>{currentRoom ? currentRoom.code : ''}</div>
+                        <div className={`font-bold ${currentRoom && String(currentRoom.status).toLowerCase() === 'active' ? 'text-green-500' : (currentRoom && String(currentRoom.status).toLowerCase() === 'occupied' ? 'text-[#F59E0B]' : 'text-gray-500')}`}> 
+                            {currentRoom ? (String(currentRoom.status).toLowerCase() === 'active' ? 'Active' : currentRoom.status) : ''}
                         </div>
                         <div></div>
                     </div>
@@ -81,12 +85,12 @@ const ViewRoomHeader: React.FC<ViewRoomHeaderProps> = ({
                         <div className='font-medium'>Facilities</div>
                     </div>
                     <div className='flex flex-col text-sm gap-1'>
-                        <div>{currentRoom!.location}, Level {currentRoom!.level}</div>
-                        <div>{currentRoom!.sizeLabel}</div>
-                        <div>{currentRoom!.seats}</div>
+                        <div>{currentRoom ? `${currentRoom.location}, Level ${currentRoom.level}` : ''}</div>
+                        <div>{currentRoom ? currentRoom.sizeLabel : ''}</div>
+                        <div>{currentRoom ? currentRoom.seats : ''}</div>
                         <div>
-                            {currentRoom!.amenities && currentRoom!.amenities.length > 0
-                                ? currentRoom!.amenities.join(', ')
+                            {currentRoom && currentRoom.amenities && currentRoom.amenities.length > 0
+                                ? currentRoom.amenities.join(', ')
                                 : 'No amenities'}
                         </div>
                     </div>
