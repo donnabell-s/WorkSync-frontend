@@ -78,7 +78,7 @@ export const AdminDashboardProvider: React.FC<{ children: React.ReactNode }> = (
     const intervalId = setInterval(() => {
       console.log('[DASHBOARD POLLING] Refreshing dashboard data...');
       fetchOptimizedDashboard();
-    }, 30000); // 30 seconds
+    }, 10000); // 10 seconds
 
     return () => {
       console.log('[DASHBOARD POLLING] Cleanup interval');
