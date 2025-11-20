@@ -10,7 +10,7 @@ import { FaClipboardCheck } from "react-icons/fa";
 import { LuTrendingUpDown } from "react-icons/lu";
 
 const Dashboard = () => {
-  const { dashboardSummary, isLoading, error } = useAdminDashboard();
+  const { dashboardSummary, isLoading, error, fromCache, lastComputedAt } = useAdminDashboard();
 
   // Loading state
   if (isLoading) {
@@ -55,6 +55,21 @@ const Dashboard = () => {
 
   return (
     <div className='w-full h-[calc(100vh-4rem)] flex flex-col gap-5 p-4 pb-10 lg:pb-0 overflow-y-scroll lg:overflow-clip'>
+      {/* Optional Cache Status Indicator */}
+      {lastComputedAt && (
+        <div className='w-full bg-white shadow-sm rounded-lg px-4 py-2 flex items-center justify-between text-sm'>
+          <div className='flex items-center gap-2'>
+            <span className={`inline-block w-2 h-2 rounded-full ${fromCache ? 'bg-green-500' : 'bg-blue-500'}`}></span>
+            <span className='text-gray-600'>
+              {fromCache ? 'Cached Data' : 'Fresh Data'}
+            </span>
+          </div>
+          <span className='text-gray-500'>
+            Updated {new Date(lastComputedAt).toLocaleString()}
+          </span>
+        </div>
+      )}
+      
       <div className='max-h-max w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 flex-wrap'>
         <AdminDashboardCard 
           label='Available Rooms' 
