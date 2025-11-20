@@ -79,6 +79,12 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
   };
   const todayDate = toLocalYMD(new Date());
 
+  // Set default date to today for user booking
+  useEffect(() => {
+    setStartDate(todayDate);
+    setEndDate(todayDate);
+  }, []);
+
   const timeOptions = Array.from({ length: 23 }, (_, i) => {
     const hour = 8 + Math.floor(i / 2);
     const minutes = i % 2 === 0 ? "00" : "30";

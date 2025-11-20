@@ -105,8 +105,9 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
                     const [h, m] = t.split(":");
                     let hour = parseInt(h, 10);
                     const min = m;
-                    const ampm = hour >= 12 ? "pm" : "am";
-                    hour = hour % 12;
+                    let ampm = "am";
+                    if (hour >= 12) ampm = "pm";
+                    if (hour > 12) hour -= 12;
                     if (hour === 0) hour = 12;
                     return `${hour}:${min}${ampm}`;
                   };
@@ -114,8 +115,8 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
                     <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
                       <p className="min-w-35 font-semibold">Operating hours:</p>
                       <div className="flex flex-col">
-                        <span>Weekdays: {formatTime(hours.weekdays?.open)} - {formatTime(hours.weekdays?.close)}</span>
-                        <span>Weekend: {formatTime(hours.weekends?.open)} - {formatTime(hours.weekends?.close)}</span>
+                        <span>Weekdays: {formatTime(hours.Weekdays?.Open)} - {formatTime(hours.Weekdays?.Close)}</span>
+                        <span>Weekend: {formatTime(hours.Weekends?.Open)} - {formatTime(hours.Weekends?.Close)}</span>
                       </div>
                     </div>
                   );
