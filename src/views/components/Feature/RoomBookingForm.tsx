@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import RoomDayScheduleModal from "./RoomDayScheduleModal";
 import { FaCaretDown } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
@@ -48,6 +49,7 @@ interface RoomBookingFormProps {
 }
 
 const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, description: descProp, expectedAttendees }) => {
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
   const navigate = useNavigate();
   const { getRoomById, currentRoom } = useRooms();
   const { getBookingById, currentBooking, addBooking, updateBooking, deleteBooking, isLoading } = useBookings();
@@ -557,7 +559,22 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
           onChange={setEndTime}
           minTime={calculateMinEndTime(startTime)}
         />
-        <div className="pb-1.5 pl-1 text-emerald-600"><FaCalendarCheck size={30}/></div>
+        <button
+          type="button"
+          className="pb-1.5 pl-1 text-emerald-600 focus:outline-none"
+          onClick={() => setShowScheduleModal(true)}
+          aria-label="Show room day schedule"
+          disabled={!currentRoom?.roomId}
+        >
+          <FaCalendarCheck size={30} />
+        </button>
+        {currentRoom?.roomId && (
+          <RoomDayScheduleModal
+            roomId={String(currentRoom.roomId)}
+            isOpen={showScheduleModal}
+            onClose={() => setShowScheduleModal(false)}
+          />
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-2">

@@ -14,6 +14,10 @@ export type CreateBookingPayload = {
 };
 
 export const bookingsService = {
+    async getBookingSlotsByRoomAndDate(roomId: string | number, date: string) {
+      const { data } = await http.get<BookingSlot[]>(API.BOOKINGS.GET_DATETIMES(roomId, date));
+      return data;
+    },
   async getAll() {
     const { data } = await http.get<Booking[]>(API.BOOKINGS.GET);
     return data;
