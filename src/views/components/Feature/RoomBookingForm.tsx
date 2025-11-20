@@ -7,6 +7,7 @@ import { useRooms } from "../../../context/RoomContext";
 import { useBookings } from "../../../context/BookingContext";
 import type { CreateBookingPayload } from "../../../services/bookings.service";
 import { useAuth } from "../../../context/AuthContext";
+import { FaCalendarCheck } from "react-icons/fa6";
 
 function generateRecurringDates(
   pattern: string,
@@ -337,8 +338,18 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
   };
 
   const handleSave = async (e?: React.FormEvent) => {
+
     if (e) e.preventDefault();
-    if (!startTime || !endTime) return alert("Please select both start and end times");
+    // Require all fields
+    if (!title || !title.trim()) return alert("Please enter a booking title.");
+    if (!currentRoom || !currentRoom.roomId) return alert("Please select a room.");
+    if (!startDate || !endDate) return alert("Please select start and end dates.");
+    if (!startTime || !endTime) return alert("Please select start and end times.");
+    if (!user || !user.id) return alert("User information is missing.");
+    if (typeof expectedAttendees !== 'number' && !(currentBooking?.expectedAttendees)) return alert("Please enter expected attendees.");
+    if (!currentRoom.operatingHours) {
+      return alert("Room operating hours not available. Cannot validate booking time.");
+    }
 
     const startLocal = `${startDate}T${startTime}:00`;
     const nonRecurringEndLocal = `${endDate}T${endTime}:00`;
@@ -346,7 +357,6 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const startDateTime = new Date(startLocal);
     const endDateTime = new Date(nonRecurringEndLocal);
     const now = new Date();
-    // Fix: define endRef for use in operating hours validation
     const endRef = isRecurring ? new Date(recurringEndLocal) : endDateTime;
 
     if (startDateTime < now) return alert("Start date and time must be in the future.");
@@ -359,16 +369,29 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const diffMinutes = (endDateTime.getTime() - startDateTime.getTime()) / 60000;
     if (!isRecurring && diffMinutes < 30) return alert("Booking must be at least 30 minutes.");
 
-    // Validate against room operating hours if available
+    // Validate against room operating hours
     let roomOpen: string | undefined;
     let roomClose: string | undefined;
-    if (currentRoom?.operatingHours) {
-      try {
-        const ops = typeof currentRoom.operatingHours === 'string' ? JSON.parse(currentRoom.operatingHours) : currentRoom.operatingHours;
-        const isWeekend = [0, 6].includes(startDateTime.getDay());
-        roomOpen = isWeekend ? ops?.weekends?.open : ops?.weekdays?.open;
-        roomClose = isWeekend ? ops?.weekends?.close : ops?.weekdays?.close;
-      } catch {}
+    try {
+      const ops = typeof currentRoom.operatingHours === 'string' ? JSON.parse(currentRoom.operatingHours) : currentRoom.operatingHours;
+      const isWeekend = [0, 6].includes(startDateTime.getDay());
+      // Support both capitalized and lowercase keys
+      const weekdays = ops?.weekdays || ops?.Weekdays;
+      const weekends = ops?.weekends || ops?.Weekends;
+      // Support both 'open'/'close' and 'Open'/'Close' keys
+      function getOpenClose(obj: any) {
+        if (!obj) return { open: undefined, close: undefined };
+        return {
+          open: obj.open || obj.Open,
+          close: obj.close || obj.Close,
+        };
+      }
+      const weekdayHours = getOpenClose(weekdays);
+      const weekendHours = getOpenClose(weekends);
+      roomOpen = isWeekend ? weekendHours.open : weekdayHours.open;
+      roomClose = isWeekend ? weekendHours.close : weekdayHours.close;
+    } catch {
+      return alert("Room operating hours are invalid. Cannot validate booking time.");
     }
     const startTimeStr = startDateTime.toTimeString().slice(0,5);
     const endTimeStr = endRef.toTimeString().slice(0,5);
@@ -534,6 +557,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
           onChange={setEndTime}
           minTime={calculateMinEndTime(startTime)}
         />
+        <div className="pb-1.5 pl-1 text-emerald-600"><FaCalendarCheck size={30}/></div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-2">

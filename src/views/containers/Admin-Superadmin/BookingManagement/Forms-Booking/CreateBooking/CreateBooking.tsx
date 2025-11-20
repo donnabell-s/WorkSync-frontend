@@ -127,8 +127,18 @@ const CreateBooking = () => {
   }, [startDate]);
   const { roomOpen, roomClose } = React.useMemo(() => {
     const oh = parseOperatingHours(selectedRoomObj?.operatingHours);
-    const open = isWeekend ? oh?.weekends?.open : oh?.weekdays?.open;
-    const close = isWeekend ? oh?.weekends?.close : oh?.weekdays?.close;
+    // Support both 'open'/'close' and 'Open'/'Close' keys
+    function getOpenClose(obj: any) {
+      if (!obj) return { open: undefined, close: undefined };
+      return {
+        open: obj.open || obj.Open,
+        close: obj.close || obj.Close,
+      };
+    }
+    const weekdayHours = getOpenClose(oh?.weekdays || oh?.Weekdays);
+    const weekendHours = getOpenClose(oh?.weekends || oh?.Weekends);
+    const open = isWeekend ? weekendHours.open : weekdayHours.open;
+    const close = isWeekend ? weekendHours.close : weekdayHours.close;
     return { roomOpen: open, roomClose: close } as { roomOpen?: string; roomClose?: string };
   }, [selectedRoomObj, isWeekend]);
   const combineMin = (a?: string, b?: string): string | undefined => {

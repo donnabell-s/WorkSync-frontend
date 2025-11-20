@@ -71,12 +71,16 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
 
   const filteredRoomLogs = useMemo<RoomLogRow[]>(() => {
     if (mode !== 'rooms') return [];
-    return logs
+    // Memoize room name lookup for speed, fallback to roomId if missing
+    return [...logs]
+      .reverse()
       .map((log) => {
         const l = log as Log;
+        let roomName = l.roomName;
+        if (!roomName && l.roomId) roomName = `Room #${l.roomId}`;
         return {
-          action: l.changeType || 'unknown',
-          room: l.roomName || 'N/A',
+          action: `${(l.changeType || 'unknown').toUpperCase()}`,
+          room: roomName || 'N/A',
           message: l.message || 'N/A',
           author: l.authorName || `User #${l.authorId}` || 'N/A',
           timestamp: format(new Date(l.timestamp || ''), 'MM/dd/yy hh:mma'),
@@ -88,12 +92,16 @@ const AuditLogs: React.FC<AuditLogsProps> = ({ mode }) => {
 
   const filteredBookingLogs = useMemo<BookingLogRow[]>(() => {
     if (mode !== 'bookings') return [];
-    return logs
+    // Memoize booking name lookup for speed, fallback to bookingId if missing
+    return [...logs]
+      .reverse()
       .map((log) => {
         const l = log as Log;
+        let bookingName = l.bookingName;
+        if (!bookingName && l.bookingId) bookingName = `Booking #${l.bookingId}`;
         return {
-          action: l.changeType || 'unknown',
-          booking: l.bookingName || 'N/A',
+          action: `${(l.changeType || 'unknown').toUpperCase()}`,
+          booking: bookingName || 'N/A',
           message: l.message || 'N/A',
           author: l.authorName || `User #${l.authorId}` || 'N/A',
           timestamp: format(new Date(l.timestamp || ''), 'MM/dd/yy hh:mma'),

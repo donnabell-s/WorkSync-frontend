@@ -349,6 +349,36 @@ const EditBooking = () => {
       endDate: `${endDate}T${(endTime || startTime || '00:00')}:00`,
       daysOfWeek: recurrenceType === 'weekly' ? selectedDays : undefined,
     } : { isRecurring: false };
+
+    // Validate against room operating hours
+    let roomOpen, roomClose;
+    const roomObj = rooms.find(r => String(r.roomId) === String(selectedRoomId));
+    if (roomObj && roomObj.operatingHours) {
+      try {
+        const ops = typeof roomObj.operatingHours === 'string' ? JSON.parse(roomObj.operatingHours) : roomObj.operatingHours;
+        function getOpenClose(obj: any) {
+          if (!obj) return { open: undefined, close: undefined };
+          return {
+            open: obj.open || obj.Open,
+            close: obj.close || obj.Close,
+          };
+        }
+        const isWeekend = (() => {
+          if (!startDate) return false;
+          const d = new Date(startDate + 'T00:00:00');
+          const day = d.getDay();
+          return day === 0 || day === 6;
+        })();
+        const weekdayHours = getOpenClose(ops?.weekdays || ops?.Weekdays);
+        const weekendHours = getOpenClose(ops?.weekends || ops?.Weekends);
+        roomOpen = isWeekend ? weekendHours.open : weekdayHours.open;
+        roomClose = isWeekend ? weekendHours.close : weekdayHours.close;
+      } catch {}
+    }
+    if (roomOpen && startTime < roomOpen) return alert(`Start time is before room opening time (${roomOpen}).`);
+    if (roomClose && endTime > roomClose) return alert(`End time is after room closing time (${roomClose}).`);
+    if (roomOpen && roomClose && roomOpen === roomClose) return alert(`This room is closed on the selected day (${roomOpen} - ${roomClose}). Please choose another time or room.`);
+
     try {
       console.log('[EditBooking] Attempting PUT with patch:', partial);
       await updateBooking(id, partial);
