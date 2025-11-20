@@ -79,15 +79,24 @@ import type { Booking as ApiBooking } from '../../../types';
 interface BookingListForDateProps {
   date: Date;
   isAdmin: boolean;
+  roomId?: string;
 }
 
-const BookingListForDate: React.FC<BookingListForDateProps> = ({ date, isAdmin }) => {
+const BookingListForDate: React.FC<BookingListForDateProps> = ({ date, isAdmin, roomId }) => {
   const { bookings } = useBookings();
   const navigate = useNavigate();
 
   // Filter bookings that have an occurrence on the date
   type BookingItem = ApiBooking | LegacyBooking;
-  const bookingsForDate = bookings.filter((b: any) => occursOnDate(b, date));
+  let bookingsForDate: BookingItem[] = [];
+  if (roomId) {
+    bookingsForDate = bookings.filter((b: any) => b.roomId === roomId);
+  }
+  else {
+    bookingsForDate = bookings;
+  }
+
+  bookingsForDate = bookingsForDate.filter((b: any) => occursOnDate(b, date));
 
   if (bookingsForDate.length === 0) return null;
 

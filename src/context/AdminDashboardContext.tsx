@@ -62,10 +62,28 @@ export const AdminDashboardProvider: React.FC<{ children: React.ReactNode }> = (
     await fetchOptimizedDashboard();
   };
 
+  // Initial fetch when user is authenticated
   useEffect(() => {
     if (user && (user.role === 'admin' || user.role === 'superadmin' || user.role === 'Admin' || user.role === 'SuperAdmin')) {
       fetchOptimizedDashboard();
     }
+  }, [user]);
+
+  // Automatic polling every 30 seconds to match backend computation cycle
+  useEffect(() => {
+    if (!user || !(user.role === 'admin' || user.role === 'superadmin' || user.role === 'Admin' || user.role === 'SuperAdmin')) {
+      return;
+    }
+
+    const intervalId = setInterval(() => {
+      console.log('[DASHBOARD POLLING] Refreshing dashboard data...');
+      fetchOptimizedDashboard();
+    }, 30000); // 30 seconds
+
+    return () => {
+      console.log('[DASHBOARD POLLING] Cleanup interval');
+      clearInterval(intervalId);
+    };
   }, [user]);
 
   return (

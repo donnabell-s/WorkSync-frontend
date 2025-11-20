@@ -11,9 +11,10 @@ const MONTH_NAMES = [
 
 interface MainCalendarProps {
   isAdmin: boolean;
+  selectedRoomId?: string;
 }
 
-const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
+const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin, selectedRoomId }) => {
   const today = new Date();
   // Use a single source of truth for displayed month to avoid desync/skips
   const [current, setCurrent] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
@@ -122,7 +123,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
                   <td
                     key={index}
                     className={`
-                      px-0 h-35 w-1/7 border-t border-[#D2D4D8]
+                      px-0 h-35 max-h-max w-1/7 border-t border-[#D2D4D8]
                       ${weekIndex === weeks.length - 1 ? 'border-b-0' : 'border-b border-[#D2D4D8]'}
                       ${index === 0 ? 'border-l-0' : 'border-l border-[#D2D4D8]'}
                       ${index === week.length - 1 ? 'border-r-0' : 'border-r border-[#D2D4D8]'}
@@ -154,7 +155,7 @@ const MainCalendar: React.FC<MainCalendarProps> = ({ isAdmin }) => {
                         {formatDayDisplay(date, currentMonth)}
                       </div>
                         <div className="w-full mt-1">
-                          <Components.BookingListForDate date={date} isAdmin={isAdmin} />
+                          <Components.BookingListForDate date={date} isAdmin={isAdmin} roomId={selectedRoomId} />
                         </div>
                     </button>
                   </td>

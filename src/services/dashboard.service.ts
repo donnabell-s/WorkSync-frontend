@@ -27,6 +27,7 @@ export interface BookingTrendItem {
 
 // Peak usage types
 export interface PeakUsageItem {
+    code: string;
     roomName: string;
     hour: number; // 0-23
     occupancyRate: number; // 0-100
