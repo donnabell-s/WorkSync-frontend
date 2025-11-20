@@ -1,5 +1,6 @@
 import React from 'react';
 import { AdminButton } from '../../../UI';
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 interface PaginationControlsProps {
   currentPage: number;
@@ -26,13 +27,13 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
         className="py-2 bg-gray-700" 
         onClick={() => onPageChange(Math.max(currentPage - 1, 0))}
         disabled={currentPage === 0} 
-        label="<" 
+        label={<FaArrowLeft />}
       />
       <AdminButton 
         className="py-2 bg-gray-700" 
         onClick={() => onPageChange(Math.min(currentPage + 1, totalPages - 1))}
         disabled={currentPage === totalPages - 1} 
-        label=">" 
+        label={<FaArrowRight />} 
       />
     </div>
   );

@@ -73,7 +73,7 @@ const BookingsPerRoom: React.FC = () => {
 
   return (
     <div className='h-full w-full flex flex-col gap-3'>
-      <div className='flex justify-between items-center mb-3'>
+      <div className='flex flex-col lg:flex-row justify-between items-center gap-4 mb-3'>
         <h2 className='font-bold text-[#1F2937]'>
           Bookings per Day (Trend Over Time)
         </h2>

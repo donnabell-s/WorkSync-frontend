@@ -110,13 +110,13 @@ export const createHeatmapOptions = (): ApexOptions => ({
   },
   tooltip: {
     custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-      const roomNumber = w.globals.seriesNames[seriesIndex];
+      const code = w.globals.seriesNames[seriesIndex];
       const occupancy = series[seriesIndex][dataPointIndex];
-      const roomName = findRoomNameByNumber(roomNumber);
+      const roomName = findRoomNameByNumber(code);
 
       return `<div class="p-2 bg-white border border-[#e5e7eb] rounded shadow">
-        <div class="font-bold">${roomNumber} - ${roomName}</div>
-        <div>Occupancy: ${occupancy}%</div>
+        <div class="font-bold text-xs mb-1">${code} - ${roomName}</div>
+        <div class="text-xs">Occupancy: ${occupancy}%</div>
       </div>`;
     }
   },

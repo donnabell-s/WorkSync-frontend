@@ -4,7 +4,7 @@ import Calendar from './RoomDetails/Calendar';
 import History from './RoomDetails/History';
 import Reservations from './RoomDetails/Reservations';
 import AdminBackLink from '../../../../components/UI/AdminBackLink';
-import { useRooms } from '../../../../../context/RoomContext';
+import { useRooms } from '@/context/RoomContext';
 
 const ViewRoomDetails = () => {
 

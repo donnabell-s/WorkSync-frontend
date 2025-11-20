@@ -40,11 +40,13 @@ export const API = {
     },
   },
     DASHBOARD: {
-        SUMMARY: '/api/Dashboard/Summary',
-        BOOKINGS_TREND: '/api/Dashboard/BookingsTrend',
-        BOOKINGS_TREND_POST: '/api/Dashboard/BookingsTrendPost',
-        PEAK_USAGE: '/api/Dashboard/PeakUsage',
-        PEAK_USAGE_POST: '/api/Dashboard/PeakUsagePost',
+        // Optimized endpoints (with caching)
+        OPTIMIZED_DASHBOARD: '/api/Dashboard/GetOptimizedDashboard',
+        OPTIMIZED_TREND: '/api/Dashboard/GetOptimizedTrend',
+        OPTIMIZED_PEAK_USAGE: '/api/Dashboard/GetOptimizedPeakUsage',
+        // Admin-only endpoints
+        RECOMPUTE_METRICS: '/api/Dashboard/RecomputeMetrics',
+        BACKFILL_METRICS: '/api/Dashboard/BackfillMetrics',
     },
 } as const;
 

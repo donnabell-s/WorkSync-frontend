@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import AdminButton from './AdminButton';
+import { FaArrowRight, FaArrowLeft } from "react-icons/fa";
 
 interface DatePickerProps {
   variant: 'days' | 'weeks';
@@ -179,10 +180,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
           {/* Calendar Header */}
           <div className="flex items-center justify-between mb-4">
             <button
-              className="p-1 hover:bg-gray-100 rounded"
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
               onClick={() => navigateMonth('prev')}
             >
-              <span className="text-gray-600">←</span>
+              <span className="text-gray-600"><FaArrowLeft /></span>
             </button>
             <h3 className="text-lg font-semibold text-[#1F2937]">
               {currentMonth.toLocaleDateString('en-US', { 
@@ -191,10 +192,10 @@ const DatePicker: React.FC<DatePickerProps> = ({
               })}
             </h3>
             <button
-              className="p-1 hover:bg-gray-100 rounded"
+              className="p-1 hover:bg-gray-100 rounded cursor-pointer"
               onClick={() => navigateMonth('next')}
             >
-              <span className="text-gray-600">→</span>
+              <span className="text-gray-600"><FaArrowRight /></span>
             </button>
           </div>
 
@@ -221,7 +222,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                       className={`
                         p-2 text-sm rounded hover:bg-gray-100 transition-colors
                         ${!isCurrentMonth ? 'text-gray-300' : 'text-gray-900'}
-                        ${isSelected ? 'bg-blue-500 text-white hover:bg-blue-600' : ''}
+                        ${isSelected ? 'bg-blue-800 text-white hover:bg-blue-600' : ''}
                         ${isToday && !isSelected ? 'bg-gray-200' : ''}
                       `}
                       onClick={() => handleDayClick(date)}
@@ -257,7 +258,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
                           <td key={dayIndex} className="p-2 text-center">
                             <span 
                               className={`inline-block w-full h-8 leading-8 rounded text-sm ${
-                                isToday ? 'bg-blue-500 text-white' : 
+                                isToday ? 'bg-blue-800 text-white' : 
                                 !isCurrentMonth ? 'text-gray-400' : 
                                 'text-gray-700'
                               }`}

@@ -48,30 +48,37 @@ const PeakUsageTimes: React.FC = () => {
   }, [selectedDate]);
 
   // Get unique rooms and paginate them
-  const { currentRooms, totalPages } = useMemo(() => {
-    const uniqueRooms = [...new Set(peakUsageData.map(item => item.roomName))];
+  const { currentRoomCodes, totalPages } = useMemo(() => {
+    // Group by code for unique identification
+    const roomMap = new Map<string, { code: string; roomName: string }>();
+    peakUsageData.forEach(item => {
+      if (!roomMap.has(item.code)) {
+        roomMap.set(item.code, { code: item.code, roomName: item.roomName });
+      }
+    });
+    
+    const uniqueRooms = Array.from(roomMap.values());
     const startIndex = currentPage * ROOMS_PER_PAGE;
     const endIndex = startIndex + ROOMS_PER_PAGE;
     const roomsForCurrentPage = uniqueRooms.slice(startIndex, endIndex);
     
     return {
-      currentRoomIds: roomsForCurrentPage,
-      currentRooms: roomsForCurrentPage,
+      currentRoomCodes: roomsForCurrentPage.map(r => r.code),
       totalPages: Math.ceil(uniqueRooms.length / ROOMS_PER_PAGE)
     };
   }, [peakUsageData, currentPage]);
 
   // Generate chart series for current page rooms
   const series = useMemo(() => {
-    if (!peakUsageData.length || !currentRooms.length) return [];
+    if (!peakUsageData.length || !currentRoomCodes.length) return [];
 
     const hours = [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18];
 
-    return currentRooms.map(roomName => ({
-      name: roomName,
+    return currentRoomCodes.map((code) => ({
+      name: code,
       data: hours.map(hour => {
         const dataPoint = peakUsageData.find(
-          item => item.roomName === roomName && (item.hour === hour || item.hour > hour && item.hour < hour + 1)
+          item => item.code === code && item.hour === hour
         );
         return {
           x: hour,
@@ -79,7 +86,7 @@ const PeakUsageTimes: React.FC = () => {
         };
       })
     }));
-  }, [peakUsageData, currentRooms]);
+  }, [peakUsageData, currentRoomCodes]);
 
   const hasData = peakUsageData.length > 0;
 
@@ -89,8 +96,8 @@ const PeakUsageTimes: React.FC = () => {
   return (
     <div className="h-full w-full flex flex-col">
       {/* Header with pagination controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-3">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center gap-3">
           <h2 className='font-bold text-[#1F2937]'>
             Peak Usage Times Heatmap
           </h2>
@@ -130,6 +137,7 @@ const PeakUsageTimes: React.FC = () => {
             series={series}
             type="heatmap"
             height="100%"
+            width="100%"
           />
         ) : (
           <NoDataState
@@ -147,10 +155,10 @@ const PeakUsageTimes: React.FC = () => {
       {/* Footer with room info and legend */}
       <div className='flex justify-between items-end'>
         {hasData && (
-          <>
-            <RoomInfoDisplay currentRooms={currentRooms} />
+          <div className='flex flex-col lg:flex-row gap-4'>
+            <RoomInfoDisplay currentRooms={currentRoomCodes} />
             <HeatmapLegend />
-          </>
+          </div>
         )}
       </div>
     </div>
