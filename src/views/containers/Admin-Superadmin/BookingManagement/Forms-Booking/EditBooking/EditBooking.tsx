@@ -90,7 +90,15 @@ const EditBooking = () => {
         setToggle(false);
         if (rec.pattern) setRecurrenceType(rec.pattern);
         if (rec.interval) setInterval(rec.interval);
-        if (Array.isArray(rec.daysOfWeek)) setSelectedDays(rec.daysOfWeek);
+        if (rec.daysOfWeek) {
+          let days = rec.daysOfWeek;
+          if (typeof days === 'string') {
+            days = days.split(',').map(d => parseInt(d.trim(), 10));
+          } else if (typeof days === 'number') {
+            days = [days];
+          }
+          if (Array.isArray(days)) setSelectedDays(days);
+        }
       } else {
         setToggle(true);
         setRecurrenceType('');
@@ -191,6 +199,23 @@ const EditBooking = () => {
     }
   }, [toggle, startDate]);
 
+  // Adjust startDate to earliest selected day if current dow is not selected
+  React.useEffect(() => {
+    if (selectedDays.length > 0 && startDate) {
+      const currentDow = new Date(startDate + 'T00:00:00').getDay();
+      if (!selectedDays.includes(currentDow)) {
+        const minDow = Math.min(...selectedDays);
+        const weekStart = new Date(startDate);
+        weekStart.setDate(weekStart.getDate() - currentDow);
+        const target = new Date(weekStart);
+        target.setDate(weekStart.getDate() + minDow);
+        const today = new Date(todayDate + 'T00:00:00');
+        if (target < today) target.setDate(target.getDate() + 7);
+        setStartDate(toLocalYMD(target));
+      }
+    }
+  }, [selectedDays, startDate, todayDate]);
+
   const nextHalfHourSlot = () => {
     const now = new Date();
     let h = now.getHours();
@@ -243,22 +268,59 @@ const EditBooking = () => {
   }
 
   const toggleDay = (day: number) => {
-    if (recurrenceType === 'weekly') {
-      const start = new Date(startDate + 'T00:00:00');
-      const weekStart = new Date(start);
-      weekStart.setDate(start.getDate() - start.getDay());
-      const target = new Date(weekStart);
-      target.setDate(weekStart.getDate() + day);
-      const today = new Date(todayDate + 'T00:00:00');
-      if (target < today) {
-        target.setDate(target.getDate() + 7);
-      }
-      setStartDate(toLocalYMD(target));
-      setSelectedDays([day]);
-    } else {
+    if (recurrenceType !== 'weekly') {
       setSelectedDays((prev) => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
+      return;
     }
+    if (!startDate) return;
+    const start = new Date(startDate + 'T00:00:00');
+    const startDow = start.getDay();
+    setSelectedDays((prev) => {
+      const exists = prev.includes(day);
+      if (exists) {
+        const next = prev.filter((d) => d !== day);
+        if (next.length === 0) {
+          // Prevent empty selection: keep anchored to start date's weekday
+          return [startDow];
+        }
+        // If removing the anchor day, move anchor to a remaining selected day within this week
+        if (day === startDow) {
+          const chosen = Math.min(...next);
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + chosen);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+        }
+        return next;
+      } else {
+        if (prev.length === 0) {
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + day);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+          return [day];
+        }
+        const next = [...prev, day].sort((a, b) => a - b);
+        if (day < startDow) {
+          const weekStart = new Date(start);
+          weekStart.setDate(start.getDate() - start.getDay());
+          const target = new Date(weekStart);
+          target.setDate(weekStart.getDate() + day);
+          const today = new Date(todayDate + 'T00:00:00');
+          if (target < today) target.setDate(target.getDate() + 7);
+          setStartDate(toLocalYMD(target));
+        }
+        return next;
+      }
+    });
   }
+  // removed stray closing brace
 
   const handleSave = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -287,6 +349,36 @@ const EditBooking = () => {
       endDate: `${endDate}T${(endTime || startTime || '00:00')}:00`,
       daysOfWeek: recurrenceType === 'weekly' ? selectedDays : undefined,
     } : { isRecurring: false };
+
+    // Validate against room operating hours
+    let roomOpen, roomClose;
+    const roomObj = rooms.find(r => String(r.roomId) === String(selectedRoomId));
+    if (roomObj && roomObj.operatingHours) {
+      try {
+        const ops = typeof roomObj.operatingHours === 'string' ? JSON.parse(roomObj.operatingHours) : roomObj.operatingHours;
+        function getOpenClose(obj: any) {
+          if (!obj) return { open: undefined, close: undefined };
+          return {
+            open: obj.open || obj.Open,
+            close: obj.close || obj.Close,
+          };
+        }
+        const isWeekend = (() => {
+          if (!startDate) return false;
+          const d = new Date(startDate + 'T00:00:00');
+          const day = d.getDay();
+          return day === 0 || day === 6;
+        })();
+        const weekdayHours = getOpenClose(ops?.weekdays || ops?.Weekdays);
+        const weekendHours = getOpenClose(ops?.weekends || ops?.Weekends);
+        roomOpen = isWeekend ? weekendHours.open : weekdayHours.open;
+        roomClose = isWeekend ? weekendHours.close : weekdayHours.close;
+      } catch {}
+    }
+    if (roomOpen && startTime < roomOpen) return alert(`Start time is before room opening time (${roomOpen}).`);
+    if (roomClose && endTime > roomClose) return alert(`End time is after room closing time (${roomClose}).`);
+    if (roomOpen && roomClose && roomOpen === roomClose) return alert(`This room is closed on the selected day (${roomOpen} - ${roomClose}). Please choose another time or room.`);
+
     try {
       console.log('[EditBooking] Attempting PUT with patch:', partial);
       await updateBooking(id, partial);
@@ -319,13 +411,12 @@ const EditBooking = () => {
   }
 
   React.useEffect(() => {
-    if (!toggle && recurrenceType === 'weekly' && startDate) {
-      if (!selectedDays || selectedDays.length === 0) {
-        const dow = new Date(startDate + 'T00:00:00').getDay();
-        setSelectedDays([dow]);
-      }
+    // Only set selectedDays if it is empty, to avoid overwriting pre-selected days from booking
+    if (!toggle && recurrenceType === 'weekly' && startDate && (!selectedDays || selectedDays.length === 0)) {
+      const dow = new Date(startDate + 'T00:00:00').getDay();
+      setSelectedDays([dow]);
     }
-  }, [startDate, recurrenceType, toggle, selectedDays]);
+  }, [startDate, recurrenceType, toggle]);
 
   return (
     <div className='h-full min-h-0 flex flex-col px-7 pt-6 pb-8 gap-4'>

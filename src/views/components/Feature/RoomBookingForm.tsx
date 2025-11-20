@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import RoomDayScheduleModal from "./RoomDayScheduleModal";
 import { FaCaretDown } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { RxCross1 } from "react-icons/rx";
@@ -7,6 +8,7 @@ import { useRooms } from "../../../context/RoomContext";
 import { useBookings } from "../../../context/BookingContext";
 import type { CreateBookingPayload } from "../../../services/bookings.service";
 import { useAuth } from "../../../context/AuthContext";
+import { FaCalendarCheck } from "react-icons/fa6";
 
 function generateRecurringDates(
   pattern: string,
@@ -47,6 +49,7 @@ interface RoomBookingFormProps {
 }
 
 const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, description: descProp, expectedAttendees }) => {
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
   const navigate = useNavigate();
   const { getRoomById, currentRoom } = useRooms();
   const { getBookingById, currentBooking, addBooking, updateBooking, deleteBooking, isLoading } = useBookings();
@@ -337,8 +340,18 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
   };
 
   const handleSave = async (e?: React.FormEvent) => {
+
     if (e) e.preventDefault();
-    if (!startTime || !endTime) return alert("Please select both start and end times");
+    // Require all fields
+    if (!title || !title.trim()) return alert("Please enter a booking title.");
+    if (!currentRoom || !currentRoom.roomId) return alert("Please select a room.");
+    if (!startDate || !endDate) return alert("Please select start and end dates.");
+    if (!startTime || !endTime) return alert("Please select start and end times.");
+    if (!user || !user.id) return alert("User information is missing.");
+    if (typeof expectedAttendees !== 'number' && !(currentBooking?.expectedAttendees)) return alert("Please enter expected attendees.");
+    if (!currentRoom.operatingHours) {
+      return alert("Room operating hours not available. Cannot validate booking time.");
+    }
 
     const startLocal = `${startDate}T${startTime}:00`;
     const nonRecurringEndLocal = `${endDate}T${endTime}:00`;
@@ -346,6 +359,7 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const startDateTime = new Date(startLocal);
     const endDateTime = new Date(nonRecurringEndLocal);
     const now = new Date();
+    const endRef = isRecurring ? new Date(recurringEndLocal) : endDateTime;
 
     if (startDateTime < now) return alert("Start date and time must be in the future.");
     if (!isRecurring && endDateTime <= startDateTime) return alert("End time must be after start time.");
@@ -357,11 +371,40 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
     const diffMinutes = (endDateTime.getTime() - startDateTime.getTime()) / 60000;
     if (!isRecurring && diffMinutes < 30) return alert("Booking must be at least 30 minutes.");
 
-    const startHour = startDateTime.getHours();
-    const endRef = isRecurring ? new Date(recurringEndLocal) : endDateTime;
-    const endHour = endRef.getHours();
-    if (startHour < 8 || endHour > 19 || (endHour === 19 && endRef.getMinutes() > 0)) {
-      return alert("Bookings must be between 08:00 and 19:00.");
+    // Validate against room operating hours
+    let roomOpen: string | undefined;
+    let roomClose: string | undefined;
+    try {
+      const ops = typeof currentRoom.operatingHours === 'string' ? JSON.parse(currentRoom.operatingHours) : currentRoom.operatingHours;
+      const isWeekend = [0, 6].includes(startDateTime.getDay());
+      // Support both capitalized and lowercase keys
+      const weekdays = ops?.weekdays || ops?.Weekdays;
+      const weekends = ops?.weekends || ops?.Weekends;
+      // Support both 'open'/'close' and 'Open'/'Close' keys
+      function getOpenClose(obj: any) {
+        if (!obj) return { open: undefined, close: undefined };
+        return {
+          open: obj.open || obj.Open,
+          close: obj.close || obj.Close,
+        };
+      }
+      const weekdayHours = getOpenClose(weekdays);
+      const weekendHours = getOpenClose(weekends);
+      roomOpen = isWeekend ? weekendHours.open : weekdayHours.open;
+      roomClose = isWeekend ? weekendHours.close : weekdayHours.close;
+    } catch {
+      return alert("Room operating hours are invalid. Cannot validate booking time.");
+    }
+    const startTimeStr = startDateTime.toTimeString().slice(0,5);
+    const endTimeStr = endRef.toTimeString().slice(0,5);
+    if (roomOpen && startTimeStr < roomOpen) {
+      return alert(`Start time is before room opening time (${roomOpen}).`);
+    }
+    if (roomClose && endTimeStr > roomClose) {
+      return alert(`End time is after room closing time (${roomClose}).`);
+    }
+    if (roomOpen && roomClose && roomOpen === roomClose) {
+      return alert(`This room is closed on the selected day (${roomOpen} - ${roomClose}). Please choose another time or room.`);
     }
 
     if (!user) return alert("Missing user info");
@@ -516,6 +559,22 @@ const RoomBookingForm: React.FC<RoomBookingFormProps> = ({ edit = false, descrip
           onChange={setEndTime}
           minTime={calculateMinEndTime(startTime)}
         />
+        <button
+          type="button"
+          className="pb-1.5 pl-1 text-emerald-600 focus:outline-none"
+          onClick={() => setShowScheduleModal(true)}
+          aria-label="Show room day schedule"
+          disabled={!currentRoom?.roomId}
+        >
+          <FaCalendarCheck size={30} />
+        </button>
+        {currentRoom?.roomId && (
+          <RoomDayScheduleModal
+            roomId={String(currentRoom.roomId)}
+            isOpen={showScheduleModal}
+            onClose={() => setShowScheduleModal(false)}
+          />
+        )}
       </div>
 
       <div className="flex flex-col md:flex-row gap-2">

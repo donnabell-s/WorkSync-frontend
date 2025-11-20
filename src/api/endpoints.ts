@@ -28,6 +28,7 @@ export const API = {
     DELETE: (id: string | number) => `/api/Bookings/Delete/${id}`,
     APPROVE: (id: string | number) => `/api/Bookings/Approve/${id}`,
     DECLINE: (id: string | number) => `/api/Bookings/Decline/${id}`,
+    GET_DATETIMES: (roomId: string | number, date: string) => `/api/bookings/datetimes/${roomId}?date=${date}`,
   },
   LOGS: {
     BOOKING_LOGS: {

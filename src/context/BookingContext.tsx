@@ -16,6 +16,7 @@ interface BookingContextType {
   deleteBooking: (id: string) => Promise<void>;
   approveBooking: (id: string | number) => Promise<void>;
   declineBooking: (id: string | number) => Promise<void>;
+  getBookingSlotsByRoomAndDate: (roomId: string | number, date: string) => Promise<any[]>;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);
@@ -151,6 +152,10 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
     }
   };
 
+  const getBookingSlotsByRoomAndDate = async (roomId: string | number, date: string) => {
+    return await bookingsService.getBookingSlotsByRoomAndDate(roomId, date);
+  };
+
   const approveBooking = async (id: string | number) => {
     setIsLoading(true);
     try {
@@ -191,8 +196,10 @@ export const BookingProvider: React.FC<{children: React.ReactNode}> = ({ childre
       getBookingById,
       addBooking,
       updateBooking,
-      deleteBooking
-      , approveBooking, declineBooking
+      deleteBooking,
+      approveBooking,
+      declineBooking,
+      getBookingSlotsByRoomAndDate,
     }}>
       {children}
     </BookingContext.Provider>

@@ -80,7 +80,8 @@ export const roomsService = {
     if (payload.sizeLabel !== undefined) fd.append('SizeLabel', String(payload.sizeLabel));
     if (payload.status !== undefined) fd.append('Status', String(payload.status));
     if (payload.seats !== undefined) fd.append('Seats', String(payload.seats));
-    if (payload.operatingHours !== undefined) fd.append('OperatingHours', JSON.stringify(payload.operatingHours));
+    // Always send operatingHours, default to empty if not provided
+    fd.append('OperatingHours', JSON.stringify(payload.operatingHours || { weekdays: { open: '', close: '' }, weekends: { open: '', close: '' } }));
     payload.amenities.forEach(a => fd.append('Amenities', a));
     if (file) fd.append('Image', file);
     if (payload.imageUrl) fd.append('ImageUrl', String(payload.imageUrl));
@@ -145,7 +146,8 @@ export const roomsService = {
     if (payload.sizeLabel !== undefined) fd.append('SizeLabel', String(payload.sizeLabel));
     if (payload.status !== undefined) fd.append('Status', String(payload.status));
     if (payload.seats !== undefined) fd.append('Seats', String(payload.seats));
-    if (opHours !== undefined) fd.append('OperatingHours', JSON.stringify(opHours));
+    // Always send operatingHours, default to empty if not provided
+    fd.append('OperatingHours', JSON.stringify(payload.operatingHours || { weekdays: { open: '', close: '' }, weekends: { open: '', close: '' } }));
     payload.amenities.forEach(a => fd.append('Amenities', a));
     if (file) fd.append('Image', file);
     if (payload.imageUrl) fd.append('ImageUrl', String(payload.imageUrl));

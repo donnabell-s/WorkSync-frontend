@@ -6,7 +6,7 @@ import { useRooms } from '../../../context/RoomContext';
 
 interface Props {
   dateOrder: 'asc' | 'desc' | 'all';
-  statusFilter: 'Completed' | 'Upcoming' | 'Cancelled' | 'See All';
+  statusFilter: 'Pending' | 'Approved' | 'Declined' | 'See All';
   searchQuery: string;
 }
 
