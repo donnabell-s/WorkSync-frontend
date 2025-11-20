@@ -134,7 +134,7 @@ const BookingListForDate: React.FC<BookingListForDateProps> = ({ date, isAdmin, 
           key={booking.bookingId ?? booking.id}
           className={`${styleForBooking(booking)} flex items-start text-xs font-semibold rounded px-1 py-1 truncate mb-0.5`}
           title={isRecurringBooking(booking) ? 'Recurring booking' : 'One-time booking'}
-          onClick={() => isAdmin && handleBookingClick(booking.bookingId ?? booking.id)}
+          onClick={() => isAdmin && handleBookingClick(booking)}
         >
           {formatTime(booking.startDatetime ?? booking.startDateTime)} - {booking.title}
         </div>
