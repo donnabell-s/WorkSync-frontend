@@ -8,7 +8,7 @@ const statuses = ['Active', 'Inactive'];
 
 const EditUser: React.FC = () => {
   const navigate = useNavigate();
-  const { currentUser, getAllUsers, updateUser, deleteUser, getUserById } = useAuth();
+  const { currentUser, getAllUsers, updateUser, deleteUser, getUserById, user } = useAuth();
 
   // Add a local state for permissions and status
   const [form, setForm] = useState<Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }>({
@@ -63,7 +63,7 @@ const EditUser: React.FC = () => {
         console.log('User updated successfully');
         return getAllUsers(); // Fetch updated admins list
       })
-      .then(() => navigate('/admin/users/view'))
+      .then(() => navigate('/admin/users/view', { state: { refetch: true } }))
       .catch((error) => {
         console.error('Error updating user:', error);
       });
@@ -136,15 +136,25 @@ const EditUser: React.FC = () => {
         </div>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Role</label>
-          <select
-            className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            name="role"
-            value={(form.role as any) ?? 'User'}
-            onChange={handleChange}
-          >
-            <option value="User">User</option>
-            <option value="Admin">Admin</option>
-          </select>
+          {user?.role === 'superadmin' ? (
+            <select
+              className="border border-gray-400 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="role"
+              value={(form.role as any) ?? 'User'}
+              onChange={handleChange}
+            >
+              <option value="User">User</option>
+              <option value="Admin">Admin</option>
+            </select>
+          ) : (
+            <input
+              type="text"
+              name="role"
+              value="User"
+              readOnly
+              className="border border-gray-400 rounded px-3 py-2 bg-gray-100"
+            />
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <label className="font-medium">Status</label>

@@ -16,6 +16,7 @@ type AuthContextType = {
   getUserById: (id: string) => Promise<void>;
   updateUser: (id: string, user: Partial<Pick<User, 'firstName' | 'lastName' | 'email' | 'role' | 'isActive'>> & { password?: string }) => Promise<User>;
   deleteUser: (id: string) => Promise<void>;
+  addUser: (user: { firstName: string; lastName: string; email: string; password: string; role?: string; isActive?: boolean }) => Promise<User>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -78,6 +79,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const addUser = async (user: { firstName: string; lastName: string; email: string; password: string; role?: string; isActive?: boolean }) => {
+    const created = await usersService.create(user);
+    setUsers(prev => [...prev, created]);
+    return created;
+  };
+
   const login = async (email: string, password: string) => {
     const data = await authService.login({ email, password });
     const normalizedUser = { ...data.user, role: String((data.user as any)?.role || '').toLowerCase() } as User;
@@ -121,7 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [user]);
 
   return (
-    <AuthContext.Provider value={{ user, users, currentUser, token, error, login, signup, logout, getAllUsers, getUserById, updateUser, deleteUser }}>
+    <AuthContext.Provider value={{ user, users, currentUser, token, error, login, signup, logout, getAllUsers, getUserById, updateUser, deleteUser, addUser }}>
       {children}
     </AuthContext.Provider>
   );
