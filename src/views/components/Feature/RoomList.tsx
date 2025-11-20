@@ -94,6 +94,36 @@ const RoomList: React.FC<RoomListProps> = ({ role, rooms }) => {
               <p className="min-w-35 font-semibold">Facilities:</p>
               <p>{Array.isArray(room.amenities) ? room.amenities.join(", ") : ""}</p>
             </div>
+            {/* Operating hours under facilities */}
+            {room.operatingHours && (
+              (() => {
+                try {
+                  const hours = JSON.parse(room.operatingHours);
+                  // Helper to format time as 9:00am
+                  const formatTime = (t: string) => {
+                    if (!t) return "";
+                    const [h, m] = t.split(":");
+                    let hour = parseInt(h, 10);
+                    const min = m;
+                    const ampm = hour >= 12 ? "pm" : "am";
+                    hour = hour % 12;
+                    if (hour === 0) hour = 12;
+                    return `${hour}:${min}${ampm}`;
+                  };
+                  return (
+                    <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
+                      <p className="min-w-35 font-semibold">Operating hours:</p>
+                      <div className="flex flex-col">
+                        <span>Weekdays: {formatTime(hours.weekdays?.open)} - {formatTime(hours.weekdays?.close)}</span>
+                        <span>Weekend: {formatTime(hours.weekends?.open)} - {formatTime(hours.weekends?.close)}</span>
+                      </div>
+                    </div>
+                  );
+                } catch {
+                  return null;
+                }
+              })()
+            )}
             {role === "admin" && (
               <div className="flex flex-row border-b border-b-[#D2D4D8] py-2">
                 <p className="w-35 font-semibold">Status:</p>
